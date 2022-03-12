@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// helps with moving items from gird to grid
 public class GridManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private List<GridObject> gridObjectList;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    private ItemObject item;
+    private ItemObject.Dir dir = ItemObject.Dir.Down;
+
+    private Transform ghostObject;
+    private bool ghostFollow = false;
+
+    private bool canPlace = false;
+    private bool inventoryClear = false;
 }

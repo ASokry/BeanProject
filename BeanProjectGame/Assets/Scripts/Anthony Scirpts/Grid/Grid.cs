@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Grid<TGridObject>
+public class Grid<TGridObject>: MonoBehaviour
 {
     public event EventHandler<OnGridValueChangedEventArgs> OnGridValueChanged;
     public class OnGridValueChangedEventArgs : EventArgs
@@ -20,10 +20,72 @@ public class Grid<TGridObject>
 
     public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject)
     {
+        this.width = width;
+        this.height = height;
+        this.cellSize = cellSize;
+        this.originPosition = originPosition;
+
+        gridArray = new TGridObject[width, height];
+        for (int x = 0; x < gridArray.GetLength(0); x++)
+            for (int y = 0; y < gridArray.GetLength(1); y++)
+                gridArray[x, y] = createGridObject(this, x, y);
+
 
     }
 
     public int GetWidth() { return width; }
     public int GetHeight() { return height; }
     public float GetCellSize() { return cellSize; }
+
+    public Vector3 GetWorldPosition(int x, int y)
+    {
+        return new Vector3(x, y) * cellSize + originPosition;
+    }
+
+    public void GetXYPosition(Vector3 worldPosition, out int x, out int y)
+    {
+        x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
+        y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
+    }
+
+    public void TriggerGridValueChanged(int x, int y)
+    {
+        OnGridValueChanged?.Invoke(this, new OnGridValueChangedEventArgs { x = x, y = y });
+    }
+
+    public TGridObject GetGridValue(int x, int y)
+    {
+        if (x >= 0 && y >= 0 && x < width && y < height)
+        {
+            return gridArray[x, y];
+        }
+        else
+        {
+            //Debug.Log(default(TGridObject));
+            return default(TGridObject);
+        }
+    }
+
+    public TGridObject GetGridValue(Vector3 worldPosition)
+    {
+        int x, y;
+        GetXYPosition(worldPosition, out x, out y);
+        return GetGridValue(x, y);
+    }
+
+    public void SetGridValue(int x, int y, TGridObject value)
+    {
+        if (x >= 0 && y >= 0 && x < width && y < height)
+        {
+            gridArray[x, y] = value;
+            OnGridValueChanged?.Invoke(this, new OnGridValueChangedEventArgs { x = x, y = y });
+        }
+    }
+
+    public void SetGridValue(Vector3 worldPosition, TGridObject value)
+    {
+        int x, y;
+        GetXYPosition(worldPosition, out x, out y);
+        SetGridValue(x, y, value);
+    }
 }

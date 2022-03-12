@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbstractObject : MonoBehaviour
+//Abstract class for items
+public class ItemObject : MonoBehaviour
 {
     public enum Dir { Down, Left, Up, Right };
     public enum itemTyp { Action, Passive, None };
@@ -12,8 +13,8 @@ public class AbstractObject : MonoBehaviour
     [SerializeField] private Transform visual;
     [SerializeField] private itemTyp itemType;
 
-    public int width;
-    public int height;
+    [SerializeField] private int width;
+    [SerializeField] private int height;
 
     [SerializeField] private List<Vector2Int> downCoordinatesList;
     [SerializeField] private List<Vector2Int> leftCoordinatesList;

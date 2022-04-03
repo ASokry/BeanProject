@@ -6,6 +6,8 @@ using UnityEngine;
 public class GridObject : MonoBehaviour
 {
     private Grid<GridValue> grid;
+    [SerializeField] private Transform gridParent;
+
     public enum GridType { BackpackMain, BackpackOther, Inventory, QuickSlot };
 
     [SerializeField] private int gridWidth = 2;
@@ -58,10 +60,24 @@ public class GridObject : MonoBehaviour
     public float GetGridCellSize() { return cellSize; }
     public List<Vector2Int> GetNullCells() { return nullCells; }
 
+    private void Awake()
+    {
+        if (!gridParent)
+        {
+            Debug.LogError(this + ": Grid Object's Parent is empty.");
+        }
+    }
+
     // GridManager will wake up GridObjects
     public void AwakeScirpt()
     {
+        CreateGrid();
+        GenerateTiles();
+    }
 
+    private void CreateGrid()
+    {
+        grid = new Grid<GridValue>(gridWidth, gridHeight, cellSize, Vector3.zero, (Grid<GridValue> g, int x, int y) => new GridValue(g, x, y));
     }
 
     private void GenerateTiles()
@@ -80,6 +96,7 @@ public class GridObject : MonoBehaviour
             if (!nullCells.Contains(coordinates))
             {
                 GameObject tiles = Instantiate(gridTile, grid.GetWorldPosition(coordinates.x, coordinates.y), Quaternion.identity);
+                tiles.transform.SetParent(gridParent);
             }
         }
     }

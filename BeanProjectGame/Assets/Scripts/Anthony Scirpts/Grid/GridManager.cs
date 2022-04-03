@@ -5,7 +5,7 @@ using UnityEngine;
 // helps with moving items from gird to grid
 public class GridManager : MonoBehaviour
 {
-    private List<GridObject> gridObjectList;
+    [SerializeField] private List<GridObject> gridObjectList;
 
     private ItemObject item;
     private ItemObject.Dir dir = ItemObject.Dir.Down;
@@ -15,4 +15,18 @@ public class GridManager : MonoBehaviour
 
     private bool canPlace = false;
     private bool inventoryClear = false;
+
+    private void Awake()
+    {
+        if (gridObjectList.Count <= 0)
+            Debug.LogError(this + ": list of Grid Objects is empty." + "gridObjectList.Count: " + gridObjectList.Count);
+    }
+
+    private void Start()
+    {
+        foreach (GridObject gridObject in gridObjectList)
+        {
+            gridObject.AwakeScirpt();
+        }
+    }
 }

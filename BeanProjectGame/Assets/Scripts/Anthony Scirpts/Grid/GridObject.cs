@@ -5,14 +5,15 @@ using UnityEngine;
 //Abstract Class for sciprts/Objects that uses a Grid
 public class GridObject : MonoBehaviour
 {
-    private Grid<GridValue> grid;
+    [SerializeField] private Grid<GridCellValue> grid;
     [SerializeField] private Transform gridParent;
 
     public enum GridType { BackpackMain, BackpackOther, Inventory, QuickSlot };
 
-    [SerializeField] private int gridWidth = 2;
-    [SerializeField] private int gridHeight = 2;
-    [SerializeField] private float cellSize = 3f;
+    [SerializeField] private int gridWidth = 5;
+    [SerializeField] private int gridHeight = 5;
+    [SerializeField] private float cellSize = 100f; //Cellsize should be equal to width/height of recttransform on Tile Image
+    [SerializeField] private Transform startingPosition;
     [SerializeField] private GameObject gridTile;
 
     [SerializeField] private List<Vector2Int> nullCells;
@@ -21,7 +22,7 @@ public class GridObject : MonoBehaviour
     //private ItemObject item; //moved to GridManager
 
     #region GirdValue
-    public class GridValue
+    /*public class GridValue
     {
         private Grid<GridValue> grid;
         private int x;
@@ -51,13 +52,14 @@ public class GridObject : MonoBehaviour
 
         public bool CanBuild() { return placedGridObject == null; }
         public override string ToString() { return x + ", " + y + "\n" + placedGridObject; }
-    }
+    }*/
     #endregion
 
-    public Grid<GridValue> GetGrid() { return grid; }
+    public Grid<GridCellValue> GetGrid() { return grid; }
     public int GetGridWidth() { return gridWidth; }
     public int GetGridHeight() { return gridHeight; }
     public float GetGridCellSize() { return cellSize; }
+    public Transform GetStartingPosition() { return startingPosition; }
     public List<Vector2Int> GetNullCells() { return nullCells; }
 
     private void Awake()
@@ -77,7 +79,8 @@ public class GridObject : MonoBehaviour
 
     private void CreateGrid()
     {
-        grid = new Grid<GridValue>(gridWidth, gridHeight, cellSize, Vector3.zero, (Grid<GridValue> g, int x, int y) => new GridValue(g, x, y));
+        grid = new Grid<GridCellValue>(gridWidth, gridHeight, cellSize, gridParent, startingPosition.position, (Grid<GridCellValue> g, int x, int y) => new GridCellValue(g, x, y));
+        //print(grid);
     }
 
     private void GenerateTiles()
@@ -101,8 +104,16 @@ public class GridObject : MonoBehaviour
         }
     }
 
-    private void SpawnItemOnGrid(ItemObject itemObj, int itemPosX, int itemPosY, int rotationOffsetX, int rotationOffsetY)
+    public bool IsMouseInThisGrid()
     {
-        
+        int x, y;
+        grid.GetXYPosition(Input.mousePosition, out x, out y);
+        //print(x + ", " + y);
+
+        if((x >= 0 && x < gridWidth) && (y >= 0 && y < gridHeight))
+        {
+            return true;
+        }
+        return false;
     }
 }

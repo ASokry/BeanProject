@@ -106,8 +106,7 @@ public class GridObject : MonoBehaviour
 
     public bool IsMouseInThisGrid()
     {
-        int x, y;
-        grid.GetXYPosition(Input.mousePosition, out x, out y);
+        grid.GetXYPosition(Input.mousePosition, out int x, out int y);
         //print(x + ", " + y);
 
         if((x >= 0 && x < gridWidth) && (y >= 0 && y < gridHeight))

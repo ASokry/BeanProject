@@ -48,10 +48,10 @@ public class Grid<TGridObject>
 
     public void GetXYPosition(Vector3 worldPosition, out int x, out int y)
     {
-        //x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
-        //y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
-        x = Mathf.RoundToInt((worldPosition - originPosition).x / cellSize);
-        y = Mathf.RoundToInt((worldPosition - originPosition).y / cellSize);
+        x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
+        y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
+        //x = Mathf.RoundToInt((worldPosition - originPosition).x / cellSize);
+        //y = Mathf.RoundToInt((worldPosition - originPosition).y / cellSize);
 
         //print("[" + x + ", " + y + "]");
     }
@@ -61,7 +61,7 @@ public class Grid<TGridObject>
         OnGridValueChanged?.Invoke(this, new OnGridValueChangedEventArgs { x = x, y = y });
     }
 
-    public TGridObject GetGridValue(int x, int y)
+    public TGridObject GetGridCellValue(int x, int y)
     {
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
@@ -74,14 +74,13 @@ public class Grid<TGridObject>
         }
     }
 
-    public TGridObject GetGridValue(Vector3 worldPosition)
+    public TGridObject GetGridCellValue(Vector3 worldPosition)
     {
-        int x, y;
-        GetXYPosition(worldPosition, out x, out y);
-        return GetGridValue(x, y);
+        GetXYPosition(worldPosition, out int x, out int y);
+        return GetGridCellValue(x, y);
     }
 
-    public void SetGridValue(int x, int y, TGridObject value)
+    public void SetGridCellValue(int x, int y, TGridObject value)
     {
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
@@ -94,6 +93,6 @@ public class Grid<TGridObject>
     {
         int x, y;
         GetXYPosition(worldPosition, out x, out y);
-        SetGridValue(x, y, value);
+        SetGridCellValue(x, y, value);
     }
 }

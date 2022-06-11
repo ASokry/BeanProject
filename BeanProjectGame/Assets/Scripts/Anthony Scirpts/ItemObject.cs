@@ -6,7 +6,7 @@ using UnityEngine;
 public class ItemObject : MonoBehaviour
 {
     public enum Dir { Down, Left, Up, Right };
-    public enum itemTyp { Action, Passive, None };
+    public enum itemTyp { Action, Passive, Null };
 
     public string nameString;
     [SerializeField] private Transform prefab;

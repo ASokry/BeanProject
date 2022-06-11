@@ -30,6 +30,6 @@ public class GridCellValue
         grid.TriggerGridValueChanged(x, y);
     }
 
-    public bool CanBuild() { return placedGridObject == null; }
+    public bool IsPlacedGridObjectEmpty() { return placedGridObject == null; }
     public override string ToString() { return x + ", " + y + "\n" + placedGridObject; }
 }

@@ -8,6 +8,7 @@ public class PlacedGridObject : MonoBehaviour
     private Vector2Int origin;
     private ItemObject.Dir dir;
     private string objectName;
+    private ItemObject.itemTyp itemType;
     private Transform parentGrid;
 
     public static PlacedGridObject Create(Vector3 worldPosition, Vector2Int origin, ItemObject.Dir dir, ItemObject itemObject, Transform parentGrid)
@@ -22,6 +23,7 @@ public class PlacedGridObject : MonoBehaviour
         placedGridObject.origin = origin;
         placedGridObject.dir = dir;
         placedGridObject.objectName = itemObject.nameString;
+        placedGridObject.itemType = itemObject.GetObjType();
 
         return placedGridObject;
     }
@@ -29,6 +31,7 @@ public class PlacedGridObject : MonoBehaviour
     public Transform GetParentGrid() { return parentGrid; }
     public string GetObjectName() { return objectName; }
     public ItemObject.Dir GetDir() { return dir; }
+    public ItemObject.itemTyp GetItemType() { return itemType; }
 
     public List<Vector2Int> GetGridPositionList()
     {

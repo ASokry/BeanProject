@@ -75,6 +75,7 @@ public class GridObject : MonoBehaviour
     {
         CreateGrid();
         GenerateTiles();
+        //SpawnItemsInGrid();
     }
 
     private void CreateGrid()
@@ -108,11 +109,21 @@ public class GridObject : MonoBehaviour
     {
         grid.GetXYPosition(Input.mousePosition, out int x, out int y);
         //print(x + ", " + y);
-
+        
         if((x >= 0 && x < gridWidth) && (y >= 0 && y < gridHeight))
         {
+            //print(gameObject.name + ": " + gridWidth + ", " + gridHeight);
             return true;
         }
+
         return false;
+    }
+
+    private void SpawnItemsInGrid()
+    {
+        foreach (ItemObject item in itemList)
+        {
+            GridManager.Instance.SpawnItemInGrid(grid, item, new Vector2Int(0,1), ItemObject.Dir.Down);
+        }
     }
 }

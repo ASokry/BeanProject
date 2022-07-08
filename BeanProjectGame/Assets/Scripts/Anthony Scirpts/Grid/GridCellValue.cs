@@ -32,4 +32,5 @@ public class GridCellValue
 
     public bool IsPlacedGridObjectEmpty() { return placedGridObject == null; }
     public override string ToString() { return x + ", " + y + "\n" + placedGridObject; }
+    public int GetPlacedGridObjectItemID() { return placedGridObject.GetItemID(); }
 }

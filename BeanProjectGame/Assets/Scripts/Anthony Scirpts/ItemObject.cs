@@ -6,10 +6,12 @@ using UnityEngine;
 public class ItemObject : MonoBehaviour
 {
     public enum Dir { Down, Left, Up, Right };
+    private Dir currentDir = Dir.Down;
+
     public enum itemTyp { Action, Passive, Null };
 
     public string nameString;
-    [SerializeField] private Transform prefab;
+    [SerializeField] private GameObject prefab;
     [SerializeField] private Transform visual;
     [SerializeField] private itemTyp itemType;
 
@@ -21,7 +23,10 @@ public class ItemObject : MonoBehaviour
     [SerializeField] private List<Vector2Int> upCoordinatesList;
     [SerializeField] private List<Vector2Int> rightCoordinatesList;
 
-    public Transform GetPrefab() { return prefab; }
+    public string GetItemName() { return nameString; }
+    public Dir GetCurrentDirection() { return currentDir; }
+    public void SetCurrentDirection(Dir newDir) { currentDir = newDir; }
+    public GameObject GetPrefab() { return prefab; }
     public itemTyp GetObjType() { return itemType; }
 
     public static Dir GetNextDir(Dir dir)

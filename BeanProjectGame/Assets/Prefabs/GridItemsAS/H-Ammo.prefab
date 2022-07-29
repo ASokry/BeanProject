@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameString: H-Ammo
-  prefab: {fileID: 9213140259921817610}
+  prefab: {fileID: 4563073048361344517}
   visual: {fileID: 6925533589662293714, guid: bfd825ce045df6f4cb9b7bce18d85786, type: 3}
   itemType: 0
   width: 1

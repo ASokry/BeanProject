@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 // helps with moving items on grid and from one gird to another grid
 public class GridManager : MonoBehaviour
@@ -15,11 +16,12 @@ public class GridManager : MonoBehaviour
     private ItemObject.Dir itemDirection = ItemObject.Dir.Down;
     private PlacedGridObject originalPlacedGridObject;
     private List<Vector2Int> originalPlacedGridObjectCoordinates;
+    private Grid<GridCellValue> originalPlacedGridObjectGrid;
 
     private GridCellValue gridCellValue;
     private PlacedGridObject placedGridObject;
 
-    private Transform ghostObject;
+    private GameObject ghostObject;
     private bool ghostFollow = false;
     private int ghostID;
 
@@ -69,6 +71,7 @@ public class GridManager : MonoBehaviour
         if (!once && currentGridMouseIsIn != null)
         {
             SpawnItemInGrid(currentGridMouseIsIn, itemOnMouse, new Vector2Int(0, 1), ItemObject.Dir.Down);
+            SpawnItemInGrid(currentGridMouseIsIn, itemOnMouse, new Vector2Int(2, 1), ItemObject.Dir.Down);
             itemOnMouse = null;
             once = true;
             //print("done");
@@ -86,21 +89,24 @@ public class GridManager : MonoBehaviour
                 placedGridObject = gridCellValue.GetPlacedGridObject();
                 print("get placed object");
             }
-
+            
             if (placedGridObject != null && placedGridObject.GetItemType() != ItemObject.itemTyp.Null)
             {
                 ghostFollow = true;
 
                 itemOnMouse = placedGridObject.GetComponent<ItemObject>();
 
-                originalPlacedGridObject = placedGridObject;
-                originalPlacedGridObjectCoordinates = originalPlacedGridObject.GetGridPositionList();
+                SetOriginalPlacedGridObject();
             }
 
-            if (Input.GetMouseButtonDown(1) && itemOnMouse) { itemDirection = ItemObject.GetNextDir(itemDirection); }
+            if (Input.GetMouseButtonDown(1) && itemOnMouse)
+            { 
+                itemDirection = ItemObject.GetNextDir(itemDirection); 
+            }
 
             CreateGhost();
             GhostTracking();
+            //LowerOpacityOriginalPlacedGridObject(true);
         }
         /*else if (Input.GetMouseButton(0) && itemOnMouse != null)
         {
@@ -109,11 +115,37 @@ public class GridManager : MonoBehaviour
         }*/
     }
 
+    private void SetOriginalPlacedGridObject()
+    {
+        if (originalPlacedGridObject == null && originalPlacedGridObjectCoordinates==null && originalPlacedGridObjectGrid==null)
+        {
+            originalPlacedGridObject = placedGridObject;
+            originalPlacedGridObjectCoordinates = originalPlacedGridObject.GetGridPositionList();
+            originalPlacedGridObjectGrid = currentGridMouseIsIn;
+        }
+    }
+
+    private void LowerOpacityOriginalPlacedGridObject(bool fade)
+    {
+        if (fade && originalPlacedGridObject != null)
+        {
+            Color lowOpacityColor = originalPlacedGridObject.GetComponentInChildren<SpriteRenderer>().color;
+            lowOpacityColor.a = 200;
+            originalPlacedGridObject.GetComponentInChildren<SpriteRenderer>().color = lowOpacityColor;
+        }
+        else
+        {
+            Color lowOpacityColor = originalPlacedGridObject.GetComponentInChildren<SpriteRenderer>().color;
+            lowOpacityColor.a = 255;
+            originalPlacedGridObject.GetComponentInChildren<SpriteRenderer>().color = lowOpacityColor;
+        }
+    }
+
     private void MouseReleaseWithItem()
     {
         if (Input.GetMouseButtonUp(0))
         {
-            if (currentGridMouseIsIn != null && itemOnMouse)
+            if (currentGridMouseIsIn != null && itemOnMouse != null)
             {
                 currentGridMouseIsIn.GetXYPosition(Input.mousePosition, out int x, out int y);
                 //print(currentGridMouseIsIn.GetParent().name + ": " + x + ", " + y);
@@ -121,11 +153,12 @@ public class GridManager : MonoBehaviour
                 List<Vector2Int> gridCoordinatesList = itemOnMouse.GetCoordinateList(new Vector2Int(x, y), itemDirection);
 
                 CheckCoordinatesOnGrid(gridCoordinatesList);
+                //print(canPlace);
                 PlaceObjectDown(new Vector2Int(x, y));
             }
-            else if(itemOnMouse)
+            else if(itemOnMouse != null)
             {
-                ClearItemOnMouse();
+                ResetItemOnMouse();
                 ClearGhost();
             }
         }
@@ -145,7 +178,7 @@ public class GridManager : MonoBehaviour
                 break;
             }
 
-            // if coordinates already contains a placed object, then we can't place down an object
+            // if coordinates already contains a DIFFERENT placed object, then we can't place down an object
             if (!currentGridMouseIsIn.GetGridCellValue(coordinates.x, coordinates.y).IsPlacedGridObjectEmpty() && currentGridMouseIsIn.GetGridCellValue(coordinates.x, coordinates.y).GetPlacedGridObjectItemID() != ghostID)
             {
                 print("taken");
@@ -159,14 +192,14 @@ public class GridManager : MonoBehaviour
     {
         if (canPlace)
         {
-            SpawnItemInGrid(currentGridMouseIsIn, itemOnMouse, itemObjPos, itemDirection);
-            ClearItemOnMouse();
-            ClearGhost();
             DestroyOriginalPlacedGridObject();
+            SpawnItemInGrid(currentGridMouseIsIn, itemOnMouse, itemObjPos, itemDirection);
+            ResetItemOnMouse();
+            ClearGhost();
         }
         else
         {
-            ClearItemOnMouse();
+            ResetItemOnMouse();
             ClearGhost();
         }
     }
@@ -186,12 +219,12 @@ public class GridManager : MonoBehaviour
     {
         if (ghostFollow && ghostObject != null)
         {
-            ghostObject.rotation = Quaternion.Euler(0, 0, itemOnMouse.GetRotationAngle(itemDirection));
-            ghostObject.position = Input.mousePosition + itemOnMouse.GetPositionOffset(itemDirection, gridsCellSize);
+            ghostObject.GetComponent<Transform>().rotation = Quaternion.Euler(0, 0, itemOnMouse.GetRotationAngle(itemDirection));
+            ghostObject.GetComponent<Transform>().position = Input.mousePosition + itemOnMouse.GetPositionOffset(itemDirection, gridsCellSize);
         }
         else
         {
-            ClearItemOnMouse();
+            ResetItemOnMouse();
             ClearGhost();
         }
     }
@@ -206,12 +239,13 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void ClearItemOnMouse()
+    private void ResetItemOnMouse()
     {
         if (once)
         {
             itemOnMouse = null;
             canPlace = false;
+            placedGridObject = null;
             //print("clear");
         }
     }
@@ -219,10 +253,19 @@ public class GridManager : MonoBehaviour
     private void DestroyOriginalPlacedGridObject()
     {
         originalPlacedGridObject.DestroySelf();
+        //print(originaloriginalPlacedGridObjectGrid.GetParent().name);
+        //print(itemOnMouse==null);
         foreach (Vector2Int originalCoordinates in originalPlacedGridObjectCoordinates)
         {
-            currentGridMouseIsIn.GetGridCellValue(originalCoordinates.x, originalCoordinates.y).ClearPlacedGridObject();
+            originalPlacedGridObjectGrid.GetGridCellValue(originalCoordinates.x, originalCoordinates.y).ClearPlacedGridObject();
         }
+        ResetOriginalGridObjects();
+    }
+
+    private void ResetOriginalGridObjects()
+    {
+        //LowerOpacityOriginalPlacedGridObject(false);
+        originalPlacedGridObjectGrid = null;
         originalPlacedGridObjectCoordinates = null;
         originalPlacedGridObject = null;
     }
@@ -233,9 +276,12 @@ public class GridManager : MonoBehaviour
 
         Vector3 itemPosition = theGrid.GetWorldPosition(itemObjPos.x, itemObjPos.y) + new Vector3(rotationOffset.x, rotationOffset.y, 0) * theGrid.GetCellSize();
 
-        PlacedGridObject item = PlacedGridObject.Create(itemPosition, new Vector2Int(itemObjPos.x, itemObjPos.y), dir, itemObj, currentGridMouseIsIn.GetParent());
+        PlacedGridObject item = PlacedGridObject.Create(itemPosition, new Vector2Int(itemObjPos.x, itemObjPos.y), dir, itemObj, theGrid.GetParent());
 
         theGrid.GetGridCellValue(itemObjPos.x, itemObjPos.y).SetPlacedGridObject(item);
+
+        //Corner case check for bug where image is turned off when original placedObject is destroyed
+        if (!item.GetComponentInChildren<Image>().enabled) { item.GetComponentInChildren<Image>().enabled = true; }
 
         List<Vector2Int> itemPositionList = itemObj.GetCoordinateList(new Vector2Int(itemObjPos.x, itemObjPos.y), dir);
         foreach (Vector2Int gridPosition in itemPositionList)

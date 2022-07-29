@@ -56,9 +56,9 @@ public class Grid<TGridObject>
         //print("[" + x + ", " + y + "]");
     }
 
-    public void TriggerGridValueChanged(int x, int y)
+    public void TriggerGridValueChanged(int xVal, int yVal)
     {
-        OnGridValueChanged?.Invoke(this, new OnGridValueChangedEventArgs { x = x, y = y });
+        OnGridValueChanged?.Invoke(this, new OnGridValueChangedEventArgs { x = xVal, y = yVal });
     }
 
     public TGridObject GetGridCellValue(int x, int y)

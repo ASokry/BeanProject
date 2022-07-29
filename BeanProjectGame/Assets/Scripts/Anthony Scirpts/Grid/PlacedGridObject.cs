@@ -14,10 +14,12 @@ public class PlacedGridObject : MonoBehaviour
 
     public static PlacedGridObject Create(Vector3 worldPosition, Vector2Int origin, ItemObject.Dir dir, ItemObject itemObject, Transform parentGrid)
     {
-        Transform placedObjectTransform = Instantiate(itemObject.GetPrefab(), worldPosition, Quaternion.Euler(0, 0, itemObject.GetRotationAngle(dir)));
-        placedObjectTransform.SetParent(parentGrid);
+        GameObject placedObject = Instantiate(itemObject.GetPrefab(), worldPosition, Quaternion.Euler(0, 0, itemObject.GetRotationAngle(dir)));
+        placedObject.GetComponent<ItemObject>().SetCurrentDirection(dir);
+        placedObject.GetComponent<Transform>().SetParent(parentGrid);
+        placedObject.name = itemObject.GetItemName() + " (clone)";
 
-        PlacedGridObject placedGridObject = placedObjectTransform.GetComponent<PlacedGridObject>();
+        PlacedGridObject placedGridObject = placedObject.GetComponent<PlacedGridObject>();
 
         placedGridObject.parentGrid = parentGrid;
         placedGridObject.itemObject = itemObject;

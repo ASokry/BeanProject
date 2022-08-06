@@ -2,25 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbstractObject : MonoBehaviour
+//Abstract class for items
+public class ItemObject : MonoBehaviour
 {
     public enum Dir { Down, Left, Up, Right };
-    public enum itemTyp { Action, Passive, None };
+    private Dir currentDir = Dir.Down;
+
+    public enum itemTyp { Action, Passive, Null };
 
     public string nameString;
-    [SerializeField] private Transform prefab;
+    [SerializeField] private GameObject prefab;
     [SerializeField] private Transform visual;
     [SerializeField] private itemTyp itemType;
 
-    public int width;
-    public int height;
+    [SerializeField] private int width;
+    [SerializeField] private int height;
 
     [SerializeField] private List<Vector2Int> downCoordinatesList;
     [SerializeField] private List<Vector2Int> leftCoordinatesList;
     [SerializeField] private List<Vector2Int> upCoordinatesList;
     [SerializeField] private List<Vector2Int> rightCoordinatesList;
 
-    public Transform GetPrefab() { return prefab; }
+    public string GetItemName() { return nameString; }
+    public Dir GetCurrentDirection() { return currentDir; }
+    public void SetCurrentDirection(Dir newDir) { currentDir = newDir; }
+    public GameObject GetPrefab() { return prefab; }
     public itemTyp GetObjType() { return itemType; }
 
     public static Dir GetNextDir(Dir dir)

@@ -5,6 +5,7 @@ using UnityEngine;
 public class CharacterMotion : MonoBehaviour
 {
     [Header("Script References")]
+    public BulletTarget bulletTarget;
     public EnemyManager enemyManager;
     public WeaponsList weaponList;
     public CharacterStats characterStats;
@@ -15,6 +16,10 @@ public class CharacterMotion : MonoBehaviour
 
     [Header("Character Health")]
     public int curHealth;
+
+    [Header("Effects")]
+    public float missModifier = 0.5f;
+    public LineRenderer lineRenderer;
 
     private float timer;
     private float localWaitTime;
@@ -80,7 +85,15 @@ public class CharacterMotion : MonoBehaviour
 
         if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AutoTargeting")
         {
-            float[] curEnemyDistance = new float[enemyManager.enemies.Count];
+            RaycastHit hit;
+            if(Physics.Raycast(transform.position, transform.right, out hit))
+            {
+                if(hit.transform.tag == "Enemy")
+                {
+                    targettedEnemy = hit.transform.gameObject;
+                }
+            }
+            /*float[] curEnemyDistance = new float[enemyManager.enemies.Count];
             //print("AutoTargeting");
             for (int i = 0; i < enemyManager.enemies.Count; i++)
             {
@@ -93,7 +106,7 @@ public class CharacterMotion : MonoBehaviour
                     enemyDistance = curEnemyDistance[i];
                     //print("working");
                }
-            }
+            }*/
         }
 
         if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AreaTargeting")
@@ -114,6 +127,13 @@ public class CharacterMotion : MonoBehaviour
                 if(hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy)
                 {
                     AttackEnemy(weaponList.weapons[equippedWeapon].damagePerShot);
+                    AssignTarget(targettedEnemy.transform.position);
+                }
+                else
+                {
+                    float missTargetYModifier = targettedEnemy.transform.position.y + hitRoll * missModifier;
+                    Vector3 missTarget = new Vector3(targettedEnemy.transform.position.x, missTargetYModifier, targettedEnemy.transform.position.z);
+                    AssignTarget(missTarget);
                 }
 
                 attackTimer = 0;
@@ -154,5 +174,11 @@ public class CharacterMotion : MonoBehaviour
     public void AttackEnemy(int curDamage)
     {
         targettedEnemyBehaviour.AffectHealth(curDamage);
+    }
+
+    public void AssignTarget(Vector3 newTargetPosition)
+    {
+        bulletTarget.AssignTarget(newTargetPosition);
+        lineRenderer.SetPosition(1, newTargetPosition);
     }
 }

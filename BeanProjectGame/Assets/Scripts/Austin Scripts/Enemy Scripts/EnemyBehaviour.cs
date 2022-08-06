@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    [Header ("Script References")]
+    [Header ("Object References")]
     public GameObject player;
     public GameObject levelManager;
+    public GameObject nearLeftEnemy;
+    public GameObject nearRightEnemy;
+
+    [Header ("Script References")]
     public EnemyManager enemyManager;
     public EnemyStats enemyStats;
 
@@ -14,11 +18,11 @@ public class EnemyBehaviour : MonoBehaviour
     public int curEnemyHealth;
     public float curEnemySpeed;
     public bool stopped;
-    public float[] distancesFromEnemies;
+    public float preferredDistanceFromEnemies;
     public TextMesh textMesh;
 
     [Header ("Attack Ranges")]
-    public float closeRange;
+    private float closeRange;
     private float midRange;
     private float farRange;
     private float attackTimer;
@@ -31,13 +35,14 @@ public class EnemyBehaviour : MonoBehaviour
         characterMotion = player.GetComponent<CharacterMotion>();
         levelManager = GameObject.FindGameObjectWithTag("LevelManager");
         enemyManager = levelManager.GetComponent<EnemyManager>();
-        enemyManager.enemies.Add(gameObject);
+        //enemyManager.enemies.Add(gameObject);
 
         curEnemyHealth = enemyStats.enemyHealth;
         curEnemySpeed = enemyStats.enemySpeed;
         closeRange = enemyStats.closeRange;
         midRange = enemyStats.midRange;
         farRange = enemyStats.farRange;
+        preferredDistanceFromEnemies = enemyStats.prefDistanceBetweenEnemies;
 
         enemyAttacks = new EnemyStats.EnemyAttack[enemyStats.enemyAttacks.Length];
 
@@ -53,14 +58,69 @@ public class EnemyBehaviour : MonoBehaviour
 
   
     }
+    private void Awake()
+    {
+        enemyManager.enemies.Add(gameObject);
+    }
 
     // Update is called once per frame
     void Update()
     {
+        /*foreach(GameObject enemy in enemyManager.enemies)
+        {
+            if(enemy != gameObject)
+            {
+                enemyManager.enemies.Add(gameObject);
+            }
+        }*/
 
         textMesh.text = curEnemyHealth.ToString() + "/" + enemyStats.enemyHealth.ToString();
         Vector3 directionToPlayer = player.transform.position - transform.position;
         float distanceToPlayer =  Vector3.Distance(transform.position, player.transform.position);
+
+        RaycastHit leftHit;
+        RaycastHit rightHit;
+        Ray rayLeft = new Ray(transform.position, -transform.right);
+        Ray rayRight = new Ray(transform.position, transform.right);
+
+        if(Physics.Raycast(rayLeft, out leftHit))
+        {
+            if(leftHit.transform.tag == "Enemy")
+            {
+                nearLeftEnemy = leftHit.transform.gameObject;
+            }
+        }
+
+        if(Physics.Raycast(rayRight, out rightHit))
+        {
+            if (rightHit.transform.tag == "Enemy")
+            {
+                nearRightEnemy = rightHit.transform.gameObject;
+            }
+        }
+        if(nearLeftEnemy != null)
+        {
+            if (Vector3.Distance(transform.position, nearLeftEnemy.transform.position) < preferredDistanceFromEnemies)
+            {
+                stopped = true;
+            }
+            if (Vector3.Distance(transform.position, nearLeftEnemy.transform.position) > preferredDistanceFromEnemies)
+            {
+                stopped = false;
+            }
+        }
+
+        if (nearRightEnemy != null)
+        {
+            if (Vector3.Distance(transform.position, nearRightEnemy.transform.position) < preferredDistanceFromEnemies)
+            {
+                stopped = true;
+            }
+            if (Vector3.Distance(transform.position, nearRightEnemy.transform.position) > preferredDistanceFromEnemies)
+            {
+                stopped = false;
+            }
+        }
 
 
         if (distanceToPlayer > enemyStats.prefDistanceToPlayer && !stopped)
@@ -88,33 +148,11 @@ public class EnemyBehaviour : MonoBehaviour
             }
         }
 
-        distancesFromEnemies = new float[enemyManager.enemies.Count];
-
-
-
         if (curEnemyHealth <= 0)
         {
             Death();
         }
 
-        for(int i = 0; i < enemyManager.enemies.Count; i++)
-        {
-            distancesFromEnemies[i] = Vector3.Distance(transform.position, enemyManager.enemies[i].transform.position);
-
-            if (enemyManager.enemies[i] != this)
-            {
-                print(distancesFromEnemies[i]);
-                if (distancesFromEnemies[i] < enemyStats.prefDistanceBetweenEnemies)
-                {
-                    stopped = true;
-                    //transform.Translate((transform.position - enemyManager.enemies[i].transform.position) * curEnemySpeed * Time.deltaTime);
-                }
-                else
-                {
-                    stopped = false;
-                }
-            }
-        }
     }
 
     public void Attack(int damage)

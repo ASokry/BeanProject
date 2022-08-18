@@ -5,7 +5,7 @@ using UnityEngine;
 //Abstract Class for sciprts/Objects that uses a Grid
 public class GridObject : MonoBehaviour
 {
-    [SerializeField] private Grid<GridCellValue> grid;
+    private Grid<GridCellValue> grid;
     [SerializeField] private Transform gridParent;
 
     public enum GridType { BackpackMain, BackpackOther, Inventory, QuickSlot };
@@ -15,6 +15,8 @@ public class GridObject : MonoBehaviour
     [SerializeField] private float cellSize = 100f; //Cellsize should be equal to width/height of recttransform on Tile Image
     [SerializeField] private Transform startingPosition;
     [SerializeField] private GameObject gridTile;
+    [SerializeField] private GameObject arrow;
+    [SerializeField] private float arrowPadding;
 
     [SerializeField] private List<Vector2Int> nullCells;
 
@@ -73,9 +75,18 @@ public class GridObject : MonoBehaviour
     // GridManager will wake up GridObjects
     public void AwakeScirpt()
     {
+        CheckArrow();
         CreateGrid();
         GenerateTiles();
         //SpawnItemsInGrid();
+    }
+
+    private void CheckArrow()
+    {
+        if (arrow != null && arrow.activeSelf)
+        {
+            HideArrow();
+        }
     }
 
     private void CreateGrid()
@@ -117,6 +128,22 @@ public class GridObject : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void RevealArrow()
+    {
+        arrow.SetActive(true);
+    }
+
+    public void HideArrow()
+    {
+        arrow.SetActive(false);
+    }
+
+    public void MoveArrow(Vector3 tilePos)
+    {
+        Vector2 tilePosition = new Vector2(tilePos.x, tilePos.y + arrowPadding);
+        arrow.transform.position = tilePosition;
     }
 
     private void SpawnItemsInGrid()

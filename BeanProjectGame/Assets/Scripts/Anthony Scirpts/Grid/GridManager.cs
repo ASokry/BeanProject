@@ -10,6 +10,7 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private List<GridObject> gridObjectList;
     private Grid<GridCellValue> currentGridMouseIsIn;
+    private GridObject currentGridObject;
     private float gridsCellSize = 0;
 
     [SerializeField] private ItemObject itemOnMouse; private bool once = false;
@@ -66,6 +67,7 @@ public class GridManager : MonoBehaviour
             {
                 currentGridMouseIsIn = gridObject.GetGrid();
                 //currentGridMouseIsIn.GetXYPosition(Input.mousePosition, out int x, out int y);
+                currentGridObject = gridObject;
                 break;
             }
 
@@ -129,12 +131,12 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void LowerOpacityOriginalPlacedGridObject()
+    private void SetOpacityOriginalPlacedGridObject(float opacity)
     {
-        if (originalPlacedGridObject != null && itemOnMouse != null)
+        if (originalPlacedGridObject != null)
         {
             Color newColor = originalPlacedGridObject.GetComponentInChildren<Image>().color;
-            newColor.a = lowOpacityColor;
+            newColor.a = opacity;
             originalPlacedGridObject.GetComponentInChildren<Image>().color = newColor;
             //print(originalPlacedGridObject.GetComponentInChildren<Image>().color.a);
         }
@@ -195,6 +197,8 @@ public class GridManager : MonoBehaviour
             SpawnItemInGrid(currentGridMouseIsIn, itemOnMouse, itemObjPos, managerItemDirection);
             ResetItemOnMouse();
             ClearGhost();
+
+            MoveGridArrow(currentGridObject, itemObjPos);
         }
         else
         {
@@ -211,7 +215,7 @@ public class GridManager : MonoBehaviour
             ghostObject.gameObject.name = itemOnMouse.nameString + "(ghost)";
             ghostObject.transform.SetParent(CanvasMouse.Instance.gameObject.GetComponent<Transform>());
             ghostID = itemOnMouse.GetComponent<PlacedGridObject>().GetItemID();
-            LowerOpacityOriginalPlacedGridObject();
+            SetOpacityOriginalPlacedGridObject(lowOpacityColor);
         }
     }
 
@@ -236,6 +240,7 @@ public class GridManager : MonoBehaviour
             ghostObject.gameObject.GetComponent<PlacedGridObject>().DestroySelf();
             ghostObject = null;
             ghostFollow = false;
+            SetOpacityOriginalPlacedGridObject(1f);
         }
     }
 
@@ -298,5 +303,11 @@ public class GridManager : MonoBehaviour
         Color fullOpacityColor = image.GetComponentInChildren<Image>().color;
         fullOpacityColor.a = 1f;
         image.GetComponentInChildren<Image>().color = fullOpacityColor;
+    }
+
+    private void MoveGridArrow(GridObject grid, Vector2Int tile)
+    {
+        grid.RevealArrow();
+        grid.MoveArrow(currentGridMouseIsIn.GetWorldPosition(tile.x,tile.y));
     }
 }

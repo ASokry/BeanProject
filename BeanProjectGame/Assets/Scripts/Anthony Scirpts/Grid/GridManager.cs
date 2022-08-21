@@ -33,6 +33,11 @@ public class GridManager : MonoBehaviour
     private bool canPlace = false;
     private bool inventoryClear = false;
 
+    [SerializeField] private bool searchMode = false;
+    private float searchDelay = 1f;
+    private string targetItemName = "H-Ammo"; //Update this to specific item name based on items in slot
+    [SerializeField] private ItemObject itemToUse;
+    private int searchCounter = 0;
 
     private void Awake()
     {
@@ -57,6 +62,8 @@ public class GridManager : MonoBehaviour
         //print(currentGridMouseIsIn.GetParent().name);
         MouseClickOnItem();
         MouseReleaseWithItem();
+
+        StartGridTraversal();
     }
 
     private void GetCurrentGridMouseIsIn()
@@ -94,7 +101,7 @@ public class GridManager : MonoBehaviour
                 gridsCellSize = currentGridMouseIsIn.GetCellSize();
                 gridCellValue = currentGridMouseIsIn.GetGridCellValue(Input.mousePosition);
                 placedGridObject = gridCellValue.GetPlacedGridObject();
-                print("get placed object");
+                //print("get placed object");
             }
             
             if (placedGridObject != null && placedGridObject.GetItemType() != ItemObject.itemTyp.Null && !itemOnMouse)
@@ -194,11 +201,12 @@ public class GridManager : MonoBehaviour
         if (canPlace)
         {
             DestroyOriginalPlacedGridObject();
+            //print(itemOnMouse);
             SpawnItemInGrid(currentGridMouseIsIn, itemOnMouse, itemObjPos, managerItemDirection);
             ResetItemOnMouse();
             ClearGhost();
 
-            MoveGridArrow(currentGridObject, itemObjPos);
+            //MoveGridArrow(currentGridObject, itemObjPos);
         }
         else
         {
@@ -212,7 +220,7 @@ public class GridManager : MonoBehaviour
         if (ghostFollow && ghostObject == null)
         {
             ghostObject = Instantiate(itemOnMouse.GetPrefab(), Input.mousePosition, Quaternion.Euler(0,0,itemOnMouse.GetRotationAngle(managerItemDirection)));
-            ghostObject.gameObject.name = itemOnMouse.nameString + "(ghost)";
+            ghostObject.gameObject.name = itemOnMouse.GetItemName() + "(ghost)";
             ghostObject.transform.SetParent(CanvasMouse.Instance.gameObject.GetComponent<Transform>());
             ghostID = itemOnMouse.GetComponent<PlacedGridObject>().GetItemID();
             SetOpacityOriginalPlacedGridObject(lowOpacityColor);
@@ -226,11 +234,11 @@ public class GridManager : MonoBehaviour
             ghostObject.GetComponent<Transform>().rotation = Quaternion.Euler(0, 0, itemOnMouse.GetRotationAngle(managerItemDirection));
             ghostObject.GetComponent<Transform>().position = Input.mousePosition + itemOnMouse.GetPositionOffset(managerItemDirection, gridsCellSize);
         }
-        else
+        /*else
         {
             ResetItemOnMouse();
             ClearGhost();
-        }
+        }*/
     }
 
     private void ClearGhost()
@@ -276,6 +284,7 @@ public class GridManager : MonoBehaviour
 
     public void SpawnItemInGrid(Grid<GridCellValue> theGrid, ItemObject itemObj, Vector2Int itemObjPos, ItemObject.Dir dir)
     {
+        //print(itemObj);
         Vector2Int rotationOffset = itemObj.GetRotationOffset(dir);
 
         Vector3 itemPosition = theGrid.GetWorldPosition(itemObjPos.x, itemObjPos.y) + new Vector3(rotationOffset.x, rotationOffset.y, 0) * theGrid.GetCellSize();
@@ -305,9 +314,85 @@ public class GridManager : MonoBehaviour
         image.GetComponentInChildren<Image>().color = fullOpacityColor;
     }
 
+    private void StartGridTraversal()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && searchMode)
+        {
+            //print("start grid traversal");
+            StartCoroutine(GridTraversal(gridObjectList[searchCounter]));
+            /*for (int gridNum =0; gridNum<gridObjectList.Count; gridNum++)
+            {
+                StartCoroutine(GridTraversal(gridObjectList[gridNum]));
+            }
+            StopCoroutine("GridTraversal");*/
+        }
+    }
+
+    private IEnumerator GridTraversal(GridObject gridToTraverse)
+    {
+        // Traverse through entire grid, starting at the top row
+        int row = gridToTraverse.GetGridHeight() - 1;
+        while(row>=0 && itemToUse == null && searchMode)
+        {
+            //Reveal and move the arrow along y axis of grid on left hand side
+            MoveGridArrow(gridToTraverse, new Vector2Int(0,row));
+
+            // search through each column of current row
+            for (int column = 0; column < gridToTraverse.GetGridWidth()-1; column++)
+            {
+                yield return new WaitForSeconds(searchDelay);
+
+                if(gridToTraverse.GetGrid().GetGridCellValue(column, row).IsPlacedGridObjectEmpty())
+                {
+                    //print("next");
+                    continue; //if the placedGridObject is empty, then continue loop
+                }
+
+                if (CheckTargetItemName(gridToTraverse, column, row))
+                {
+                    //if we found a matching targetItemname, then use the item
+                    print("found it at:" + column + ", " + row);
+                    itemToUse = gridToTraverse.GetGrid().GetGridCellValue(column, row).GetPlacedGridObject().GetItemObject();
+                    print(itemToUse);
+                    searchMode = false;
+                    gridToTraverse.HideArrow();
+                    break;
+                }
+            }
+
+            yield return new WaitForSeconds(searchDelay);
+            // at the end of the row, hide the arrow again
+            gridToTraverse.HideArrow();
+
+            //increment row counter, so we can go down to next row
+            row--;
+        }
+
+        //If there is another grid, continue traversal on next grid
+        ContinueGridTraversal();
+    }
+
+    private void ContinueGridTraversal()
+    {
+        searchCounter++;
+        if (searchCounter < gridObjectList.Count)
+        {
+            StartCoroutine(GridTraversal(gridObjectList[searchCounter]));
+        }
+        else
+        {
+            searchCounter = 0;
+        }
+    }
+
+    private bool CheckTargetItemName(GridObject grid, int x, int y)
+    {
+        return grid.GetGrid().GetGridCellValue(x, y).GetPlacedGridObject().GetObjectName() == targetItemName;
+    }
+
     private void MoveGridArrow(GridObject grid, Vector2Int tile)
     {
         grid.RevealArrow();
-        grid.MoveArrow(currentGridMouseIsIn.GetWorldPosition(tile.x,tile.y));
+        grid.MoveArrow(grid.GetGrid().GetWorldPosition(tile.x,tile.y));
     }
 }

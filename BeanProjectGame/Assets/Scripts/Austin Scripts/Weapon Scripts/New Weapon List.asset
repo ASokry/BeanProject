@@ -15,7 +15,7 @@ MonoBehaviour:
   weapons:
   - weaponName: 00_.38 Revolver
     weaponType: Pistol
-    damagePerShot: 10
+    damagePerShot: 0
     shotsPerReload: 6
     timeBetweenAttacks: 0.5
     baseWeaponAccuracy: 60

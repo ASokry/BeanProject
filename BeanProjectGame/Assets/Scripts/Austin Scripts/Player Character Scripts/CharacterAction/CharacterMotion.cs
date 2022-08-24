@@ -21,6 +21,8 @@ public class CharacterMotion : MonoBehaviour
     public float missModifier = 0.5f;
     public LineRenderer lineRenderer;
 
+    [Header("Combnat Logic")]
+
     private float timer;
     private float localWaitTime;
     private float attackTimer;
@@ -32,6 +34,10 @@ public class CharacterMotion : MonoBehaviour
     public EnemyBehaviour targettedEnemyBehaviour;
 
     public float enemyDistance;
+
+    public List<GameObject> areaTargettedEnemies;
+    public List<EnemyBehaviour> areaEnemyBehaviours;
+    public GameObject areaTargetBox;
 
     // Start is called before the first frame update
     void Start()
@@ -111,7 +117,11 @@ public class CharacterMotion : MonoBehaviour
 
         if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AreaTargeting")
         {
-
+            areaTargetBox.SetActive(true);
+        }
+        else
+        {
+            areaTargetBox.SetActive(false);
         }
         
 

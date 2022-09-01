@@ -13,7 +13,7 @@ public class GridManager : MonoBehaviour
     private GridObject currentGridObject;
     private float gridsCellSize = 0;
 
-    [SerializeField] private ItemObject itemOnMouse; private bool once = false;
+    [SerializeField] private ItemObject itemOnMouse;
     private ItemObject.Dir managerItemDirection = ItemObject.Dir.Down;
 
     private PlacedGridObject originalPlacedGridObject;
@@ -34,8 +34,8 @@ public class GridManager : MonoBehaviour
     private bool inventoryClear = false;
 
     [SerializeField] private bool searchMode = false;
-    private float searchDelay = 1f;
-    private string targetItemName = "H-Ammo"; //Update this to specific item name based on items in slot
+    [SerializeField] private float searchDelay = 1f;
+    [SerializeField] private string targetItemName = "H-Ammo"; //Update this to specific item name based on items in slot
     [SerializeField] private ItemObject itemToUse;
     private int searchCounter = 0;
 
@@ -51,8 +51,8 @@ public class GridManager : MonoBehaviour
     {
         foreach (GridObject gridObject in gridObjectList)
         {
-            gridObject.AwakeScirpt();
-            //print(1);
+            if(gridObject.gameObject.activeSelf)
+                gridObject.AwakeScirpt();
         }
     }
 
@@ -81,21 +81,13 @@ public class GridManager : MonoBehaviour
             //print("no grid");
             currentGridMouseIsIn = null;
         }
-
-        if (!once && currentGridMouseIsIn != null)
-        {
-            SpawnItemInGrid(currentGridMouseIsIn, itemOnMouse, new Vector2Int(0, 1), ItemObject.Dir.Down);
-            SpawnItemInGrid(currentGridMouseIsIn, itemOnMouse, new Vector2Int(2, 1), ItemObject.Dir.Down);
-            itemOnMouse = null;
-            once = true;
-            //print("done");
-        }
     }
 
     private void MouseClickOnItem()
     {
         if (Input.GetMouseButton(0))
         {
+            print(currentGridMouseIsIn.GetParent().name + ": " + currentGridMouseIsIn.GetGridCellValue(Input.mousePosition));
             if (!itemOnMouse && currentGridMouseIsIn != null)
             {
                 gridsCellSize = currentGridMouseIsIn.GetCellSize();
@@ -243,7 +235,7 @@ public class GridManager : MonoBehaviour
 
     private void ClearGhost()
     {
-        if (ghostObject != null && once)
+        if (ghostObject != null)
         {
             ghostObject.gameObject.GetComponent<PlacedGridObject>().DestroySelf();
             ghostObject = null;
@@ -254,13 +246,10 @@ public class GridManager : MonoBehaviour
 
     private void ResetItemOnMouse()
     {
-        if (once)
-        {
-            itemOnMouse = null;
-            canPlace = false;
-            placedGridObject = null;
-            //print("clear");
-        }
+        itemOnMouse = null;
+        canPlace = false;
+        placedGridObject = null;
+        //print("clear");
     }
 
     private void DestroyOriginalPlacedGridObject()
@@ -302,6 +291,7 @@ public class GridManager : MonoBehaviour
         List<Vector2Int> itemPositionList = itemObj.GetCoordinateList(new Vector2Int(itemObjPos.x, itemObjPos.y), dir);
         foreach (Vector2Int gridPosition in itemPositionList)
         {
+            //print(gridPosition.x + ", " + gridPosition.y);
             theGrid.GetGridCellValue(gridPosition.x, gridPosition.y).SetPlacedGridObject(item);
         }
     }
@@ -331,29 +321,30 @@ public class GridManager : MonoBehaviour
     private IEnumerator GridTraversal(GridObject gridToTraverse)
     {
         // Traverse through entire grid, starting at the top row
-        int row = gridToTraverse.GetGridHeight() - 1;
-        while(row>=0 && itemToUse == null && searchMode)
+        int row = GetRowOfTopMostItem(gridToTraverse);
+        //print(gridToTraverse.gameObject.name + ", " + row);
+        while (row>=0 && itemToUse == null && searchMode)
         {
             //Reveal and move the arrow along y axis of grid on left hand side
             MoveGridArrow(gridToTraverse, new Vector2Int(0,row));
 
             // search through each column of current row
-            for (int column = 0; column < gridToTraverse.GetGridWidth()-1; column++)
+            for (int column = 0; column < gridToTraverse.GetGridWidth(); column++)
             {
                 yield return new WaitForSeconds(searchDelay);
 
                 if(gridToTraverse.GetGrid().GetGridCellValue(column, row).IsPlacedGridObjectEmpty())
                 {
-                    //print("next");
+                    //print(gridToTraverse.GetGrid().GetGridCellValue(column, row));
                     continue; //if the placedGridObject is empty, then continue loop
                 }
 
                 if (CheckTargetItemName(gridToTraverse, column, row))
                 {
                     //if we found a matching targetItemname, then use the item
-                    print("found it at:" + column + ", " + row);
+                    print("found it at: " + column + ", " + row);
                     itemToUse = gridToTraverse.GetGrid().GetGridCellValue(column, row).GetPlacedGridObject().GetItemObject();
-                    print(itemToUse);
+                    //print(itemToUse);
                     searchMode = false;
                     gridToTraverse.HideArrow();
                     break;
@@ -382,7 +373,27 @@ public class GridManager : MonoBehaviour
         else
         {
             searchCounter = 0;
+            searchMode = false;
         }
+    }
+
+    private int GetRowOfTopMostItem(GridObject grid)
+    {
+        //print(grid.GetGridWidth());
+        for (int row = grid.GetGridHeight()-1; row >=0; row--)
+        {
+            //print(row);
+            for (int col = 0; col<grid.GetGridWidth(); col++)
+            {
+                //print(col);
+                if (!grid.GetGrid().GetGridCellValue(col,row).IsPlacedGridObjectEmpty())
+                {
+                    return row;
+                }
+            }
+        }
+
+        return -1;
     }
 
     private bool CheckTargetItemName(GridObject grid, int x, int y)

@@ -33,6 +33,14 @@ public class Grid<TGridObject>
                 gridArray[x, y] = createGridObject(this, x, y);
 
 
+        /*for (int x = 0; x < gridArray.GetLength(0); x++)
+        {
+            for (int y = 0; y < gridArray.GetLength(1); y++)
+            {
+                Debug.DrawLine(GetWorldPosition(x,y), GetWorldPosition(x, y+1), Color.white, 100f);
+                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x+1, y), Color.white, 100f);
+            }
+        }*/
     }
 
     public int GetWidth() { return width; }
@@ -44,6 +52,14 @@ public class Grid<TGridObject>
     {
         //print(Mathf.FloorToInt((x - originPosition.x) / cellSize) + ", " + Mathf.FloorToInt((y - originPosition.y) / cellSize));
         return new Vector3(x, y) * cellSize + originPosition;
+    }
+
+    public Vector3 GetCanvasWorldPosition(Canvas canvas, int x, int y, Camera cam)
+    {
+        Vector3 vector = GetWorldPosition(x,y);
+        Vector3 output;
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(canvas.GetComponent<RectTransform>(), vector, cam, out output);
+        return output;
     }
 
     public void GetXYPosition(Vector3 worldPosition, out int x, out int y)

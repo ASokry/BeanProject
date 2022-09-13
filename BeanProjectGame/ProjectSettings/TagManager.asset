@@ -7,6 +7,8 @@ TagManager:
   - Enemy
   - LevelManager
   - Grid
+  - GridCamera
+  - GridCanvas
   layers:
   - Default
   - TransparentFX

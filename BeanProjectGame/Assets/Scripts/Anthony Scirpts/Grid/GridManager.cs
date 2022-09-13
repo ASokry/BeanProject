@@ -39,12 +39,21 @@ public class GridManager : MonoBehaviour
     [SerializeField] private ItemObject itemToUse;
     private int searchCounter = 0;
 
+    private Canvas gridCanvas;
+    private Camera gridCamera;
+
     private void Awake()
     {
         Instance = this;
 
         if (gridObjectList.Count <= 0)
             Debug.LogError(this + ": list of Grid Objects is empty." + "gridObjectList.Count: " + gridObjectList.Count);
+
+        gridCanvas = GameObject.FindGameObjectWithTag("GridCanvas").GetComponent<Canvas>();
+        gridCamera = GameObject.FindGameObjectWithTag("GridCamera").GetComponent<Camera>();
+
+        if (gridCanvas == null || gridCamera == null)
+            Debug.LogError(this + ": missing reference to canvas or camera!");
     }
 
     private void Start()
@@ -61,6 +70,7 @@ public class GridManager : MonoBehaviour
         GetCurrentGridMouseIsIn();
         //print(currentGridMouseIsIn.GetParent().name);
         MouseClickOnItem();
+        ChangeItemOnMouseDirection();
         MouseReleaseWithItem();
 
         StartGridTraversal();
@@ -87,7 +97,7 @@ public class GridManager : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            print(currentGridMouseIsIn.GetParent().name + ": " + currentGridMouseIsIn.GetGridCellValue(Input.mousePosition));
+            //print(currentGridMouseIsIn.GetParent().name + ": " + currentGridMouseIsIn.GetGridCellValue(Input.mousePosition));
             if (!itemOnMouse && currentGridMouseIsIn != null)
             {
                 gridsCellSize = currentGridMouseIsIn.GetCellSize();
@@ -105,11 +115,6 @@ public class GridManager : MonoBehaviour
                 SetOriginalPlacedGridObject();
             }
 
-            if (Input.GetMouseButtonDown(1) && itemOnMouse)
-            { 
-                managerItemDirection = ItemObject.GetNextDir(managerItemDirection); 
-            }
-
             CreateGhost();
             GhostTracking();
         }
@@ -118,6 +123,15 @@ public class GridManager : MonoBehaviour
             ClearItemOnMouse();
             ClearGhost();
         }*/
+    }
+
+    private void ChangeItemOnMouseDirection()
+    {
+        if (Input.GetMouseButtonDown(1) && itemOnMouse)
+        {
+            print("click");
+            managerItemDirection = ItemObject.GetNextDir(managerItemDirection);
+        }
     }
 
     private void SetOriginalPlacedGridObject()
@@ -194,7 +208,7 @@ public class GridManager : MonoBehaviour
         {
             DestroyOriginalPlacedGridObject();
             //print(itemOnMouse);
-            SpawnItemInGrid(currentGridMouseIsIn, itemOnMouse, itemObjPos, managerItemDirection);
+            SpawnItemInGrid(currentGridMouseIsIn, itemOnMouse, itemObjPos, managerItemDirection, gridCanvas);
             ResetItemOnMouse();
             ClearGhost();
 
@@ -211,7 +225,11 @@ public class GridManager : MonoBehaviour
     {
         if (ghostFollow && ghostObject == null)
         {
-            ghostObject = Instantiate(itemOnMouse.GetPrefab(), Input.mousePosition, Quaternion.Euler(0,0,itemOnMouse.GetRotationAngle(managerItemDirection)));
+            Vector3 mousePos;
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(gridCanvas.GetComponent<RectTransform>(), Input.mousePosition, gridCamera, out mousePos);
+            ghostObject = Instantiate(itemOnMouse.GetPrefab(), mousePos, Quaternion.Euler(0,0,itemOnMouse.GetRotationAngle(managerItemDirection)));
+            ghostObject.transform.localScale *= gridCanvas.transform.localScale.x;
+            //print(ghostObject.transform.localScale);
             ghostObject.gameObject.name = itemOnMouse.GetItemName() + "(ghost)";
             ghostObject.transform.SetParent(CanvasMouse.Instance.gameObject.GetComponent<Transform>());
             ghostID = itemOnMouse.GetComponent<PlacedGridObject>().GetItemID();
@@ -223,8 +241,12 @@ public class GridManager : MonoBehaviour
     {
         if (ghostFollow && ghostObject != null)
         {
-            ghostObject.GetComponent<Transform>().rotation = Quaternion.Euler(0, 0, itemOnMouse.GetRotationAngle(managerItemDirection));
-            ghostObject.GetComponent<Transform>().position = Input.mousePosition + itemOnMouse.GetPositionOffset(managerItemDirection, gridsCellSize);
+            Vector3 mousePos;
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(gridCanvas.GetComponent<RectTransform>(), Input.mousePosition, gridCamera, out mousePos);
+            ghostObject.transform.rotation = Quaternion.Euler(0, 0, itemOnMouse.GetRotationAngle(managerItemDirection));
+            //ghostObject.GetComponent<Transform>().position = Input.mousePosition + itemOnMouse.GetPositionOffset(managerItemDirection, gridsCellSize);
+            ghostObject.transform.position = mousePos + itemOnMouse.GetPositionOffset(managerItemDirection, gridsCellSize) * gridCanvas.transform.localScale.x;
+            //print(ghostObject.GetComponent<RectTransform>().position);
         }
         /*else
         {
@@ -271,14 +293,16 @@ public class GridManager : MonoBehaviour
         originalPlacedGridObject = null;
     }
 
-    public void SpawnItemInGrid(Grid<GridCellValue> theGrid, ItemObject itemObj, Vector2Int itemObjPos, ItemObject.Dir dir)
+    public void SpawnItemInGrid(Grid<GridCellValue> theGrid, ItemObject itemObj, Vector2Int itemObjPos, ItemObject.Dir dir, Canvas canvas)
     {
         //print(itemObj);
         Vector2Int rotationOffset = itemObj.GetRotationOffset(dir);
 
-        Vector3 itemPosition = theGrid.GetWorldPosition(itemObjPos.x, itemObjPos.y) + new Vector3(rotationOffset.x, rotationOffset.y, 0) * theGrid.GetCellSize();
+        //Vector3 itemPosition = theGrid.GetWorldPosition(itemObjPos.x, itemObjPos.y) + new Vector3(rotationOffset.x, rotationOffset.y, 0) * theGrid.GetCellSize();
+        Vector3 itemPosition = theGrid.GetCanvasWorldPosition(canvas, itemObjPos.x, itemObjPos.y, gridCamera) + new Vector3(rotationOffset.x, rotationOffset.y, 0) * theGrid.GetCellSize() * canvas.transform.localScale.x;
 
-        PlacedGridObject item = PlacedGridObject.Create(itemPosition, new Vector2Int(itemObjPos.x, itemObjPos.y), dir, itemObj, theGrid.GetParent());
+        float canvasScale = canvas.transform.localScale.x;
+        PlacedGridObject item = PlacedGridObject.Create(itemPosition, new Vector2Int(itemObjPos.x, itemObjPos.y), dir, itemObj, theGrid.GetParent(), canvasScale);
 
         theGrid.GetGridCellValue(itemObjPos.x, itemObjPos.y).SetPlacedGridObject(item);
 
@@ -404,6 +428,7 @@ public class GridManager : MonoBehaviour
     private void MoveGridArrow(GridObject grid, Vector2Int tile)
     {
         grid.RevealArrow();
-        grid.MoveArrow(grid.GetGrid().GetWorldPosition(tile.x,tile.y));
+        //grid.MoveArrow(grid.GetGrid().GetWorldPosition(tile.x,tile.y));
+        grid.MoveArrow(grid.GetGrid().GetCanvasWorldPosition(gridCanvas, tile.x, tile.y, gridCamera));
     }
 }

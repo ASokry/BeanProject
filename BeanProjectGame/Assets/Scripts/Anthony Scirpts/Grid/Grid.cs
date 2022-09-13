@@ -48,13 +48,13 @@ public class Grid<TGridObject>
     public float GetCellSize() { return cellSize; }
     public Transform GetParent() { return parent; }
 
-    public Vector3 GetWorldPosition(int x, int y)
+    public Vector3 GetWorldPosition(float x, float y)
     {
         //print(Mathf.FloorToInt((x - originPosition.x) / cellSize) + ", " + Mathf.FloorToInt((y - originPosition.y) / cellSize));
         return new Vector3(x, y) * cellSize + originPosition;
     }
 
-    public Vector3 GetCanvasWorldPosition(Canvas canvas, int x, int y, Camera cam)
+    public Vector3 GetCanvasWorldPosition(Canvas canvas, float x, float y, Camera cam)
     {
         Vector3 vector = GetWorldPosition(x,y);
         Vector3 output;

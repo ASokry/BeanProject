@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class PlacedGridObject : MonoBehaviour
 {
-    public static PlacedGridObject Create(Vector3 worldPosition, Vector2Int origin, ItemObject.Dir dir, ItemObject itemObject, Transform parentGrid)
+    public static PlacedGridObject Create(Vector3 worldPosition, Vector2Int origin, ItemObject.Dir dir, ItemObject itemObject, Transform parentGrid, float canvasScale)
     {
         GameObject placedObject = Instantiate(itemObject.GetPrefab(), worldPosition, Quaternion.Euler(0, 0, itemObject.GetRotationAngle(dir)));
-        //placedObject.transform.localScale *= scale;
+        placedObject.transform.localScale *= canvasScale;
+        //print(placedObject.GetComponent<RectTransform>().localScale);
         placedObject.GetComponent<ItemObject>().SetCurrentDirection(dir);
         placedObject.GetComponent<Transform>().SetParent(parentGrid);
         placedObject.name = itemObject.GetItemName();

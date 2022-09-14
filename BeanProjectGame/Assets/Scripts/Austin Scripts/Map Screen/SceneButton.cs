@@ -8,6 +8,13 @@ public class SceneButton : MonoBehaviour
     public string sceneName;
     public string sceneType;
     public int sceneDifficulty;
+    public bool sceneRan;
+    private GameObject levelManager;
+    public MapManager mapManager;
+    public GameObject buttonParent;
+    public GameObject sceneColumnObject;
+    public SceneColumnPopulator sceneColumnPopulator;
+    private SceneButton thisSceneButton;
 
     // Start is called before the first frame update
     void Start()
@@ -15,11 +22,22 @@ public class SceneButton : MonoBehaviour
         
     }
 
+    void Awake()
+    {
+        thisSceneButton = gameObject.GetComponent<SceneButton>();
+        levelManager = GameObject.FindGameObjectWithTag("LevelManager");
+        mapManager = levelManager.GetComponent<MapManager>();
+        buttonParent = gameObject.transform.parent.gameObject;
+        sceneColumnObject = buttonParent.transform.parent.gameObject;
+        sceneColumnPopulator = sceneColumnObject.GetComponent<SceneColumnPopulator>();
+        sceneColumnPopulator.activeSceneButtons.Add(thisSceneButton);
+    }
+
     // Update is called once per frame
     void Update()
     {
 
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0) && sceneColumnPopulator.sceneColumnActive)
         {
              Ray selectRay = Camera.main.ScreenPointToRay(Input.mousePosition);
              RaycastHit mouseHit;
@@ -28,7 +46,10 @@ public class SceneButton : MonoBehaviour
              {
                 if (mouseHit.transform == transform)
                 {
-                    SceneManager.LoadScene(sceneName);
+                    mapManager.activeScene = gameObject;
+                    sceneRan = true;
+                    sceneColumnPopulator.PickNextSceneColumn(sceneRan);
+                    //SceneManager.LoadScene(sceneName);
                 }
              }
 

@@ -21,6 +21,8 @@ public class CharacterMotion : MonoBehaviour
     public float missModifier = 0.5f;
     public LineRenderer lineRenderer;
 
+    [Header("Combnat Logic")]
+
     private float timer;
     private float localWaitTime;
     private float attackTimer;
@@ -33,6 +35,10 @@ public class CharacterMotion : MonoBehaviour
 
     public float enemyDistance;
 
+    public List<GameObject> areaTargettedEnemies;
+    public List<EnemyBehaviour> areaEnemyBehaviours;
+    public GameObject areaTargetBox;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,6 +49,9 @@ public class CharacterMotion : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        attackDelay = weaponList.weapons[equippedWeapon].timeBetweenAttacks;
+
         transform.Translate(Vector3.right * curSpeed * Time.deltaTime);
 
         timer += Time.deltaTime;
@@ -93,53 +102,61 @@ public class CharacterMotion : MonoBehaviour
                     targettedEnemy = hit.transform.gameObject;
                 }
             }
-            /*float[] curEnemyDistance = new float[enemyManager.enemies.Count];
-            //print("AutoTargeting");
-            for (int i = 0; i < enemyManager.enemies.Count; i++)
-            {
-             
-                curEnemyDistance[i]  = Vector3.Distance(transform.position, enemyManager.enemies[i].transform.position);
 
-               if(curEnemyDistance[i] <= enemyDistance || enemyDistance == 0 )
-               {
-                    targettedEnemy = enemyManager.enemies[i];
-                    enemyDistance = curEnemyDistance[i];
-                    //print("working");
-               }
-            }*/
+            if (targettedEnemy != null)
+            {
+                targettedEnemyBehaviour = targettedEnemy.GetComponent<EnemyBehaviour>();
+                attackTimer += Time.deltaTime;
+                if (attackTimer >= attackDelay)
+                {
+                    float hitRoll = Random.Range(0, 100);
+                    if (hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy)
+                    {
+                        AttackEnemy(weaponList.weapons[equippedWeapon].damagePerShot);
+                        AssignTarget(targettedEnemy.transform.position);
+                    }
+                    else
+                    {
+                        float missTargetYModifier = targettedEnemy.transform.position.y + hitRoll * missModifier;
+                        Vector3 missTarget = new Vector3(targettedEnemy.transform.position.x, missTargetYModifier, targettedEnemy.transform.position.z);
+                        AssignTarget(missTarget);
+                    }
+
+                    attackTimer = 0;
+                }
+
+            }
+
         }
 
         if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AreaTargeting")
         {
+            areaTargetBox.SetActive(true);
+            if(areaTargettedEnemies.Count > 0)
+            {
+                attackTimer += Time.deltaTime;
+                if(attackTimer >= attackDelay)
+                {
+                    for(int i = 0; i < areaTargettedEnemies.Count; i ++)
+                    {
+                        float hitRoll = Random.Range(0, 100);
+                        if(hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy)
+                        {
+                            AreaAttackEnemy(weaponList.weapons[equippedWeapon].damagePerShot, areaEnemyBehaviours[i]);
+                        }
+                    }
 
+                    attackTimer = 0;
+                }
+            }
+        }
+        else
+        {
+            areaTargetBox.SetActive(false);
         }
         
 
-        attackDelay = weaponList.weapons[equippedWeapon].timeBetweenAttacks;
 
-        if(targettedEnemy != null)
-        {
-            targettedEnemyBehaviour = targettedEnemy.GetComponent<EnemyBehaviour>();
-            attackTimer += Time.deltaTime;
-            if(attackTimer >= attackDelay)
-            {
-                float hitRoll = Random.Range(0, 100);
-                if(hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy)
-                {
-                    AttackEnemy(weaponList.weapons[equippedWeapon].damagePerShot);
-                    AssignTarget(targettedEnemy.transform.position);
-                }
-                else
-                {
-                    float missTargetYModifier = targettedEnemy.transform.position.y + hitRoll * missModifier;
-                    Vector3 missTarget = new Vector3(targettedEnemy.transform.position.x, missTargetYModifier, targettedEnemy.transform.position.z);
-                    AssignTarget(missTarget);
-                }
-
-                attackTimer = 0;
-            }
-
-        }
 
         if(curHealth <= 0)
         {
@@ -174,6 +191,11 @@ public class CharacterMotion : MonoBehaviour
     public void AttackEnemy(int curDamage)
     {
         targettedEnemyBehaviour.AffectHealth(curDamage);
+    }
+
+    public void AreaAttackEnemy(int curDamage, EnemyBehaviour areaTargetEnemy)
+    {
+        areaTargetEnemy.AffectHealth(curDamage);
     }
 
     public void AssignTarget(Vector3 newTargetPosition)

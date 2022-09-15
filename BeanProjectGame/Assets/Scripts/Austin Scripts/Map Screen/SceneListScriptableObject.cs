@@ -17,6 +17,7 @@ public class SceneListScriptableObject : ScriptableObject
         public string sceneName;
         public GameObject sceneButton;
         public string sceneType;
+        //scene difficulty int is currently redundant here
         public int sceneDifficulty;
     }
 

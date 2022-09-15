@@ -25,10 +25,10 @@ MonoBehaviour:
     weaponSprite: {fileID: 0}
   - weaponName: 01_Sawn Off
     weaponType: Shotgun
-    damagePerShot: 0
-    shotsPerReload: 0
-    timeBetweenAttacks: 0
-    baseWeaponAccuracy: 0
+    damagePerShot: 10
+    shotsPerReload: 2
+    timeBetweenAttacks: 1
+    baseWeaponAccuracy: 60
     specialEffects:
     - AreaTargeting
     weaponThumbnail: {fileID: 0}

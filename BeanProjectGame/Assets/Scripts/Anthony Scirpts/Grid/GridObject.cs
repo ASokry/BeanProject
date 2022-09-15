@@ -5,21 +5,26 @@ using UnityEngine;
 //Abstract Class for sciprts/Objects that uses a Grid
 public class GridObject : MonoBehaviour
 {
-    [SerializeField] private Grid<GridCellValue> grid;
+    private Grid<GridCellValue> grid;
     [SerializeField] private Transform gridParent;
 
     public enum GridType { BackpackMain, BackpackOther, Inventory, QuickSlot };
 
     [SerializeField] private int gridWidth = 5;
     [SerializeField] private int gridHeight = 5;
-    [SerializeField] private float cellSize = 100f; //Cellsize should be equal to width/height of recttransform on Tile Image
+    [SerializeField] private float cellSize = 100f; //Cellsize was intially 100, and equal to width/height of recttransform on Tile Image
     [SerializeField] private Transform startingPosition;
     [SerializeField] private GameObject gridTile;
+    [SerializeField] private GameObject arrow;
+    [SerializeField] private float arrowPadding;
 
     [SerializeField] private List<Vector2Int> nullCells;
 
     [SerializeField] private List<ItemObject> itemList;
-    //private ItemObject item; //moved to GridManager
+    [SerializeField] private bool gravity = false;
+
+    [SerializeField] private Canvas gridCanvas;
+    [SerializeField] private Camera gridCamera;
 
     #region GirdValue
     /*public class GridValue
@@ -58,7 +63,7 @@ public class GridObject : MonoBehaviour
     public Grid<GridCellValue> GetGrid() { return grid; }
     public int GetGridWidth() { return gridWidth; }
     public int GetGridHeight() { return gridHeight; }
-    public float GetGridCellSize() { return cellSize; }
+    public float GetGridCellSize() { return (cellSize/100f); }
     public Transform GetStartingPosition() { return startingPosition; }
     public List<Vector2Int> GetNullCells() { return nullCells; }
 
@@ -73,18 +78,38 @@ public class GridObject : MonoBehaviour
     // GridManager will wake up GridObjects
     public void AwakeScirpt()
     {
+        FindCanvasAndCamera();
+        CheckArrow();
         CreateGrid();
-        GenerateTiles();
-        //SpawnItemsInGrid();
+        GenerateTileImages();
+        SpawnItemsInGrid();
+    }
+
+    private void FindCanvasAndCamera()
+    {
+        gridCanvas = GameObject.FindGameObjectWithTag("GridCanvas").GetComponent<Canvas>();
+        gridCamera = GameObject.FindGameObjectWithTag("GridCamera").GetComponent<Camera>();
+
+        if (gridCanvas == null || gridCamera == null)
+            Debug.LogError(this + ": missing reference to canvas or camera!");
+    }
+
+    private void CheckArrow()
+    {
+        if (arrow != null && arrow.activeSelf)
+        {
+            HideArrow();
+        }
     }
 
     private void CreateGrid()
     {
-        grid = new Grid<GridCellValue>(gridWidth, gridHeight, cellSize, gridParent, startingPosition.position, (Grid<GridCellValue> g, int x, int y) => new GridCellValue(g, x, y));
-        //print(grid);
+        grid = new Grid<GridCellValue>(gridWidth, gridHeight, cellSize, gridParent, startingPosition.GetComponent<RectTransform>().anchoredPosition, (Grid<GridCellValue> g, int x, int y) => new GridCellValue(g, x, y));
+        //print(startingPosition.gameObject.name + ": " + startingPosition.position);
+        //print(startingPosition.gameObject.name + ": " + startingPosition.GetComponent<RectTransform>().anchoredPosition);
     }
 
-    private void GenerateTiles()
+    private void GenerateTileImages()
     {
         List<Vector2Int> entireGrid = new List<Vector2Int>();
         for (int x = 0; x < gridWidth; x++)
@@ -95,11 +120,18 @@ public class GridObject : MonoBehaviour
             }
         }
 
+        //print(canvas.scaleFactor);
         foreach (Vector2Int coordinates in entireGrid)
         {
             if (!nullCells.Contains(coordinates))
             {
-                GameObject tiles = Instantiate(gridTile, grid.GetWorldPosition(coordinates.x, coordinates.y), Quaternion.identity);
+                GameObject tiles = Instantiate(gridTile, grid.GetCanvasWorldPosition(gridCanvas, coordinates.x, coordinates.y, gridCamera), Quaternion.identity);
+                //GameObject tiles = Instantiate(gridTile, grid.GetWorldPosition(coordinates.x, coordinates.y), Quaternion.identity);
+                //tiles.transform.localScale *= cellSize/100f;
+                //print(tiles.transform.localScale);
+                //tiles.transform.localScale *= canvas.scaleFactor;
+                tiles.transform.localScale *= gridCanvas.transform.localScale.x;
+                //print(tiles.transform.localScale);
                 tiles.transform.SetParent(gridParent);
             }
         }
@@ -119,11 +151,50 @@ public class GridObject : MonoBehaviour
         return false;
     }
 
+    public void RevealArrow()
+    {
+        arrow.SetActive(true);
+    }
+
+    public void HideArrow()
+    {
+        arrow.SetActive(false);
+    }
+
+    public void MoveArrow(Vector3 tilePos)
+    {
+        Vector3 tilePosition = new Vector3(tilePos.x, tilePos.y + arrowPadding, tilePos.z);
+        //print(tilePosition);
+        arrow.GetComponent<RectTransform>().position = tilePosition;
+        //print(arrow.transform.position);
+    }
+
     private void SpawnItemsInGrid()
     {
+        int x = 0;
         foreach (ItemObject item in itemList)
         {
-            GridManager.Instance.SpawnItemInGrid(grid, item, new Vector2Int(0,1), ItemObject.Dir.Down);
+            GridManager.Instance.SpawnItemInGrid(grid, item, new Vector2Int(1,1), ItemObject.Dir.Down, gridCanvas);
+            x++;
         }
     }
+
+    private void GridGravity()
+    {
+        if (gravity)
+        {
+            for (int row = 1; row < gridWidth; row++)
+            {
+                for (int col = 0; col < gridHeight; col++)
+                {
+                    if (!IsCellEmpty(col, row))
+                    {
+                        
+                    }
+                }
+            }
+        }
+    }
+
+    private bool IsCellEmpty(int x, int y) => grid.GetGridCellValue(x, y).IsPlacedGridObjectEmpty();
 }

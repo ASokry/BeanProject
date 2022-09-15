@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b8b0439d3a5f5646948112ccbebe206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameString: H-Ammo
+  nameString: Walk Test
   prefab: {fileID: 2196111344284582520}
   visual: {fileID: 6925533589662293714, guid: bfd825ce045df6f4cb9b7bce18d85786, type: 3}
   itemType: 0
@@ -80,6 +80,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37c2a4cd35e0fc642829ab2d63fb002d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemObject: {fileID: 0}
+  objectName: 
 --- !u!1 &5461579762595237017
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ public class ItemObject : MonoBehaviour
 
     public enum itemTyp { Action, Passive, Null };
 
-    public string nameString;
+    [SerializeField] private string nameString;
     [SerializeField] private GameObject prefab;
     [SerializeField] private Transform visual;
     [SerializeField] private itemTyp itemType;

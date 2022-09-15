@@ -36,7 +36,22 @@ public class GridManager : MonoBehaviour
     [SerializeField] private bool searchMode = false;
     [SerializeField] private float searchDelay = 1f;
     [SerializeField] private string targetItemName = "H-Ammo"; //Update this to specific item name based on items in slot
-    [SerializeField] private ItemObject itemToUse;
+    [SerializeField] private ItemObject foundedItem;
+    [SerializeField] private GridCoordinate foundedItemCoordinates;
+    public class GridCoordinate
+    {
+        public GridObject grid;
+        public int x;
+        public int y;
+
+        public GridCoordinate(GridObject grid, int x, int y)
+        {
+            this.grid = grid;
+            this.x = x;
+            this.y = y;
+        }
+    }
+
     private int searchCounter = 0;
 
     private Canvas gridCanvas;
@@ -73,7 +88,7 @@ public class GridManager : MonoBehaviour
         ChangeItemOnMouseDirection();
         MouseReleaseWithItem();
 
-        StartGridTraversal();
+        //StartGridTraversal();
     }
 
     private void GetCurrentGridMouseIsIn()
@@ -129,7 +144,7 @@ public class GridManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1) && itemOnMouse)
         {
-            print("click");
+            //print("click");
             managerItemDirection = ItemObject.GetNextDir(managerItemDirection);
         }
     }
@@ -328,10 +343,13 @@ public class GridManager : MonoBehaviour
         image.GetComponentInChildren<Image>().color = fullOpacityColor;
     }
 
-    private void StartGridTraversal()
+    public void StartGridTraversal(string target)
     {
-        if (Input.GetKeyDown(KeyCode.Space) && searchMode)
+        //if (searchMode && (target != null || target != ""))
+        if ((target != null || target != ""))
         {
+            searchMode = true;
+            targetItemName = target;
             //print("start grid traversal");
             StartCoroutine(GridTraversal(gridObjectList[searchCounter]));
             /*for (int gridNum =0; gridNum<gridObjectList.Count; gridNum++)
@@ -347,7 +365,7 @@ public class GridManager : MonoBehaviour
         // Traverse through entire grid, starting at the top row
         int row = GetRowOfTopMostItem(gridToTraverse);
         //print(gridToTraverse.gameObject.name + ", " + row);
-        while (row>=0 && itemToUse == null && searchMode)
+        while (row>=0 && foundedItem == null && searchMode)
         {
             //Reveal and move the arrow along y axis of grid on left hand side
             MoveGridArrow(gridToTraverse, new Vector2Int(0,row));
@@ -367,7 +385,8 @@ public class GridManager : MonoBehaviour
                 {
                     //if we found a matching targetItemname, then use the item
                     print("found it at: " + column + ", " + row);
-                    itemToUse = gridToTraverse.GetGrid().GetGridCellValue(column, row).GetPlacedGridObject().GetItemObject();
+                    foundedItem = gridToTraverse.GetGrid().GetGridCellValue(column, row).GetPlacedGridObject().GetItemObject();
+                    foundedItemCoordinates = new GridCoordinate(gridToTraverse, column, row);
                     //print(itemToUse);
                     searchMode = false;
                     gridToTraverse.HideArrow();
@@ -423,6 +442,23 @@ public class GridManager : MonoBehaviour
     private bool CheckTargetItemName(GridObject grid, int x, int y)
     {
         return grid.GetGrid().GetGridCellValue(x, y).GetPlacedGridObject().GetObjectName() == targetItemName;
+    }
+
+    public GridCoordinate GetFoundItemCoordinates()
+    {
+        return foundedItemCoordinates;
+    }
+
+    public void DestoryGridItem(GridCoordinate gridCoordinate)
+    {
+        PlacedGridObject objectToDestroy = gridCoordinate.grid.GetGrid().GetGridCellValue(gridCoordinate.x, gridCoordinate.y).GetPlacedGridObject();
+        List<Vector2Int> CoordinatesToDestroy = objectToDestroy.GetGridPositionList();
+
+        objectToDestroy.DestroySelf();
+        foreach (Vector2Int coordinates in CoordinatesToDestroy)
+        {
+            gridCoordinate.grid.GetGrid().GetGridCellValue(coordinates.x, coordinates.y).ClearPlacedGridObject();
+        }
     }
 
     private void MoveGridArrow(GridObject grid, Vector2Int tile)

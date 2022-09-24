@@ -260,6 +260,9 @@ MonoBehaviour:
   targettedEnemy: {fileID: 0}
   targettedEnemyBehaviour: {fileID: 0}
   enemyDistance: 0
+  areaTargettedEnemies: []
+  areaEnemyBehaviours: []
+  areaTargetBox: {fileID: 0}
 --- !u!114 &280908091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -683,7 +686,7 @@ MonoBehaviour:
   searchMode: 1
   searchDelay: 1
   targetItemName: Walk Test
-  itemToUse: {fileID: 0}
+  foundedItem: {fileID: 0}
 --- !u!1 &662805688
 GameObject:
   m_ObjectHideFlags: 0

@@ -174,7 +174,7 @@ public class GridObject : MonoBehaviour
         int x = 0;
         foreach (ItemObject item in itemList)
         {
-            GridManager.Instance.SpawnItemInGrid(grid, item, new Vector2Int(1,1), ItemObject.Dir.Down, gridCanvas);
+            GridManager.Instance.SpawnItemInGrid(grid, item, new Vector2Int(x,1), ItemObject.Dir.Down, gridCanvas);
             x++;
         }
     }

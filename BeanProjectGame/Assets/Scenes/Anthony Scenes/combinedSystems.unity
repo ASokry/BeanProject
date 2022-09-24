@@ -257,7 +257,7 @@ MonoBehaviour:
   curHealth: 0
   missModifier: 0.5
   lineRenderer: {fileID: 418606188}
-  equippedWeapon: 2
+  equippedWeapon: 0
   curShotsInWeapon: 0
   targettedEnemy: {fileID: 0}
   targettedEnemyBehaviour: {fileID: 0}
@@ -1554,6 +1554,7 @@ MonoBehaviour:
   arrowPadding: 0
   nullCells: []
   itemList:
+  - {fileID: 4169714487419675602, guid: b7f5b2e8dcb9c0d438e27395bc2ce52a, type: 3}
   - {fileID: 4169714487419675602, guid: b7f5b2e8dcb9c0d438e27395bc2ce52a, type: 3}
   gravity: 0
   gridCanvas: {fileID: 0}

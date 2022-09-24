@@ -86,7 +86,7 @@ public class CharacterMotion : MonoBehaviour
 
         //the way these character stats are accessed is really ineffecient, when we develop stats more we need to go back and improve how stats are accessed so it isn't in the Update all the time.
         finesse = characterStats.curFinesse;
-        strength = characterStats.strength;
+        strength = characterStats.curStrength;
 
         if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AutoTargeting") // handles attack hit and reload logic for autotargetting weapons
         {

@@ -14,8 +14,9 @@ public class Weapon
 {
     public string weaponName;
     public string weaponType;
-    public int damagePerShot;
+    public float damagePerShot;
     public int shotsPerReload;
+    public string ammoType;
     public float timeBetweenAttacks;
     public float baseWeaponAccuracy;
     //Unsure how we should handle special effects, storing it as strings for now, ideally we could reference the strings elsewhere.

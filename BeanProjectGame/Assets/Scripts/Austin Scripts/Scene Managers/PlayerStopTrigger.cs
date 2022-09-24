@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerStopTrigger : MonoBehaviour
 {
-    public string waitType;
+    public string waitType = "defeatEnemies";
     public float waitTime;
     public GameObject player;
     public CharacterMotion characterMotion;

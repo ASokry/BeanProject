@@ -36,8 +36,9 @@ public class GridManager : MonoBehaviour
     [SerializeField] private bool searchMode = false;
     [SerializeField] private float searchDelay = 1f;
     [SerializeField] private string targetItemName = "H-Ammo"; //Update this to specific item name based on items in slot
-    [SerializeField] private ItemObject foundedItem;
-    [SerializeField] private GridCoordinate foundedItemCoordinates;
+    public ItemObject foundedItem;
+    public GridCoordinate foundedItemCoordinates;
+
     public class GridCoordinate
     {
         public GridObject grid;

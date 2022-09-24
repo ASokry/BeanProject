@@ -15,7 +15,7 @@ public class EnemyBehaviour : MonoBehaviour
     public EnemyStats enemyStats;
 
     [Header ("Stats and States")]
-    public int curEnemyHealth;
+    public float curEnemyHealth;
     public float curEnemySpeed;
     public bool stopped;
     public float preferredDistanceFromEnemies;
@@ -160,7 +160,7 @@ public class EnemyBehaviour : MonoBehaviour
         characterMotion.TakeDamage(damage);
     }
 
-    public void AffectHealth(int damage)
+    public void AffectHealth(float damage)
     {
         curEnemyHealth -= damage;
     }

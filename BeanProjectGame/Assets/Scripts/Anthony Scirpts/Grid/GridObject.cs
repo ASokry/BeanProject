@@ -21,6 +21,9 @@ public class GridObject : MonoBehaviour
     [SerializeField] private List<Vector2Int> nullCells;
 
     [SerializeField] private List<ItemObject> itemList;
+    [SerializeField] private List<ItemObject.Dir> itemDirectionsList;
+    [SerializeField] private List<Vector2Int> itemCoordinatesList;
+    
     [SerializeField] private bool gravity = false;
 
     [SerializeField] private Canvas gridCanvas;
@@ -72,6 +75,19 @@ public class GridObject : MonoBehaviour
         if (!gridParent)
         {
             Debug.LogError(this + ": Grid Object's Parent is empty.");
+        }
+
+        if (itemList.Count > itemCoordinatesList.Count)
+        {
+            Debug.LogError(this + ": number of items does not match number of item coordinates.");
+        }
+
+        foreach(Vector2Int itemCoordinates in itemCoordinatesList)
+        {
+            if ((itemCoordinates.x >= gridWidth || itemCoordinates.x < 0) || (itemCoordinates.y >= gridHeight || itemCoordinates.y < 0))
+            {
+                Debug.LogError(this + ": " + itemCoordinates + " Item Coordinates List is out of bounds!");
+            }
         }
     }
 
@@ -169,13 +185,41 @@ public class GridObject : MonoBehaviour
         //print(arrow.transform.position);
     }
 
+    public bool CheckCoordinatesOnGrid(Grid<GridCellValue> theGrid, ItemObject itemObject, Vector2Int coordinates, ItemObject.Dir direction)
+    {
+        int itemID = itemObject.GetComponent<PlacedGridObject>().GetItemID();
+        List<Vector2Int> gridCoordinatesList = itemObject.GetCoordinateList(new Vector2Int(coordinates.x, coordinates.y), direction);
+
+        foreach (Vector2Int coordinate in gridCoordinatesList)
+        {
+            // if coordinates are not on a grid then we can't place down an object
+            if (theGrid.GetGridCellValue(coordinate.x, coordinate.y) == null)
+            {
+                //print("not in grid");
+                Debug.LogError(this + ": the given direction and coordinates are not in the grid.");
+                return false;
+            }
+
+            // if coordinates already contains a DIFFERENT placed object, then we can't place down an object
+            if (!theGrid.GetGridCellValue(coordinate.x, coordinate.y).IsPlacedGridObjectEmpty() && theGrid.GetGridCellValue(coordinate.x, coordinate.y).GetPlacedGridObjectItemID() != itemID)
+            {
+                //print("taken");
+                Debug.LogError(this + ": the given direction and coordinates are already occupied in the grid.");
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
     private void SpawnItemsInGrid()
     {
-        int x = 0;
-        foreach (ItemObject item in itemList)
+        for(int i=0; i<itemList.Count; i++)
         {
-            GridManager.Instance.SpawnItemInGrid(grid, item, new Vector2Int(x,1), ItemObject.Dir.Down, gridCanvas);
-            x++;
+            if (CheckCoordinatesOnGrid(grid, itemList[i], itemCoordinatesList[i], itemDirectionsList[i]))
+            {
+                GridManager.Instance.SpawnItemInGrid(grid, itemList[i], itemCoordinatesList[i], itemDirectionsList[i], gridCanvas);
+            }
         }
     }
 

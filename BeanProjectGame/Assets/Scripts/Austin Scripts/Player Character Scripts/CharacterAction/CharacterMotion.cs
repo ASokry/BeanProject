@@ -6,6 +6,7 @@ public class CharacterMotion : MonoBehaviour
 {
     [Header("Script References")]
     public BulletTarget bulletTarget;
+    public GridManager gridManager;
     public EnemyManager enemyManager;
     public WeaponsList weaponList;
     public CharacterStats characterStats;
@@ -29,6 +30,7 @@ public class CharacterMotion : MonoBehaviour
     private float attackDelay;
     private bool stopped;
     public int equippedWeapon;
+    public int curShotsInWeapon;
     //private int curDamage;
     public GameObject targettedEnemy;
     public EnemyBehaviour targettedEnemyBehaviour;
@@ -38,12 +40,17 @@ public class CharacterMotion : MonoBehaviour
     public List<GameObject> areaTargettedEnemies;
     public List<EnemyBehaviour> areaEnemyBehaviours;
     public GameObject areaTargetBox;
+    public GameObject meleeTargetBox;
+
+    private float finesse;
+    private float strength;
 
     // Start is called before the first frame update
     void Start()
     {
         curSpeed = walkSpeed;
         curHealth = characterStats.health;
+        curShotsInWeapon = weaponList.weapons[equippedWeapon].shotsPerReload;
     }
 
     // Update is called once per frame
@@ -77,23 +84,13 @@ public class CharacterMotion : MonoBehaviour
             curSpeed = walkSpeed;
         }
 
-        /*if (Input.GetKey(KeyCode.Mouse0))
-        {
-            Ray selectRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit mouseHit;
-            if (Physics.Raycast(selectRay, out mouseHit))
-            {
-                if (mouseHit.transform.tag == "Enemy")
-                {
-                    targettedEnemy = mouseHit.transform.gameObject;
-                    targettedEnemyBehaviour = targettedEnemy.GetComponent<EnemyBehaviour>();
-                }
-            }
+        //the way these character stats are accessed is really ineffecient, when we develop stats more we need to go back and improve how stats are accessed so it isn't in the Update all the time.
+        finesse = characterStats.curFinesse;
+        strength = characterStats.curStrength;
 
-        }*/   
-
-        if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AutoTargeting")
+        if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AutoTargeting") // handles attack hit and reload logic for autotargetting weapons
         {
+            print(weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse));
             RaycastHit hit;
             if(Physics.Raycast(transform.position, transform.right, out hit))
             {
@@ -107,10 +104,10 @@ public class CharacterMotion : MonoBehaviour
             {
                 targettedEnemyBehaviour = targettedEnemy.GetComponent<EnemyBehaviour>();
                 attackTimer += Time.deltaTime;
-                if (attackTimer >= attackDelay)
+                if (attackTimer >= attackDelay && curShotsInWeapon > 0)
                 {
                     float hitRoll = Random.Range(0, 100);
-                    if (hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy)
+                    if (hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse))
                     {
                         AttackEnemy(weaponList.weapons[equippedWeapon].damagePerShot);
                         AssignTarget(targettedEnemy.transform.position);
@@ -121,31 +118,32 @@ public class CharacterMotion : MonoBehaviour
                         Vector3 missTarget = new Vector3(targettedEnemy.transform.position.x, missTargetYModifier, targettedEnemy.transform.position.z);
                         AssignTarget(missTarget);
                     }
-
+                    curShotsInWeapon--;
                     attackTimer = 0;
                 }
 
             }
-
         }
 
-        if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AreaTargeting")
+        if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AreaTargeting") // handles attack hit and reload logic for area targetting weapons
         {
             areaTargetBox.SetActive(true);
             if(areaTargettedEnemies.Count > 0)
             {
                 attackTimer += Time.deltaTime;
-                if(attackTimer >= attackDelay)
+                if(attackTimer >= attackDelay && curShotsInWeapon > 0)
                 {
                     for(int i = 0; i < areaTargettedEnemies.Count; i ++)
                     {
                         float hitRoll = Random.Range(0, 100);
-                        if(hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy)
+                        if(hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse))
                         {
-                            AreaAttackEnemy(weaponList.weapons[equippedWeapon].damagePerShot, areaEnemyBehaviours[i]);
+                            float damageDealt = weaponList.weapons[equippedWeapon].damagePerShot + ((weaponList.weapons[equippedWeapon].damagePerShot * .1f) * strength);
+                            AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
+                            print(damageDealt);
                         }
                     }
-
+                    curShotsInWeapon--;
                     attackTimer = 0;
                 }
             }
@@ -154,11 +152,52 @@ public class CharacterMotion : MonoBehaviour
         {
             areaTargetBox.SetActive(false);
         }
-        
+
+        if (weaponList.weapons[equippedWeapon].specialEffects[0] == "MeleeAreaTargeting") // handles attack hit and reload logic for area targetting weapons
+        {
+            meleeTargetBox.SetActive(true);
+            if (areaTargettedEnemies.Count > 0)
+            {
+                attackTimer += Time.deltaTime;
+                if (attackTimer >= attackDelay && curShotsInWeapon > 0)
+                {
+                    for (int i = 0; i < areaTargettedEnemies.Count; i++)
+                    {
+                        float hitRoll = Random.Range(0, 100);
+                        if (hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse))
+                        {
+                            float damageDealt = weaponList.weapons[equippedWeapon].damagePerShot + ((weaponList.weapons[equippedWeapon].damagePerShot * .1f) * strength);
+                            AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
+                            print(damageDealt);
+                        }
+                    }
+                    curShotsInWeapon--;
+                    attackTimer = 0;
+                }
+            }
+        }
+        else
+        {
+            meleeTargetBox.SetActive(false);
+        }
+
+        if (curShotsInWeapon <= 0) // preforms reload logic when curShots runs out, for melee weapons this value will represent durability (unless we choose not to use durability)
+        {
+            if (gridManager.foundedItem == null)
+            {
+                gridManager.StartGridTraversal(weaponList.weapons[equippedWeapon].ammoType);
+            }
+
+            if (gridManager.foundedItem != null && gridManager.foundedItem.name == weaponList.weapons[equippedWeapon].ammoType)
+            {
+                curShotsInWeapon = weaponList.weapons[equippedWeapon].shotsPerReload;
+                gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);
+                gridManager.foundedItem = null;
+            }
+        }
 
 
-
-        if(curHealth <= 0)
+        if (curHealth <= 0)
         {
             PlayerDeath();
         }
@@ -188,12 +227,12 @@ public class CharacterMotion : MonoBehaviour
         }
     }
 
-    public void AttackEnemy(int curDamage)
+    public void AttackEnemy(float curDamage)
     {
         targettedEnemyBehaviour.AffectHealth(curDamage);
     }
 
-    public void AreaAttackEnemy(int curDamage, EnemyBehaviour areaTargetEnemy)
+    public void AreaAttackEnemy(float curDamage, EnemyBehaviour areaTargetEnemy)
     {
         areaTargetEnemy.AffectHealth(curDamage);
     }

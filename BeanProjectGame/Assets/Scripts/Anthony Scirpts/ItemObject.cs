@@ -8,12 +8,14 @@ public class ItemObject : MonoBehaviour
     public enum Dir { Down, Left, Up, Right };
     private Dir currentDir = Dir.Down;
 
-    public enum itemTyp { Action, Passive, Null };
+    public enum ItemTag { Firearm, Consumbles, None };
+    public enum ItemType { Action, Passive, None };
 
     [SerializeField] private string nameString;
     [SerializeField] private GameObject prefab;
     [SerializeField] private Transform visual;
-    [SerializeField] private itemTyp itemType;
+    [SerializeField] private ItemType itemType;
+    [SerializeField] private ItemTag itemTag;
 
     [SerializeField] private int width;
     [SerializeField] private int height;
@@ -27,7 +29,8 @@ public class ItemObject : MonoBehaviour
     public Dir GetCurrentDirection() { return currentDir; }
     public void SetCurrentDirection(Dir newDir) { currentDir = newDir; }
     public GameObject GetPrefab() { return prefab; }
-    public itemTyp GetObjType() { return itemType; }
+    public ItemType GetItemType() { return itemType; }
+    public ItemTag GetItemTag() { return itemTag; }
 
     public static Dir GetNextDir(Dir dir)
     {

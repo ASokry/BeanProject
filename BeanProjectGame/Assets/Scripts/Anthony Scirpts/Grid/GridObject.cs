@@ -25,6 +25,9 @@ public class GridObject : MonoBehaviour
     [SerializeField] private List<Vector2Int> itemCoordinatesList;
     
     [SerializeField] private bool gravity = false;
+    private List<PlacedGridObject> gravityItemsList = new List<PlacedGridObject>(); //using queue system to check what items to move
+    private float gravityDelayTime = 0.05f;
+    private float currentGravityDelayTime;
 
     [SerializeField] private Canvas gridCanvas;
     [SerializeField] private Camera gridCamera;
@@ -69,6 +72,17 @@ public class GridObject : MonoBehaviour
     public float GetGridCellSize() { return (cellSize/100f); }
     public Transform GetStartingPosition() { return startingPosition; }
     public List<Vector2Int> GetNullCells() { return nullCells; }
+    public bool IsGravity() { return gravity; }
+    public void AddToGravityItemsList(PlacedGridObject obj) { gravityItemsList.Add(obj); }
+    public bool GravityItemsListContains(PlacedGridObject obj) 
+    {
+        if(obj != null)
+        {
+            //print(gravityItemsList.Contains(obj));
+            return gravityItemsList.Contains(obj);
+        }
+        return true;
+    }
 
     private void Awake()
     {
@@ -89,6 +103,8 @@ public class GridObject : MonoBehaviour
                 Debug.LogError(this + ": " + itemCoordinates + " Item Coordinates List is out of bounds!");
             }
         }
+
+        currentGravityDelayTime = gravityDelayTime;
     }
 
     // GridManager will wake up GridObjects
@@ -99,6 +115,11 @@ public class GridObject : MonoBehaviour
         CreateGrid();
         GenerateTileImages();
         SpawnItemsInGrid();
+    }
+
+    private void Update()
+    {
+        GridGravity();
     }
 
     private void FindCanvasAndCamera()
@@ -185,7 +206,7 @@ public class GridObject : MonoBehaviour
         //print(arrow.transform.position);
     }
 
-    public bool CheckCoordinatesOnGrid(Grid<GridCellValue> theGrid, ItemObject itemObject, Vector2Int coordinates, ItemObject.Dir direction)
+    public bool CheckCoordinatesOnGrid(ItemObject itemObject, Vector2Int coordinates, ItemObject.Dir direction)
     {
         int itemID = itemObject.GetComponent<PlacedGridObject>().GetItemID();
         List<Vector2Int> gridCoordinatesList = itemObject.GetCoordinateList(new Vector2Int(coordinates.x, coordinates.y), direction);
@@ -193,18 +214,18 @@ public class GridObject : MonoBehaviour
         foreach (Vector2Int coordinate in gridCoordinatesList)
         {
             // if coordinates are not on a grid then we can't place down an object
-            if (theGrid.GetGridCellValue(coordinate.x, coordinate.y) == null)
+            if (grid.GetGridCellValue(coordinate.x, coordinate.y) == null)
             {
                 //print("not in grid");
-                Debug.LogError(this + ": the given direction and coordinates are not in the grid.");
+                //Debug.LogError(this + ": the given direction and coordinates are not in the grid.");
                 return false;
             }
 
             // if coordinates already contains a DIFFERENT placed object, then we can't place down an object
-            if (!theGrid.GetGridCellValue(coordinate.x, coordinate.y).IsPlacedGridObjectEmpty() && theGrid.GetGridCellValue(coordinate.x, coordinate.y).GetPlacedGridObjectItemID() != itemID)
+            if (!grid.GetGridCellValue(coordinate.x, coordinate.y).IsPlacedGridObjectEmpty() && grid.GetGridCellValue(coordinate.x, coordinate.y).GetPlacedGridObjectItemID() != itemID)
             {
                 //print("taken");
-                Debug.LogError(this + ": the given direction and coordinates are already occupied in the grid.");
+                //Debug.LogError(this + ": the given direction and coordinates are already occupied in the grid.");
                 return false;
             }
         }
@@ -216,7 +237,7 @@ public class GridObject : MonoBehaviour
     {
         for(int i=0; i<itemList.Count; i++)
         {
-            if (CheckCoordinatesOnGrid(grid, itemList[i], itemCoordinatesList[i], itemDirectionsList[i]))
+            if (CheckCoordinatesOnGrid(itemList[i], itemCoordinatesList[i], itemDirectionsList[i]))
             {
                 GridManager.Instance.SpawnItemInGrid(grid, itemList[i], itemCoordinatesList[i], itemDirectionsList[i], gridCanvas);
             }
@@ -225,18 +246,40 @@ public class GridObject : MonoBehaviour
 
     private void GridGravity()
     {
-        if (gravity)
+        if (gravity && gravityItemsList.Count > 0)
         {
-            for (int row = 1; row < gridWidth; row++)
+            //print(gravityItemsList.Count);
+            if (currentGravityDelayTime > 0)
             {
-                for (int col = 0; col < gridHeight; col++)
-                {
-                    if (!IsCellEmpty(col, row))
-                    {
-                        
-                    }
-                }
+                currentGravityDelayTime -= Time.deltaTime;
             }
+            else
+            {
+                PlacedGridObject firstObjectInList = gravityItemsList[0];
+                MoveItemDown(firstObjectInList);
+                currentGravityDelayTime = gravityDelayTime;
+            }
+        }
+    }
+
+    private void MoveItemDown(PlacedGridObject objectToMove)
+    {
+        ItemObject item = objectToMove.GetComponent<ItemObject>();
+        Vector2Int origin = objectToMove.GetGridPositionList()[0];
+        Vector2Int destinationCoord = new Vector2Int(origin.x, origin.y-1);
+        ItemObject.Dir direction = objectToMove.GetDir();
+
+        if (CheckCoordinatesOnGrid(item, destinationCoord, direction))
+        {
+            //remove item from list
+            gravityItemsList.Remove(gravityItemsList[0]);
+
+            //Destroy Original item
+            GridManager.GridCoordinate originalItem = new GridManager.GridCoordinate(this, origin.x, origin.y);
+            GridManager.Instance.DestoryGridItem(originalItem);
+
+            //Create same item at new coordinates
+            GridManager.Instance.SpawnItemInGrid(grid, item, destinationCoord, direction, gridCanvas);
         }
     }
 

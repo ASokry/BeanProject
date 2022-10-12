@@ -9,10 +9,13 @@ public class EnemyBehaviour : MonoBehaviour
     public GameObject levelManager;
     public GameObject nearLeftEnemy;
     public GameObject nearRightEnemy;
+    private Vector3 previousPosition;
+    public Transform projectileInstatiator;
 
     [Header ("Script References")]
     public EnemyManager enemyManager;
     public EnemyStats enemyStats;
+    public CharacterAnimationManager characterAnimationManager;
 
     [Header ("Stats and States")]
     public float curEnemyHealth;
@@ -20,6 +23,10 @@ public class EnemyBehaviour : MonoBehaviour
     public bool stopped;
     public float preferredDistanceFromEnemies;
     public TextMesh textMesh;
+    public float knockBackSpeed;
+    public float knockbackDistance;
+    private bool beingKnockedBack;
+    private Vector3 knockBackStartPos;
 
     [Header ("Attack Ranges")]
     private float closeRange;
@@ -73,6 +80,11 @@ public class EnemyBehaviour : MonoBehaviour
                 enemyManager.enemies.Add(gameObject);
             }
         }*/
+        if(characterAnimationManager != null)
+        {
+            characterAnimationManager.characterVelocity = (transform.position - previousPosition).magnitude / Time.deltaTime;
+            previousPosition = transform.position;
+        }
 
         textMesh.text = curEnemyHealth.ToString() + "/" + enemyStats.enemyHealth.ToString();
         Vector3 directionToPlayer = player.transform.position - transform.position;
@@ -148,11 +160,43 @@ public class EnemyBehaviour : MonoBehaviour
             }
         }
 
+        if(distanceToPlayer <= farRange)
+        {
+            for(int i = 0; i < enemyAttacks.Length; i++)
+            {
+                if (enemyAttacks[i].attackRange == "Far")
+                {
+                    if(enemyAttacks[i].attackType == "Projectile")
+                    {
+                        attackTimer += Time.deltaTime;
+                        if(attackTimer >= enemyAttacks[i].timeBetweenAttacks)
+                        {
+                            Instantiate(enemyAttacks[i].projectile, projectileInstatiator.position, projectileInstatiator.rotation);
+                            attackTimer = 0;
+                        }
+
+                    }
+                }
+            }
+        }
+
         if (curEnemyHealth <= 0)
         {
             Death();
         }
 
+        if (beingKnockedBack)
+        {
+            if(Vector3.Distance(knockBackStartPos, transform.position) < knockbackDistance)
+            {
+                transform.Translate(-directionToPlayer * knockBackSpeed * Time.deltaTime);
+            }
+            else
+            {
+                stopped = false;
+                beingKnockedBack = false;
+            }
+        }
     }
 
     public void Attack(int damage)
@@ -163,6 +207,14 @@ public class EnemyBehaviour : MonoBehaviour
     public void AffectHealth(float damage)
     {
         curEnemyHealth -= damage;
+    }
+
+    public void Knockback()
+    {
+        print("Knocked Back");
+        knockBackStartPos = transform.position;
+        stopped = true;
+        beingKnockedBack = true;
     }
 
     private void Death()

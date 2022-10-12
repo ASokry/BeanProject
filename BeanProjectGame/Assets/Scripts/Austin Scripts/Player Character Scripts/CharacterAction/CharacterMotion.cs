@@ -10,17 +10,20 @@ public class CharacterMotion : MonoBehaviour
     public EnemyManager enemyManager;
     public WeaponsList weaponList;
     public CharacterStats characterStats;
+    public CharacterAnimationManager characterAnimationManager;
 
-    [Header("Character Speed")]
-    private float curSpeed;
-    public float walkSpeed = 3;
+    [Header("Component References")]
+    public Rigidbody playerRigidbody;
+    private Vector3 previousPosition;
 
-    [Header("Character Health")]
+    [Header("Character Stats")]
     public int curHealth;
+    public float walkSpeed = 3;
+    private float curSpeed;
 
     [Header("Effects")]
-    public float missModifier = 0.5f;
-    public LineRenderer lineRenderer;
+    public float missModifier = 0.5f; //The factor that's multiplied against the difference between the check for an accurate shot and the actual roll, basically determines how severe a missed shot will appear to miss by.
+    public LineRenderer lineRenderer; //The line renderer currently used for bullet trail rendering, may be switched out later.
 
     [Header("Combnat Logic")]
 
@@ -60,6 +63,10 @@ public class CharacterMotion : MonoBehaviour
         attackDelay = weaponList.weapons[equippedWeapon].timeBetweenAttacks;
 
         transform.Translate(Vector3.right * curSpeed * Time.deltaTime);
+
+        characterAnimationManager.characterVelocity = (transform.position - previousPosition).magnitude / Time.deltaTime;
+        previousPosition = transform.position;
+        //print(playerRigidbody.velocity.magnitude);
 
         timer += Time.deltaTime;
         //print(timer);
@@ -140,7 +147,11 @@ public class CharacterMotion : MonoBehaviour
                         {
                             float damageDealt = weaponList.weapons[equippedWeapon].damagePerShot + ((weaponList.weapons[equippedWeapon].damagePerShot * .1f) * strength);
                             AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
-                            print(damageDealt);
+                            if(weaponList.weapons[equippedWeapon].specialEffects[1] == "Knockback")
+                            {
+                                areaEnemyBehaviours[i].Knockback();
+                            }
+                            //print(damageDealt);
                         }
                     }
                     curShotsInWeapon--;
@@ -168,7 +179,7 @@ public class CharacterMotion : MonoBehaviour
                         {
                             float damageDealt = weaponList.weapons[equippedWeapon].damagePerShot + ((weaponList.weapons[equippedWeapon].damagePerShot * .1f) * strength);
                             AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
-                            print(damageDealt);
+                            //print(damageDealt);
                         }
                     }
                     curShotsInWeapon--;

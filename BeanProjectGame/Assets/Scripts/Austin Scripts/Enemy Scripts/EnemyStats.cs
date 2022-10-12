@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "New Enemy Stat", menuName = "Enemy Stats / New EnemyStats")]
 public class EnemyStats : ScriptableObject
 {
     public float enemyHealth;
@@ -21,6 +22,7 @@ public class EnemyStats : ScriptableObject
         public int damage;
         public float timeBetweenAttacks;
         public float attackAccuracy;
+        public GameObject projectile;
     }
 
     // Start is called before the first frame update
@@ -35,6 +37,6 @@ public class EnemyStats : ScriptableObject
         
     }
 
-    [CreateAssetMenu(fileName = "New Enemy Stat", menuName = "Enemy Stats / New EnemyStats")]
-    public class EnemyStatsData : EnemyStats { }
+   /* [CreateAssetMenu(fileName = "New Enemy Stat", menuName = "Enemy Stats / New EnemyStats")]
+    public class EnemyStatsData : EnemyStats { }*/
 }

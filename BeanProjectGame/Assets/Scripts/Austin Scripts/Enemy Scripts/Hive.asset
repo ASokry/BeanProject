@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1615d1e08312fd448b8a118c36272ad9, type: 3}
-  m_Name: Shambler
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats/EnemyStatsData
+  m_Name: Hive
+  m_EditorClassIdentifier: 
   enemyHealth: 20
-  enemySpeed: 0.5
+  enemySpeed: 0
   closeRange: 1
-  midRange: 5
-  farRange: 10
-  prefDistanceBetweenEnemies: 0.5
-  prefDistanceToPlayer: 1
+  midRange: 10
+  farRange: 50
+  prefDistanceBetweenEnemies: 0
+  prefDistanceToPlayer: 0
   enemyAttacks:
-  - attackRange: Close
-    attackType: Melee
+  - attackRange: Far
+    attackType: Projectile
     damage: 10
     timeBetweenAttacks: 2
     attackAccuracy: 100
-    projectile: {fileID: 0}
+    projectile: {fileID: 4911565816004461244, guid: 16acc09d56e80a4478ef085ef9b7275c, type: 3}

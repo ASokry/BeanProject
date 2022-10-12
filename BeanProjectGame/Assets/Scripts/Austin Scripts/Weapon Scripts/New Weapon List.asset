@@ -33,6 +33,7 @@ MonoBehaviour:
     baseWeaponAccuracy: 60
     specialEffects:
     - AreaTargeting
+    - Knockback
     weaponThumbnail: {fileID: 0}
     weaponSprite: {fileID: 0}
   - weaponName: 02_Nail Bat

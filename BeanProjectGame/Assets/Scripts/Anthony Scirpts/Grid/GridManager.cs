@@ -6,6 +6,8 @@ using UnityEngine.UI;
 // helps with moving items on grid and from one gird to another grid
 public class GridManager : MonoBehaviour
 {
+    public delegate void ItemSpawnInGridAction();
+    public event ItemSpawnInGridAction OnItemSpawnedInGrid;
     public static GridManager Instance { get; private set; }
 
     [SerializeField] private List<GridObject> gridObjectList;
@@ -122,7 +124,7 @@ public class GridManager : MonoBehaviour
                 //print("get placed object");
             }
             
-            if (placedGridObject != null && placedGridObject.GetItemType() != ItemObject.itemTyp.Null && !itemOnMouse)
+            if (placedGridObject != null && placedGridObject.GetItemType() != ItemObject.ItemType.None && !itemOnMouse)
             {
                 ghostFollow = true;
 
@@ -334,6 +336,9 @@ public class GridManager : MonoBehaviour
             //print(gridPosition.x + ", " + gridPosition.y);
             theGrid.GetGridCellValue(gridPosition.x, gridPosition.y).SetPlacedGridObject(item);
         }
+
+        item.StartItemGravity();
+        OnItemSpawnedInGrid();
     }
 
     private void CheckImageProperties(Image image)

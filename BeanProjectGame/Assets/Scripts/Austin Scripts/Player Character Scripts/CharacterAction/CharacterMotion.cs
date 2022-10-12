@@ -33,6 +33,7 @@ public class CharacterMotion : MonoBehaviour
     private float attackDelay;
     private bool stopped;
     public int equippedWeapon;
+    public WeaponObject weaponObject;
     public int curShotsInWeapon;
     //private int curDamage;
     public GameObject targettedEnemy;
@@ -252,5 +253,10 @@ public class CharacterMotion : MonoBehaviour
     {
         bulletTarget.AssignTarget(newTargetPosition);
         lineRenderer.SetPosition(1, newTargetPosition);
+    }
+
+    public void SetWeaponObject(WeaponObject weaponObject)
+    {
+        this.weaponObject = weaponObject;
     }
 }

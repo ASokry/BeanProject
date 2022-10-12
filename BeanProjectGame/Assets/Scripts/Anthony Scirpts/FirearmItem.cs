@@ -10,9 +10,15 @@ public class FirearmItem : ItemObject
     public int GetMaxAmmo() { return maxAmmo; }
     public int GetCurrentAmmo() { return currentAmmo; }
 
+
     public void SetMaxAmmo(int ammo)
     {
         maxAmmo = ammo > 0 ? ammo : 0;
+        WeaponObject.WeaponType ex = WeaponObject.WeaponType.Pistol;
+        if (ex == WeaponObject.WeaponType.Pistol)
+        {
+
+        }
     }
 
     public void SetCurrentAmmo(int ammo)

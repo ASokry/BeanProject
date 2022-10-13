@@ -41,6 +41,8 @@ public class GridManager : MonoBehaviour
     public ItemObject foundedItem;
     public GridCoordinate foundedItemCoordinates;
 
+    private CharacterMotion characterMotion;
+
     public class GridCoordinate
     {
         public GridObject grid;
@@ -80,6 +82,15 @@ public class GridManager : MonoBehaviour
         {
             if(gridObject.gameObject.activeSelf)
                 gridObject.AwakeScirpt();
+        }
+
+        if (GameObject.FindGameObjectWithTag("Player"))
+        {
+            characterMotion = GameObject.FindGameObjectWithTag("Player").GetComponent<CharacterMotion>();
+        }
+        else
+        {
+            Debug.LogError(this + ": cannot find Player Object that has CharacterMotion component");
         }
     }
 
@@ -136,11 +147,22 @@ public class GridManager : MonoBehaviour
             CreateGhost();
             GhostTracking();
         }
-        /*else if (Input.GetMouseButton(0) && itemOnMouse != null)
+        else if (Input.GetMouseButtonDown(1) && !itemOnMouse)
         {
-            ClearItemOnMouse();
-            ClearGhost();
-        }*/
+            print("right click");
+            if (currentGridMouseIsIn != null)
+            {
+                gridCellValue = currentGridMouseIsIn.GetGridCellValue(Input.mousePosition);
+                placedGridObject = gridCellValue.GetPlacedGridObject();
+            }
+
+            if (placedGridObject.GetComponent<WeaponObject>() != null)
+            {
+                characterMotion.SetWeaponObject(placedGridObject.GetComponent<WeaponObject>());
+            }
+            gridCellValue = null;
+            placedGridObject = null;
+        }
     }
 
     private void ChangeItemOnMouseDirection()

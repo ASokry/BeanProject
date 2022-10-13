@@ -9,7 +9,7 @@ public class ItemObject : MonoBehaviour
     private Dir currentDir = Dir.Down;
 
     public enum ItemTag { Firearm, Consumbles, None };
-    public enum ItemType { Action, Passive, None };
+    public enum ItemType { Something, None };
 
     [SerializeField] private string nameString;
     [SerializeField] private GameObject prefab;

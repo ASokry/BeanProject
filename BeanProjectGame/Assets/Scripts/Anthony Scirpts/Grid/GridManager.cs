@@ -132,6 +132,7 @@ public class GridManager : MonoBehaviour
                 gridsCellSize = currentGridMouseIsIn.GetCellSize();
                 gridCellValue = currentGridMouseIsIn.GetGridCellValue(Input.mousePosition);
                 placedGridObject = gridCellValue.GetPlacedGridObject();
+                //print(placedGridObject);
                 //print("get placed object");
             }
             
@@ -140,6 +141,7 @@ public class GridManager : MonoBehaviour
                 ghostFollow = true;
 
                 itemOnMouse = placedGridObject.GetComponent<ItemObject>();
+                //print(itemOnMouse);
                 managerItemDirection = placedGridObject.GetDir();
                 SetOriginalPlacedGridObject();
             }
@@ -159,6 +161,7 @@ public class GridManager : MonoBehaviour
             if (placedGridObject.GetComponent<WeaponObject>() != null)
             {
                 characterMotion.SetWeaponObject(placedGridObject.GetComponent<WeaponObject>());
+                //print("got it");
             }
             gridCellValue = null;
             placedGridObject = null;

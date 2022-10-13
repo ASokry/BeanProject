@@ -363,6 +363,7 @@ MonoBehaviour:
   missModifier: 0.5
   lineRenderer: {fileID: 418606188}
   equippedWeapon: 1
+  weaponObject: {fileID: 0}
   curShotsInWeapon: 0
   targettedEnemy: {fileID: 0}
   targettedEnemyBehaviour: {fileID: 0}
@@ -1010,6 +1011,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridObjectList:
   - {fileID: 1105356280}
+  - {fileID: 863224858}
   itemOnMouse: {fileID: 0}
   lowOpacityColor: 0.5
   searchMode: 1
@@ -1699,7 +1701,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &863224857
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1715,9 +1717,9 @@ RectTransform:
   m_Father: {fileID: 841914472}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -50, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 720, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &863224858
@@ -1742,9 +1744,10 @@ MonoBehaviour:
   arrowPadding: 0
   nullCells: []
   itemList:
-  - {fileID: 1798238454359162799, guid: 815810879843fd7478746dc1808d98ab, type: 3}
-  itemDirectionsList: 
-  itemCoordinatesList: []
+  - {fileID: 7404266813352150908, guid: 38f42c1c6cef8434e8ae873bf75a617d, type: 3}
+  itemDirectionsList: 00000000
+  itemCoordinatesList:
+  - {x: 1, y: 1}
   gravity: 0
   gridCanvas: {fileID: 0}
   gridCamera: {fileID: 0}
@@ -1997,7 +2000,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 419, y: 0}
+  m_AnchoredPosition: {x: 215, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1105356280

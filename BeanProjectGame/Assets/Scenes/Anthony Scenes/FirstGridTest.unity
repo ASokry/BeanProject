@@ -290,7 +290,7 @@ MonoBehaviour:
   searchMode: 1
   searchDelay: 1
   targetItemName: Walk Test
-  itemToUse: {fileID: 0}
+  foundedItem: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -551,9 +551,11 @@ MonoBehaviour:
   nullCells: []
   itemList:
   - {fileID: 1798238454359162799, guid: 815810879843fd7478746dc1808d98ab, type: 3}
+  itemDirectionsList: 
+  itemCoordinatesList: []
   gravity: 0
-  canvas: {fileID: 0}
-  theCamera: {fileID: 0}
+  gridCanvas: {fileID: 0}
+  gridCamera: {fileID: 0}
 --- !u!223 &863224859
 Canvas:
   m_ObjectHideFlags: 0
@@ -719,9 +721,11 @@ MonoBehaviour:
   nullCells: []
   itemList:
   - {fileID: 4169714487419675602, guid: b7f5b2e8dcb9c0d438e27395bc2ce52a, type: 3}
+  itemDirectionsList: 
+  itemCoordinatesList: []
   gravity: 0
-  canvas: {fileID: 0}
-  theCamera: {fileID: 0}
+  gridCanvas: {fileID: 0}
+  gridCamera: {fileID: 0}
 --- !u!223 &1105356281
 Canvas:
   m_ObjectHideFlags: 0
@@ -1204,7 +1208,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2196111344284582520, guid: 815810879843fd7478746dc1808d98ab, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2389561349569057442, guid: 815810879843fd7478746dc1808d98ab, type: 3}
       propertyPath: m_Enabled
@@ -1393,7 +1397,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6233506829103365110, guid: 608bfe8c7e1772c4eb324bd58fb5661e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 608bfe8c7e1772c4eb324bd58fb5661e, type: 3}

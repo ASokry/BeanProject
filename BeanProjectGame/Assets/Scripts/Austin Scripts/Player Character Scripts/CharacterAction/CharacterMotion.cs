@@ -61,7 +61,6 @@ public class CharacterMotion : MonoBehaviour
     void Update()
     {
 
-        attackDelay = weaponList.weapons[equippedWeapon].timeBetweenAttacks;
 
         transform.Translate(Vector3.right * curSpeed * Time.deltaTime);
 
@@ -95,118 +94,126 @@ public class CharacterMotion : MonoBehaviour
         //the way these character stats are accessed is really ineffecient, when we develop stats more we need to go back and improve how stats are accessed so it isn't in the Update all the time.
         finesse = characterStats.curFinesse;
         strength = characterStats.curStrength;
-
-        if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AutoTargeting") // handles attack hit and reload logic for autotargetting weapons
+        if(weaponObject != null)
         {
-            print(weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse));
-            RaycastHit hit;
-            if(Physics.Raycast(transform.position, transform.right, out hit))
-            {
-                if(hit.transform.tag == "Enemy")
-                {
-                    targettedEnemy = hit.transform.gameObject;
-                }
-            }
+            attackDelay = weaponObject.timeBetweenAttacks;
 
-            if (targettedEnemy != null)
+            if (weaponObject.aimType == WeaponObject.AimType.AutoTargeting) // handles attack hit and reload logic for autotargetting weapons
             {
-                targettedEnemyBehaviour = targettedEnemy.GetComponent<EnemyBehaviour>();
-                attackTimer += Time.deltaTime;
-                if (attackTimer >= attackDelay && curShotsInWeapon > 0)
+                //print(weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse));
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, transform.right, out hit))
                 {
-                    float hitRoll = Random.Range(0, 100);
-                    if (hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse))
+                    if (hit.transform.tag == "Enemy")
                     {
-                        AttackEnemy(weaponList.weapons[equippedWeapon].damagePerShot);
-                        AssignTarget(targettedEnemy.transform.position);
+                        targettedEnemy = hit.transform.gameObject;
                     }
-                    else
-                    {
-                        float missTargetYModifier = targettedEnemy.transform.position.y + hitRoll * missModifier;
-                        Vector3 missTarget = new Vector3(targettedEnemy.transform.position.x, missTargetYModifier, targettedEnemy.transform.position.z);
-                        AssignTarget(missTarget);
-                    }
-                    curShotsInWeapon--;
-                    attackTimer = 0;
                 }
 
-            }
-        }
-
-        if(weaponList.weapons[equippedWeapon].specialEffects[0] == "AreaTargeting") // handles attack hit and reload logic for area targetting weapons
-        {
-            areaTargetBox.SetActive(true);
-            if(areaTargettedEnemies.Count > 0)
-            {
-                attackTimer += Time.deltaTime;
-                if(attackTimer >= attackDelay && curShotsInWeapon > 0)
+                if (targettedEnemy != null)
                 {
-                    for(int i = 0; i < areaTargettedEnemies.Count; i ++)
+                    targettedEnemyBehaviour = targettedEnemy.GetComponent<EnemyBehaviour>();
+                    attackTimer += Time.deltaTime;
+                    if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
                     {
                         float hitRoll = Random.Range(0, 100);
-                        if(hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse))
+                        if (hitRoll <= weaponObject.baseWeaponAccuracy + ((weaponObject.baseWeaponAccuracy * .1) * finesse))
                         {
-                            float damageDealt = weaponList.weapons[equippedWeapon].damagePerShot + ((weaponList.weapons[equippedWeapon].damagePerShot * .1f) * strength);
-                            AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
-                            if(weaponList.weapons[equippedWeapon].specialEffects[1] == "Knockback")
+                            AttackEnemy(weaponObject.damagePerShot);
+                            AssignTarget(targettedEnemy.transform.position);
+                        }
+                        else
+                        {
+                            float missTargetYModifier = targettedEnemy.transform.position.y + hitRoll * missModifier;
+                            Vector3 missTarget = new Vector3(targettedEnemy.transform.position.x, missTargetYModifier, targettedEnemy.transform.position.z);
+                            AssignTarget(missTarget);
+                        }
+                        weaponObject.SetCurAmmo(-1);
+                        attackTimer = 0;
+                    }
+
+                }
+            }
+
+            if (weaponObject.aimType == WeaponObject.AimType.AreaTargeting) // handles attack hit and reload logic for area targetting weapons
+            {
+                areaTargetBox.SetActive(true);
+                if (areaTargettedEnemies.Count > 0)
+                {
+                    attackTimer += Time.deltaTime;
+                    if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
+                    {
+                        for (int i = 0; i < areaTargettedEnemies.Count; i++)
+                        {
+                            float hitRoll = Random.Range(0, 100);
+                            if (hitRoll <= weaponObject.baseWeaponAccuracy + ((weaponObject.baseWeaponAccuracy * .1) * finesse))
                             {
-                                areaEnemyBehaviours[i].Knockback();
+                                float damageDealt = weaponObject.damagePerShot + ((weaponObject.damagePerShot * .1f) * strength);
+                                AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
+                                for(int e = 0; e < weaponObject.specialEffects.Length; e++)
+                                {
+                                    if(weaponObject.specialEffects[e] == "Knockback")
+                                    {
+                                        areaEnemyBehaviours[i].Knockback();
+                                    }
+                                }
+                                //print(damageDealt);
                             }
-                            //print(damageDealt);
                         }
+                        weaponObject.SetCurAmmo(-1);
+                        attackTimer = 0;
                     }
-                    curShotsInWeapon--;
-                    attackTimer = 0;
                 }
             }
-        }
-        else
-        {
-            areaTargetBox.SetActive(false);
-        }
-
-        if (weaponList.weapons[equippedWeapon].specialEffects[0] == "MeleeAreaTargeting") // handles attack hit and reload logic for area targetting weapons
-        {
-            meleeTargetBox.SetActive(true);
-            if (areaTargettedEnemies.Count > 0)
+            else
             {
-                attackTimer += Time.deltaTime;
-                if (attackTimer >= attackDelay && curShotsInWeapon > 0)
+                areaTargetBox.SetActive(false);
+            }
+
+            if (weaponObject.aimType == WeaponObject.AimType.MeleeAreaTargeting) // handles attack hit and reload logic for area targetting weapons
+            {
+                meleeTargetBox.SetActive(true);
+                if (areaTargettedEnemies.Count > 0)
                 {
-                    for (int i = 0; i < areaTargettedEnemies.Count; i++)
+                    attackTimer += Time.deltaTime;
+                    if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
                     {
-                        float hitRoll = Random.Range(0, 100);
-                        if (hitRoll <= weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse))
+                        for (int i = 0; i < areaTargettedEnemies.Count; i++)
                         {
-                            float damageDealt = weaponList.weapons[equippedWeapon].damagePerShot + ((weaponList.weapons[equippedWeapon].damagePerShot * .1f) * strength);
-                            AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
-                            //print(damageDealt);
+                            float hitRoll = Random.Range(0, 100);
+                            if (hitRoll <= weaponObject.baseWeaponAccuracy + ((weaponObject.baseWeaponAccuracy * .1) * finesse))
+                            {
+                                float damageDealt = weaponObject.damagePerShot + ((weaponObject.damagePerShot * .1f) * strength);
+                                AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
+                                //print(damageDealt);
+                            }
                         }
+                        weaponObject.SetCurAmmo(-1);
+                        attackTimer = 0;
                     }
-                    curShotsInWeapon--;
-                    attackTimer = 0;
+                }
+            }
+            else
+            {
+                meleeTargetBox.SetActive(false);
+            }
+
+            if (weaponObject.curAmmo <= 0) // preforms reload logic when curShots runs out, for melee weapons this value will represent durability (unless we choose not to use durability)
+            {
+                if (gridManager.foundedItem == null)
+                {
+                    gridManager.StartGridTraversal(weaponObject.ammoType);
+                }
+
+                if (gridManager.foundedItem != null && gridManager.foundedItem.name == weaponObject.ammoType)
+                {
+                    weaponObject.SetCurAmmo(weaponObject.clipSize);
+                    gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);
+                    gridManager.foundedItem = null;
                 }
             }
         }
-        else
-        {
-            meleeTargetBox.SetActive(false);
-        }
-
-        if (curShotsInWeapon <= 0) // preforms reload logic when curShots runs out, for melee weapons this value will represent durability (unless we choose not to use durability)
-        {
-            if (gridManager.foundedItem == null)
-            {
-                gridManager.StartGridTraversal(weaponList.weapons[equippedWeapon].ammoType);
-            }
-
-            if (gridManager.foundedItem != null && gridManager.foundedItem.name == weaponList.weapons[equippedWeapon].ammoType)
-            {
-                curShotsInWeapon = weaponList.weapons[equippedWeapon].shotsPerReload;
-                gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);
-                gridManager.foundedItem = null;
-            }
-        }
+       
 
 
         if (curHealth <= 0)

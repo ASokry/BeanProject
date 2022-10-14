@@ -7,7 +7,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PlayerWalk
+  m_Name: Idle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -21,7 +21,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 91cb1f631ee9fd14cb3e00fc0e5011b9, type: 2}
+  m_Motion: {fileID: 7400000, guid: 9b234adc2b9c8ee4494e06695f7559c6, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -66,7 +66,7 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -87,8 +87,8 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New State
-  m_Speed: 2
+  m_Name: Walk
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -2174065208009643176}
@@ -121,7 +121,7 @@ AnimatorStateMachine:
     m_Position: {x: 370, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 953049004981074076}
-    m_Position: {x: 390, y: -30, z: 0}
+    m_Position: {x: 370, y: -30, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []

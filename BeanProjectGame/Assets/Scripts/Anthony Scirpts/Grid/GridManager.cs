@@ -393,44 +393,47 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator GridTraversal(GridObject gridToTraverse)
     {
-        // Traverse through entire grid, starting at the top row
-        int row = GetRowOfTopMostItem(gridToTraverse);
-        //print(gridToTraverse.gameObject.name + ", " + row);
-        while (row>=0 && foundedItem == null && searchMode)
+        if (gridToTraverse.GetIsSearchable())
         {
-            //Reveal and move the arrow along y axis of grid on left hand side
-            MoveGridArrow(gridToTraverse, new Vector2Int(0,row));
-
-            // search through each column of current row
-            for (int column = 0; column < gridToTraverse.GetGridWidth(); column++)
+            // Traverse through entire grid, starting at the top row
+            int row = GetRowOfTopMostItem(gridToTraverse);
+            //print(gridToTraverse.gameObject.name + ", " + row);
+            while (row >= 0 && foundedItem == null && searchMode)
             {
+                //Reveal and move the arrow along y axis of grid on left hand side
+                MoveGridArrow(gridToTraverse, new Vector2Int(0, row));
+
+                // search through each column of current row
+                for (int column = 0; column < gridToTraverse.GetGridWidth(); column++)
+                {
+                    yield return new WaitForSeconds(searchDelay);
+
+                    if (gridToTraverse.GetGrid().GetGridCellValue(column, row).IsPlacedGridObjectEmpty())
+                    {
+                        //print(gridToTraverse.GetGrid().GetGridCellValue(column, row));
+                        continue; //if the placedGridObject is empty, then continue loop
+                    }
+
+                    if (CheckTargetItemName(gridToTraverse, column, row))
+                    {
+                        //if we found a matching targetItemname, then use the item
+                        //print("found it at: " + column + ", " + row);
+                        foundedItem = gridToTraverse.GetGrid().GetGridCellValue(column, row).GetPlacedGridObject().GetItemObject();
+                        foundedItemCoordinates = new GridCoordinate(gridToTraverse, column, row);
+                        //print(itemToUse);
+                        searchMode = false;
+                        gridToTraverse.HideArrow();
+                        break;
+                    }
+                }
+
                 yield return new WaitForSeconds(searchDelay);
+                // at the end of the row, hide the arrow again
+                gridToTraverse.HideArrow();
 
-                if(gridToTraverse.GetGrid().GetGridCellValue(column, row).IsPlacedGridObjectEmpty())
-                {
-                    //print(gridToTraverse.GetGrid().GetGridCellValue(column, row));
-                    continue; //if the placedGridObject is empty, then continue loop
-                }
-
-                if (CheckTargetItemName(gridToTraverse, column, row))
-                {
-                    //if we found a matching targetItemname, then use the item
-                    print("found it at: " + column + ", " + row);
-                    foundedItem = gridToTraverse.GetGrid().GetGridCellValue(column, row).GetPlacedGridObject().GetItemObject();
-                    foundedItemCoordinates = new GridCoordinate(gridToTraverse, column, row);
-                    //print(itemToUse);
-                    searchMode = false;
-                    gridToTraverse.HideArrow();
-                    break;
-                }
+                //increment row counter, so we can go down to next row
+                row--;
             }
-
-            yield return new WaitForSeconds(searchDelay);
-            // at the end of the row, hide the arrow again
-            gridToTraverse.HideArrow();
-
-            //increment row counter, so we can go down to next row
-            row--;
         }
 
         //If there is another grid, continue traversal on next grid

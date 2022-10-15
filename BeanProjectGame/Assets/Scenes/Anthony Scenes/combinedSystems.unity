@@ -1287,7 +1287,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 665530565}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 159, y: 42.55, z: 1}
+  m_LocalPosition: {x: 38.4, y: 42.55, z: 1}
   m_LocalScale: {x: 4.494313, y: 2.6228263, z: 1}
   m_Children: []
   m_Father: {fileID: 280908095}
@@ -1748,7 +1748,7 @@ MonoBehaviour:
   itemDirectionsList: 00000000
   itemCoordinatesList:
   - {x: 1, y: 1}
-  gravity: 0
+  gravity: 1
   gridCanvas: {fileID: 0}
   gridCamera: {fileID: 0}
 --- !u!223 &863224859

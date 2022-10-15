@@ -174,8 +174,8 @@ MonoBehaviour:
   aimType: 0
   damagePerShot: 10
   ammoType: H-Ammo
-  clipSize: 2
-  curAmmo: 2
+  clipSize: 6
+  curAmmo: 6
   timeBetweenAttacks: 1
   baseWeaponAccuracy: 60
   specialEffects: []

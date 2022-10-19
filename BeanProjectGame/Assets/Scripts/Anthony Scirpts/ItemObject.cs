@@ -15,7 +15,7 @@ public class ItemObject : MonoBehaviour
     [SerializeField] private GameObject prefab;
     [SerializeField] private Transform visual;
     [SerializeField] private ItemType itemType;
-    [SerializeField] private ItemTag itemTag;
+    private ItemTag itemTag;
 
     [SerializeField] private int width;
     [SerializeField] private int height;

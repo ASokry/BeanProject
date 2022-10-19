@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WeaponObject : ItemObject
 {
-    public enum WeaponType {Pistol, Shotgun, Melee, None};
+    public enum WeaponType {Pistol, Shotgun, Specialty, Melee, None};
     public enum AimType {AutoTargeting, AreaTargeting, MeleeAreaTargeting, None};
 
     public WeaponType weaponType = WeaponType.None;

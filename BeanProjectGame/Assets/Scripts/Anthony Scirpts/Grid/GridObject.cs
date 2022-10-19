@@ -15,8 +15,10 @@ public class GridObject : MonoBehaviour
     [SerializeField] private float cellSize = 100f; //Cellsize was intially 100, and equal to width/height of recttransform on Tile Image
     [SerializeField] private Transform startingPosition;
     [SerializeField] private GameObject gridTile;
+
     [SerializeField] private GameObject arrow;
     [SerializeField] private float arrowPadding;
+    [SerializeField] private bool isSearchable = true;
 
     [SerializeField] private List<Vector2Int> nullCells;
 
@@ -71,6 +73,7 @@ public class GridObject : MonoBehaviour
     public int GetGridHeight() { return gridHeight; }
     public float GetGridCellSize() { return (cellSize/100f); }
     public Transform GetStartingPosition() { return startingPosition; }
+    public bool GetIsSearchable() { return isSearchable; }
     public List<Vector2Int> GetNullCells() { return nullCells; }
     public bool IsGravity() { return gravity; }
     public void AddToGravityItemsList(PlacedGridObject obj) { gravityItemsList.Add(obj); }
@@ -190,7 +193,8 @@ public class GridObject : MonoBehaviour
 
     public void RevealArrow()
     {
-        arrow.SetActive(true);
+        if (isSearchable)
+            arrow.SetActive(true);
     }
 
     public void HideArrow()
@@ -200,10 +204,13 @@ public class GridObject : MonoBehaviour
 
     public void MoveArrow(Vector3 tilePos)
     {
-        Vector3 tilePosition = new Vector3(tilePos.x, tilePos.y + arrowPadding, tilePos.z);
-        //print(tilePosition);
-        arrow.GetComponent<RectTransform>().position = tilePosition;
-        //print(arrow.transform.position);
+        if (isSearchable)
+        {
+            Vector3 tilePosition = new Vector3(tilePos.x, tilePos.y + arrowPadding, tilePos.z);
+            //print(tilePosition);
+            arrow.GetComponent<RectTransform>().position = tilePosition;
+            //print(arrow.transform.position);
+        }
     }
 
     public bool CheckCoordinatesOnGrid(ItemObject itemObject, Vector2Int coordinates, ItemObject.Dir direction)
@@ -240,6 +247,17 @@ public class GridObject : MonoBehaviour
             if (CheckCoordinatesOnGrid(itemList[i], itemCoordinatesList[i], itemDirectionsList[i]))
             {
                 GridManager.Instance.SpawnItemInGrid(grid, itemList[i], itemCoordinatesList[i], itemDirectionsList[i], gridCanvas);
+            }
+        }
+    }
+
+    public void SpawnItemsInGrid(List<ItemObject> items, List<ItemObject.Dir> itemDirections, List<Vector2Int> itemCoordinates)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (CheckCoordinatesOnGrid(items[i], itemCoordinates[i], itemDirections[i]))
+            {
+                GridManager.Instance.SpawnItemInGrid(grid, items[i], itemCoordinates[i], itemDirections[i], gridCanvas);
             }
         }
     }

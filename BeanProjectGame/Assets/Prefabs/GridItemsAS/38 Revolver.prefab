@@ -146,6 +146,7 @@ MonoBehaviour:
   itemTag: 0
   width: 3
   height: 2
+  spriteOrigin: {x: 1, y: 1}
   downCoordinatesList:
   - {x: 0, y: 0}
   - {x: 1, y: 0}

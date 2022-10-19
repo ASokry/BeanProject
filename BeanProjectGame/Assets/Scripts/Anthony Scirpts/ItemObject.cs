@@ -19,6 +19,7 @@ public class ItemObject : MonoBehaviour
 
     [SerializeField] private int width;
     [SerializeField] private int height;
+    [SerializeField] private Vector2Int spriteOrigin;
 
     [SerializeField] private List<Vector2Int> downCoordinatesList;
     [SerializeField] private List<Vector2Int> leftCoordinatesList;

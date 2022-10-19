@@ -5,11 +5,17 @@ using UnityEngine;
 public class WeaponObject : ItemObject
 {
     public enum WeaponType {Pistol, Shotgun, Specialty, Melee, None};
+    public enum AimType {AutoTargeting, AreaTargeting, MeleeAreaTargeting, None};
 
     public WeaponType weaponType = WeaponType.None;
-    public string AmmoType;
-    public int MaxAmmo;
+    public AimType aimType = AimType.None;
+    public float damagePerShot;
+    public string ammoType;
+    public int clipSize;
     public int curAmmo;
+    public float timeBetweenAttacks;
+    public float baseWeaponAccuracy;
+    public string[] specialEffects;
 
 
     // Start is called before the first frame update
@@ -27,9 +33,9 @@ public class WeaponObject : ItemObject
     public virtual void SetCurAmmo(int ammoModifier)
     {
         curAmmo = curAmmo + ammoModifier;
-        if(curAmmo > MaxAmmo)
+        if(curAmmo > clipSize)
         {
-            curAmmo = MaxAmmo;
+            curAmmo = clipSize;
         }
         if(curAmmo < 0)
         {

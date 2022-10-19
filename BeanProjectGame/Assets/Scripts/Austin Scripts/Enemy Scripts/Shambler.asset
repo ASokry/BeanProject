@@ -17,8 +17,8 @@ MonoBehaviour:
   closeRange: 1
   midRange: 5
   farRange: 10
-  prefDistanceBetweenEnemies: 0.5
-  prefDistanceToPlayer: 1
+  prefDistanceBetweenEnemies: 1
+  prefDistanceToPlayer: 1.5
   enemyAttacks:
   - attackRange: Close
     attackType: Melee

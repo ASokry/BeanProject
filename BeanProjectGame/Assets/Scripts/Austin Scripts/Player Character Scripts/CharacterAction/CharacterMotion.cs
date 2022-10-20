@@ -76,10 +76,10 @@ public class CharacterMotion : MonoBehaviour
             stopped = false;
         }
 
-        if (enemyManager.enemies.Count <= 0)
+        /*if (enemyManager.enemies.Count <= 0)
         {
             stopped = false;
-        }
+        }*/
 
         if (stopped)
         {
@@ -94,7 +94,7 @@ public class CharacterMotion : MonoBehaviour
         //the way these character stats are accessed is really ineffecient, when we develop stats more we need to go back and improve how stats are accessed so it isn't in the Update all the time.
         finesse = characterStats.curFinesse;
         strength = characterStats.curStrength;
-        if(weaponObject != null)
+        if(weaponObject != null && stopped)
         {
             attackDelay = weaponObject.timeBetweenAttacks;
 
@@ -238,11 +238,22 @@ public class CharacterMotion : MonoBehaviour
         {
             stopped = true;
         }
-        if(waitType == "stopForTime")
+        else if(waitType == "stopForTime")
         {
             timer = 0;
             localWaitTime = waitTime;
             stopped = true;
+        }
+    }
+    public void WalkToggle()
+    {
+        if (!stopped)
+        {
+            stopped = true;
+        }
+        else
+        {
+            stopped = false;
         }
     }
 

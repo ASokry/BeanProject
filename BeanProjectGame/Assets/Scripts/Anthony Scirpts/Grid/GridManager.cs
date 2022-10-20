@@ -43,6 +43,7 @@ public class GridManager : MonoBehaviour
 
     private CharacterMotion characterMotion;
 
+    #region Grid Coordinate Class
     public class GridCoordinate
     {
         public GridObject grid;
@@ -56,11 +57,15 @@ public class GridManager : MonoBehaviour
             this.y = y;
         }
     }
+    #endregion
 
     private int searchCounter = 0;
 
     private Canvas gridCanvas;
     private Camera gridCamera;
+
+    private bool inCombat = false;
+    public void SetCombatStatus(bool b) { inCombat = b; }
 
     private void Awake()
     {
@@ -124,7 +129,7 @@ public class GridManager : MonoBehaviour
 
     private void MouseClickOnItem()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && !inCombat)
         {
             //print(currentGridMouseIsIn.GetParent().name + ": " + currentGridMouseIsIn.GetGridCellValue(Input.mousePosition));
             if (!itemOnMouse && currentGridMouseIsIn != null)
@@ -176,7 +181,7 @@ public class GridManager : MonoBehaviour
 
     private void ChangeItemOnMouseDirection()
     {
-        if (Input.GetMouseButtonDown(1) && itemOnMouse)
+        if (Input.GetMouseButtonDown(1) && itemOnMouse && !inCombat)
         {
             //print("click");
             managerItemDirection = ItemObject.GetNextDir(managerItemDirection);
@@ -206,7 +211,7 @@ public class GridManager : MonoBehaviour
 
     private void MouseReleaseWithItem()
     {
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && !inCombat)
         {
             if (currentGridMouseIsIn != null && itemOnMouse != null)
             {

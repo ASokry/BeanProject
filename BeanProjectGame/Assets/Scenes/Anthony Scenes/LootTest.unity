@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 95906805}
   - component: {fileID: 95906807}
   m_Layer: 5
-  m_Name: Inventory
+  m_Name: Empty Inventory
   m_TagString: Grid
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

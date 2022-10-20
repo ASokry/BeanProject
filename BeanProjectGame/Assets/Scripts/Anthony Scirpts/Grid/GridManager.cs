@@ -507,4 +507,45 @@ public class GridManager : MonoBehaviour
         //grid.MoveArrow(grid.GetGrid().GetWorldPosition(tile.x,tile.y));
         grid.MoveArrow(grid.GetGrid().GetCanvasWorldPosition(gridCanvas, tile.x, tile.y, gridCamera));
     }
+
+    public void SpawnItemInGrid(ItemObject itemObject)
+    {
+        //minus 2 so we skip the inventory grid
+        int counter = gridObjectList.Count;
+        while (counter > 0)
+        {
+            GridObject gridObject = gridObjectList[counter];
+            if (gridObject.gameObject.name == "Inventory")
+            {
+                counter--;
+                continue;
+            }
+
+            for (int row = gridObject.GetGridHeight() - 1; row >= 0; row--)
+            {
+                for (int col = 0; col < gridObject.GetGridWidth(); col++)
+                {
+                    Vector2Int coordinates = new Vector2Int(col,row);
+                    if (gridObject.CheckCoordinatesOnGrid(itemObject, coordinates, ItemObject.Dir.Down))
+                    {
+                        SpawnItemInGrid(gridObject.GetGrid(), itemObject, coordinates, ItemObject.Dir.Down, gridCanvas);
+                    }
+                    else if (gridObject.CheckCoordinatesOnGrid(itemObject, coordinates, ItemObject.Dir.Left))
+                    {
+                        SpawnItemInGrid(gridObject.GetGrid(), itemObject, coordinates, ItemObject.Dir.Left, gridCanvas);
+                    }
+                    else if (gridObject.CheckCoordinatesOnGrid(itemObject, coordinates, ItemObject.Dir.Up))
+                    {
+                        SpawnItemInGrid(gridObject.GetGrid(), itemObject, coordinates, ItemObject.Dir.Up, gridCanvas);
+                    }
+                    else if (gridObject.CheckCoordinatesOnGrid(itemObject, coordinates, ItemObject.Dir.Right))
+                    {
+                        SpawnItemInGrid(gridObject.GetGrid(), itemObject, coordinates, ItemObject.Dir.Right, gridCanvas);
+                    }
+                }
+            }
+            counter--;
+        }
+
+    }
 }

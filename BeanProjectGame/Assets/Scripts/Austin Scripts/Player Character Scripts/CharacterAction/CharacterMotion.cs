@@ -20,6 +20,7 @@ public class CharacterMotion : MonoBehaviour
     public int curHealth;
     public float walkSpeed = 3;
     private float curSpeed;
+    public bool isDead;
 
     [Header("Visual Effects")]
     public float missModifier = 0.5f; //The factor that's multiplied against the difference between the check for an accurate shot and the actual roll, basically determines how severe a missed shot will appear to miss by.
@@ -48,11 +49,19 @@ public class CharacterMotion : MonoBehaviour
     private float finesse;
     private float strength;
 
+    [SerializeField]private bool debugMode;
+
     // Start is called before the first frame update
     void Start()
     {
         curSpeed = walkSpeed;
         curHealth = characterStats.health;
+        isDead = false;
+
+        if (!debugMode)
+        {
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+        }
     }
 
     // Update is called once per frame
@@ -239,9 +248,10 @@ public class CharacterMotion : MonoBehaviour
        
 
 
-        if (curHealth <= 0)
+        if (curHealth <= 0 && !isDead)
         {
             PlayerDeath();
+            isDead = true;
         }
 
     }

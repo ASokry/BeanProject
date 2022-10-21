@@ -20,8 +20,9 @@ public class CharacterMotion : MonoBehaviour
     public int curHealth;
     public float walkSpeed = 3;
     private float curSpeed;
+    public bool isDead;
 
-    [Header("Effects")]
+    [Header("Visual Effects")]
     public float missModifier = 0.5f; //The factor that's multiplied against the difference between the check for an accurate shot and the actual roll, basically determines how severe a missed shot will appear to miss by.
     public LineRenderer lineRenderer; //The line renderer currently used for bullet trail rendering, may be switched out later.
 
@@ -32,9 +33,8 @@ public class CharacterMotion : MonoBehaviour
     private float attackTimer;
     private float attackDelay;
     private bool stopped;
-    public int equippedWeapon;
     public WeaponObject weaponObject;
-    public int curShotsInWeapon;
+    public ConsumableObject consumableObject;
     //private int curDamage;
     public GameObject targettedEnemy;
     public EnemyBehaviour targettedEnemyBehaviour;
@@ -49,12 +49,19 @@ public class CharacterMotion : MonoBehaviour
     private float finesse;
     private float strength;
 
+    [SerializeField]private bool debugMode;
+
     // Start is called before the first frame update
     void Start()
     {
         curSpeed = walkSpeed;
         curHealth = characterStats.health;
-        curShotsInWeapon = weaponList.weapons[equippedWeapon].shotsPerReload;
+        isDead = false;
+
+        if (!debugMode)
+        {
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+        }
     }
 
     // Update is called once per frame
@@ -121,6 +128,10 @@ public class CharacterMotion : MonoBehaviour
                         {
                             AttackEnemy(weaponObject.damagePerShot);
                             AssignTarget(targettedEnemy.transform.position);
+                            for (int e = 0; e < weaponObject.specialEffects.Length; e++)
+                            {
+                                CallWeaponEffect(weaponObject.specialEffects[e], targettedEnemyBehaviour);
+                            }
                         }
                         else
                         {
@@ -152,10 +163,7 @@ public class CharacterMotion : MonoBehaviour
                                 AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
                                 for(int e = 0; e < weaponObject.specialEffects.Length; e++)
                                 {
-                                    if(weaponObject.specialEffects[e] == "Knockback")
-                                    {
-                                        areaEnemyBehaviours[i].Knockback();
-                                    }
+                                    CallWeaponEffect(weaponObject.specialEffects[e], areaEnemyBehaviours[i]);      
                                 }
                                 //print(damageDealt);
                             }
@@ -186,6 +194,10 @@ public class CharacterMotion : MonoBehaviour
                                 float damageDealt = weaponObject.damagePerShot + ((weaponObject.damagePerShot * .1f) * strength);
                                 AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
                                 //print(damageDealt);
+                                for (int e = 0; e < weaponObject.specialEffects.Length; e++)
+                                {
+                                    CallWeaponEffect(weaponObject.specialEffects[e], areaEnemyBehaviours[i]);
+                                }
                             }
                         }
                         weaponObject.SetCurAmmo(-1);
@@ -213,18 +225,54 @@ public class CharacterMotion : MonoBehaviour
                 }
             }
         }
+
+        if(consumableObject != null) // if the script has a consumable object, imediately preform its effect and then set it to null and delete the object from the grid
+        {
+            gridManager.StartGridTraversal(consumableObject.name);
+
+            if(gridManager.foundedItem != null && gridManager.foundedItem.name == consumableObject.name)
+            {
+                if (consumableObject.consumableType == ConsumableObject.ConsumableType.Healing)
+                {
+                    if (curHealth < characterStats.health)
+                    {
+                        curHealth += consumableObject.healAmount;
+                        gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);
+                        gridManager.foundedItem = null;
+                        consumableObject = null;
+                    }
+                }
+            }
+
+        }
        
 
 
-        if (curHealth <= 0)
+        if (curHealth <= 0 && !isDead)
         {
             PlayerDeath();
+            isDead = true;
         }
 
     }
 
+    public void CallWeaponEffect(string effectName, EnemyBehaviour enemyBehaviour)
+    {
+        if(effectName == "Knockback")
+        {
+            enemyBehaviour.Knockback();
+        }
+    }
+
     public void PlayerDeath()
     {
+        stopped = true;
+        characterAnimationManager.DeathAnimation();
+    }
+
+    public void DeathAnimComplete()
+    {
+        
         print("dead");
     }
     public void TakeDamage(int damage)
@@ -276,5 +324,10 @@ public class CharacterMotion : MonoBehaviour
     public void SetWeaponObject(WeaponObject weaponObject)
     {
         this.weaponObject = weaponObject;
+    }
+
+    public void SetConsumableObject(ConsumableObject consumableObject)
+    {
+        this.consumableObject = consumableObject;
     }
 }

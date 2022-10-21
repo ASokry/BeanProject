@@ -5,10 +5,14 @@ using UnityEngine;
 public class AreaTargetting : MonoBehaviour
 {
     public CharacterMotion characterMotion;
+    public bool debugMode;
     // Start is called before the first frame update
     void Start()
     {
-        
+        if(debugMode == false)
+        {
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+        }
     }
 
     // Update is called once per frame

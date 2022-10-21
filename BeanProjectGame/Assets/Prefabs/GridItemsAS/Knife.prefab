@@ -74,9 +74,14 @@ MonoBehaviour:
   - {x: 0, y: 0}
   - {x: 1, y: 0}
   weaponType: 3
-  AmmoType: Melee
-  MaxAmmo: 0
-  curAmmo: 0
+  aimType: 2
+  damagePerShot: 5
+  ammoType: 
+  clipSize: 1000
+  curAmmo: 1000
+  timeBetweenAttacks: 0.5
+  baseWeaponAccuracy: 100
+  specialEffects: []
 --- !u!114 &27025174518857436
 MonoBehaviour:
   m_ObjectHideFlags: 0

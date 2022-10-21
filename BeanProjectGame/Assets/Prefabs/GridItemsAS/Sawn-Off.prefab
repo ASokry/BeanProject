@@ -153,9 +153,15 @@ MonoBehaviour:
   - {x: 0, y: 0}
   - {x: 0, y: -1}
   weaponType: 1
-  AmmoType: SH-Ammo
-  MaxAmmo: 2
-  curAmmo: 0
+  aimType: 1
+  damagePerShot: 10
+  ammoType: H-Ammo
+  clipSize: 2
+  curAmmo: 2
+  timeBetweenAttacks: 1
+  baseWeaponAccuracy: 60
+  specialEffects:
+  - Knockback
 --- !u!114 &2337559332667247065
 MonoBehaviour:
   m_ObjectHideFlags: 0

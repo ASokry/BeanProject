@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    [Header ("Object References")]
+    [Header("Object References")]
     public GameObject player;
     public GameObject levelManager;
     public GameObject nearLeftEnemy;
@@ -12,12 +12,12 @@ public class EnemyBehaviour : MonoBehaviour
     private Vector3 previousPosition;
     public Transform projectileInstatiator;
 
-    [Header ("Script References")]
+    [Header("Script References")]
     public EnemyManager enemyManager;
     public EnemyStats enemyStats;
     public CharacterAnimationManager characterAnimationManager;
 
-    [Header ("Stats and States")]
+    [Header("Stats and States")]
     public float curEnemyHealth;
     public float curEnemySpeed;
     public bool stopped;
@@ -27,6 +27,8 @@ public class EnemyBehaviour : MonoBehaviour
     public float knockbackDistance;
     private bool beingKnockedBack;
     private Vector3 knockBackStartPos;
+    private bool isDead;
+    [SerializeField] private bool debugMode;
 
     [Header ("Attack Ranges")]
     private float closeRange;
@@ -58,12 +60,16 @@ public class EnemyBehaviour : MonoBehaviour
             enemyAttacks[i] = enemyStats.enemyAttacks[i];
         }
 
-        if(curEnemyHealth <= 0)
+        /*if(curEnemyHealth <= 0)
         {
             Death();
+        }*/
+        if(debugMode == false)
+        {
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
         }
 
-  
+        isDead = false;
     }
     private void Awake()
     {
@@ -180,9 +186,10 @@ public class EnemyBehaviour : MonoBehaviour
             }
         }
 
-        if (curEnemyHealth <= 0)
+        if (curEnemyHealth <= 0 && !isDead)
         {
             Death();
+            isDead = true;
         }
 
         if (beingKnockedBack)
@@ -218,6 +225,12 @@ public class EnemyBehaviour : MonoBehaviour
     }
 
     private void Death()
+    {
+        characterAnimationManager.DeathAnimation();
+        gameObject.tag = "Untagged";
+    }
+
+    public void DeathAnimComplete()
     {
         enemyManager.enemies.Remove(gameObject);
         Destroy(gameObject);

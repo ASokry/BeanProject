@@ -173,6 +173,8 @@ public class GridObject : MonoBehaviour
                 tiles.transform.localScale *= gridCanvas.transform.localScale.x;
                 //print(tiles.transform.localScale);
                 tiles.transform.SetParent(gridParent);
+
+                grid.GetGridCellValue(coordinates.x, coordinates.y).SetGridTile(tiles.GetComponent<GridTile>());
             }
         }
     }

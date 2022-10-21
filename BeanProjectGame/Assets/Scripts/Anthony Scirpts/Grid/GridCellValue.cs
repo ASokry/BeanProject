@@ -7,7 +7,9 @@ public class GridCellValue
     private Grid<GridCellValue> grid;
     private int x;
     private int y;
+
     private PlacedGridObject placedGridObject;
+    private GridTile gridTile;
 
     public GridCellValue(Grid<GridCellValue> grid, int x, int y)
     {
@@ -23,6 +25,9 @@ public class GridCellValue
     }
 
     public PlacedGridObject GetPlacedGridObject() { return placedGridObject; }
+
+    public void SetGridTile(GridTile tile) { gridTile = tile; }
+    public GridTile GetGridTile() { return gridTile; }
 
     public void ClearPlacedGridObject()
     {

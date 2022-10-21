@@ -41,10 +41,15 @@ public class PlacedGridObject : MonoBehaviour
     private Transform parentGrid;
     private bool isGravity;
 
+    private bool isEquipped = false;
+    public void SetEquipStatus(bool b) { isEquipped = b; }
+    public bool GetEquipStatus() { return isEquipped; }
+
     public Transform GetParentGrid() { return parentGrid; }
     public string GetObjectName() { return objectName; }
     public int GetItemID() { return itemID; }
     public ItemObject GetItemObject() { return itemObject; }
+    public Vector2Int GetOrigin() { return origin; }
     public ItemObject.Dir GetDir() { return dir; }
     public ItemObject.ItemType GetItemType() { return itemType; }
     public bool GetIsGravity() { return isGravity; }

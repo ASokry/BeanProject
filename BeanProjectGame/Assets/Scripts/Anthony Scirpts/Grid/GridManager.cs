@@ -43,7 +43,6 @@ public class GridManager : MonoBehaviour
 
     private CharacterMotion characterMotion;
 
-    #region Grid Coordinate Class
     public class GridCoordinate
     {
         public GridObject grid;
@@ -57,7 +56,6 @@ public class GridManager : MonoBehaviour
             this.y = y;
         }
     }
-    #endregion
 
     private int searchCounter = 0;
 
@@ -66,6 +64,21 @@ public class GridManager : MonoBehaviour
 
     private bool inCombat = false;
     public void SetCombatStatus(bool b) { inCombat = b; }
+
+    public class LastEquippedTiles
+    {
+        public Grid<GridCellValue> grid;
+        public PlacedGridObject placedObj;
+        public List<Vector2Int> coordinates = new List<Vector2Int>();
+        
+        public LastEquippedTiles(Grid<GridCellValue> grid, PlacedGridObject placedObj, List<Vector2Int> coordinates)
+        {
+            this.grid = grid;
+            this.placedObj = placedObj;
+            this.coordinates = coordinates;
+        }
+    }
+    private LastEquippedTiles lastEquippedTiles;
 
     private void Awake()
     {
@@ -156,7 +169,7 @@ public class GridManager : MonoBehaviour
         }
         else if (Input.GetMouseButtonDown(1) && !itemOnMouse)
         {
-            print("right click");
+            //print("right click");
             if (currentGridMouseIsIn != null)
             {
                 gridCellValue = currentGridMouseIsIn.GetGridCellValue(Input.mousePosition);
@@ -165,21 +178,49 @@ public class GridManager : MonoBehaviour
 
             if (placedGridObject.GetComponent<WeaponObject>() != null)
             {
+                SetEquippedTiles(currentGridMouseIsIn, placedGridObject, placedGridObject.GetOrigin());
                 characterMotion.SetWeaponObject(placedGridObject.GetComponent<WeaponObject>());
-                //print("got it");
             }
             else if(placedGridObject.GetComponent<ConsumableObject>() != null)
             {
                 characterMotion.SetConsumableObject(placedGridObject.GetComponent<ConsumableObject>());
             }
-            /*else if (placedGridObject.GetComponent<ConsumeObject>() != null)
-            {
-                characterMotion.SetWeaponObject(placedGridObject.GetComponent<ConsumeObject>());
-                //print("got it");
-            }*/
 
             gridCellValue = null;
             placedGridObject = null;
+        }
+    }
+
+    private void SetEquippedTiles(Grid<GridCellValue> theGrid, PlacedGridObject obj, Vector2Int origin)
+    {
+        ResetCurrentEquippedTiles();
+
+        ItemObject item = obj.GetItemObject();
+        List<Vector2Int> newTilesCoord = item.GetCoordinateList(origin, item.GetCurrentDirection());
+        obj.SetEquipStatus(true);
+
+        foreach (Vector2Int coord in newTilesCoord)
+        {
+            GridCellValue cell = theGrid.GetGridCellValue(coord.x, coord.y);
+            GridTile tile = cell.GetGridTile();
+            tile.SetEquipMat();
+        }
+
+        lastEquippedTiles = new LastEquippedTiles(theGrid, obj, newTilesCoord);
+    }
+
+    private void ResetCurrentEquippedTiles()
+    {
+        if (lastEquippedTiles != null && lastEquippedTiles.coordinates.Count > 0)
+        {
+            lastEquippedTiles.placedObj.SetEquipStatus(false);
+            foreach (Vector2Int coord in lastEquippedTiles.coordinates)
+            {
+                Grid<GridCellValue> grid = lastEquippedTiles.grid;
+                GridCellValue cell = grid.GetGridCellValue(coord.x, coord.y);
+                GridTile tile = cell.GetGridTile();
+                tile.SetDefualtMat();
+            }
         }
     }
 
@@ -245,7 +286,7 @@ public class GridManager : MonoBehaviour
             // if coordinates are not on a grid then we can't place down an object
             if (currentGridMouseIsIn.GetGridCellValue(coordinates.x, coordinates.y) == null)
             {
-                print("not in grid");
+                //print("not in grid");
                 canPlace = false;
                 break;
             }
@@ -253,7 +294,7 @@ public class GridManager : MonoBehaviour
             // if coordinates already contains a DIFFERENT placed object, then we can't place down an object
             if (!currentGridMouseIsIn.GetGridCellValue(coordinates.x, coordinates.y).IsPlacedGridObjectEmpty() && currentGridMouseIsIn.GetGridCellValue(coordinates.x, coordinates.y).GetPlacedGridObjectItemID() != ghostID)
             {
-                print("taken");
+                //print("taken");
                 canPlace = false;
                 break;
             }
@@ -334,6 +375,8 @@ public class GridManager : MonoBehaviour
 
     private void DestroyOriginalPlacedGridObject()
     {
+        if (originalPlacedGridObject.GetEquipStatus()) ResetCurrentEquippedTiles();
+
         originalPlacedGridObject.DestroySelf();
         //print(originaloriginalPlacedGridObjectGrid.GetParent().name);
         //print(itemOnMouse==null);
@@ -502,6 +545,8 @@ public class GridManager : MonoBehaviour
     {
         PlacedGridObject objectToDestroy = gridCoordinate.grid.GetGrid().GetGridCellValue(gridCoordinate.x, gridCoordinate.y).GetPlacedGridObject();
         List<Vector2Int> CoordinatesToDestroy = objectToDestroy.GetGridPositionList();
+
+        if (objectToDestroy.GetEquipStatus()) ResetCurrentEquippedTiles();
 
         objectToDestroy.DestroySelf();
         foreach (Vector2Int coordinates in CoordinatesToDestroy)

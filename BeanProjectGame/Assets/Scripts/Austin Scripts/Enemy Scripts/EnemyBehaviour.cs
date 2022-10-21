@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    [Header ("Object References")]
+    [Header("Object References")]
     public GameObject player;
     public GameObject levelManager;
     public GameObject nearLeftEnemy;
@@ -12,12 +12,12 @@ public class EnemyBehaviour : MonoBehaviour
     private Vector3 previousPosition;
     public Transform projectileInstatiator;
 
-    [Header ("Script References")]
+    [Header("Script References")]
     public EnemyManager enemyManager;
     public EnemyStats enemyStats;
     public CharacterAnimationManager characterAnimationManager;
 
-    [Header ("Stats and States")]
+    [Header("Stats and States")]
     public float curEnemyHealth;
     public float curEnemySpeed;
     public bool stopped;
@@ -28,6 +28,7 @@ public class EnemyBehaviour : MonoBehaviour
     private bool beingKnockedBack;
     private Vector3 knockBackStartPos;
     private bool isDead;
+    [SerializeField] private bool debugMode;
 
     [Header ("Attack Ranges")]
     private float closeRange;
@@ -63,6 +64,10 @@ public class EnemyBehaviour : MonoBehaviour
         {
             Death();
         }*/
+        if(debugMode == false)
+        {
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+        }
 
         isDead = false;
     }

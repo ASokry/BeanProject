@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats/EnemyStatsData
   enemyHealth: 20
   enemySpeed: 0.5
-  closeRange: 1
+  closeRange: 2
   midRange: 5
   farRange: 10
   prefDistanceBetweenEnemies: 1

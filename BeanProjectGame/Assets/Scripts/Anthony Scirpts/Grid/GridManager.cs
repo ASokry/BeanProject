@@ -168,6 +168,10 @@ public class GridManager : MonoBehaviour
                 characterMotion.SetWeaponObject(placedGridObject.GetComponent<WeaponObject>());
                 //print("got it");
             }
+            else if(placedGridObject.GetComponent<ConsumableObject>() != null)
+            {
+                characterMotion.SetConsumableObject(placedGridObject.GetComponent<ConsumableObject>());
+            }
             /*else if (placedGridObject.GetComponent<ConsumeObject>() != null)
             {
                 characterMotion.SetWeaponObject(placedGridObject.GetComponent<ConsumeObject>());

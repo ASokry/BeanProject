@@ -17,4 +17,9 @@ public class CharacterAnimationManager : MonoBehaviour
     {
         animator.SetFloat("Speed", characterVelocity);
     }
+
+    public void DeathAnimation()
+    {
+        animator.SetTrigger("Die");
+    }
 }

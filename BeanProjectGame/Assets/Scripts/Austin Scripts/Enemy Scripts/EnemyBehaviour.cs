@@ -27,6 +27,7 @@ public class EnemyBehaviour : MonoBehaviour
     public float knockbackDistance;
     private bool beingKnockedBack;
     private Vector3 knockBackStartPos;
+    private bool isDead;
 
     [Header ("Attack Ranges")]
     private float closeRange;
@@ -58,12 +59,12 @@ public class EnemyBehaviour : MonoBehaviour
             enemyAttacks[i] = enemyStats.enemyAttacks[i];
         }
 
-        if(curEnemyHealth <= 0)
+        /*if(curEnemyHealth <= 0)
         {
             Death();
-        }
+        }*/
 
-  
+        isDead = false;
     }
     private void Awake()
     {
@@ -180,9 +181,10 @@ public class EnemyBehaviour : MonoBehaviour
             }
         }
 
-        if (curEnemyHealth <= 0)
+        if (curEnemyHealth <= 0 && !isDead)
         {
             Death();
+            isDead = true;
         }
 
         if (beingKnockedBack)
@@ -218,6 +220,12 @@ public class EnemyBehaviour : MonoBehaviour
     }
 
     private void Death()
+    {
+        characterAnimationManager.DeathAnimation();
+        gameObject.tag = "Untagged";
+    }
+
+    public void DeathAnimComplete()
     {
         enemyManager.enemies.Remove(gameObject);
         Destroy(gameObject);

@@ -17,6 +17,9 @@ public class CharacterMotion : MonoBehaviour
     private Vector3 previousPosition;
 
     [Header("Character Stats")]
+    public UIBar healthBarUI;
+
+    [Header("Character Stats")]
     public int curHealth;
     public float walkSpeed = 3;
     private float curSpeed;
@@ -62,6 +65,8 @@ public class CharacterMotion : MonoBehaviour
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
         }
+
+        healthBarUI.SetMaxHealth(curHealth);
     }
 
     // Update is called once per frame
@@ -278,6 +283,7 @@ public class CharacterMotion : MonoBehaviour
     public void TakeDamage(int damage)
     {
         curHealth -= damage;
+        healthBarUI.SetHealth(curHealth);
     }
     public void Stop(string waitType, float waitTime)
     {

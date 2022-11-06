@@ -155,7 +155,7 @@ MonoBehaviour:
   weaponType: 1
   aimType: 1
   damagePerShot: 10
-  ammoType: H-Ammo
+  ammoType: SH-Ammo
   clipSize: 2
   curAmmo: 2
   timeBetweenAttacks: 1

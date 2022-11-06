@@ -15,15 +15,15 @@ public class EnemyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach(GameObject enemy in enemies)
+        foreach (GameObject enemy in enemies)
         {
-            if(!enemy.activeInHierarchy)
+            if (!enemy.activeInHierarchy)
             {
                 enemies.Remove(enemy);
                 disabledEnemies.Add(enemy);
             }
         }
-        foreach(GameObject disabledEnemy in disabledEnemies)
+        foreach (GameObject disabledEnemy in disabledEnemies)
         {
             if (disabledEnemy.activeInHierarchy)
             {

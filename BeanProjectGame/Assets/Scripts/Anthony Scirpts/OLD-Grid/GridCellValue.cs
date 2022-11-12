@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class GridCellValue
 {
-    private Grid<GridCellValue> grid;
+    private OldGrid<GridCellValue> grid;
     private int x;
     private int y;
 
     private PlacedGridObject placedGridObject;
     private GridTile gridTile;
 
-    public GridCellValue(Grid<GridCellValue> grid, int x, int y)
+    public GridCellValue(OldGrid<GridCellValue> grid, int x, int y)
     {
         this.grid = grid;
         this.x = x;

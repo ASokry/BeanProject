@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Abstract Class for sciprts/Objects that uses a Grid
-public class GridObject : MonoBehaviour
+public class OldGridObject : MonoBehaviour
 {
-    private Grid<GridCellValue> grid;
+    private OldGrid<GridCellValue> grid;
     [SerializeField] private Transform gridParent;
 
     public enum GridType { BackpackMain, BackpackOther, Inventory, QuickSlot };
@@ -68,7 +68,7 @@ public class GridObject : MonoBehaviour
     }*/
     #endregion
 
-    public Grid<GridCellValue> GetGrid() { return grid; }
+    public OldGrid<GridCellValue> GetGrid() { return grid; }
     public int GetGridWidth() { return gridWidth; }
     public int GetGridHeight() { return gridHeight; }
     public float GetGridCellSize() { return (cellSize/100f); }
@@ -144,7 +144,7 @@ public class GridObject : MonoBehaviour
 
     private void CreateGrid()
     {
-        grid = new Grid<GridCellValue>(gridWidth, gridHeight, cellSize, gridParent, startingPosition.GetComponent<RectTransform>().anchoredPosition, (Grid<GridCellValue> g, int x, int y) => new GridCellValue(g, x, y));
+        grid = new OldGrid<GridCellValue>(gridWidth, gridHeight, cellSize, gridParent, startingPosition.GetComponent<RectTransform>().anchoredPosition, (OldGrid<GridCellValue> g, int x, int y) => new GridCellValue(g, x, y));
         //print(startingPosition.gameObject.name + ": " + startingPosition.position);
         //print(startingPosition.gameObject.name + ": " + startingPosition.GetComponent<RectTransform>().anchoredPosition);
     }

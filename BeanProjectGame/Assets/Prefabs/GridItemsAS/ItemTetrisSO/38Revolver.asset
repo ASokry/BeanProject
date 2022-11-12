@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8deb5acad94106d41ae63ce2083c3644, type: 3}
+  m_Name: 38Revolver
+  m_EditorClassIdentifier: 
+  nameString: 38 Revolver
+  prefab: {fileID: 423559406803879581, guid: 6521b1c81c185544880098d729e98a26, type: 3}
+  visual: {fileID: 2700954451650666817, guid: 902fa54846afc7f40b0dea11946abc4d, type: 3}
+  width: 3
+  height: 2
+  downCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 0, y: -1}
+  - {x: -1, y: -1}
+  - {x: -1, y: 0}
+  leftCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 0, y: -1}
+  - {x: -1, y: 0}
+  - {x: -1, y: 1}
+  - {x: 0, y: 1}
+  upCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: -1, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
+  rightCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 1, y: -1}
+  - {x: 0, y: -1}
+  - {x: 0, y: 1}

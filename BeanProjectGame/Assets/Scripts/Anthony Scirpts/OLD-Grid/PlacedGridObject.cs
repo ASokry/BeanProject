@@ -16,7 +16,7 @@ public class PlacedGridObject : MonoBehaviour
         PlacedGridObject placedGridObject = placedObject.GetComponent<PlacedGridObject>();
 
         placedGridObject.parentGrid = parentGrid;
-        placedGridObject.isGravity = parentGrid.GetComponent<GridObject>().IsGravity();
+        placedGridObject.isGravity = parentGrid.GetComponent<OldGridObject>().IsGravity();
         //placedGridObject.itemObject = itemObject;
         placedGridObject.itemObject = placedObject.GetComponent<ItemObject>();
         placedGridObject.origin = origin;
@@ -63,7 +63,7 @@ public class PlacedGridObject : MonoBehaviour
 
     public void StartItemGravity()
     {
-        GridObject gridObject = parentGrid.GetComponent<GridObject>();
+        OldGridObject gridObject = parentGrid.GetComponent<OldGridObject>();
         Vector2Int cellBelowCoordinates = new Vector2Int(origin.x, origin.y-1);
         //print(gridObject.CheckCoordinatesOnGrid(itemObject, cellBelowCoordinates, dir) + " " + this.gameObject.GetInstanceID());
         //print(gameObject.GetComponent<PlacedGridObject>() + " " + gameObject.GetInstanceID());

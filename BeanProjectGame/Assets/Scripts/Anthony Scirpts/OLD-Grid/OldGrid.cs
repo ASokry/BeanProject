@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Grid<TGridObject>
+public class OldGrid<TGridObject>
 {
     public event EventHandler<OnGridValueChangedEventArgs> OnGridValueChanged;
     public class OnGridValueChangedEventArgs : EventArgs
@@ -19,7 +19,7 @@ public class Grid<TGridObject>
     private Vector3 originPosition;
     private TGridObject[,] gridArray;
 
-    public Grid(int width, int height, float cellSize, Transform parent, Vector3 originPosition, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject)
+    public OldGrid(int width, int height, float cellSize, Transform parent, Vector3 originPosition, Func<OldGrid<TGridObject>, int, int, TGridObject> createGridObject)
     {
         this.width = width;
         this.height = height;

@@ -10,9 +10,9 @@ public class GridManager : MonoBehaviour
     public event ItemSpawnInGridAction OnItemSpawnedInGrid;
     public static GridManager Instance { get; private set; }
 
-    [SerializeField] private List<GridObject> gridObjectList;
-    private Grid<GridCellValue> currentGridMouseIsIn;
-    private GridObject currentGridObject;
+    [SerializeField] private List<OldGridObject> gridObjectList;
+    private OldGrid<GridCellValue> currentGridMouseIsIn;
+    private OldGridObject currentGridObject;
     private float gridsCellSize = 0;
 
     [SerializeField] private ItemObject itemOnMouse;
@@ -20,7 +20,7 @@ public class GridManager : MonoBehaviour
 
     private PlacedGridObject originalPlacedGridObject;
     private List<Vector2Int> originalPlacedGridObjectCoordinates;
-    private Grid<GridCellValue> originalPlacedGridObjectGrid;
+    private OldGrid<GridCellValue> originalPlacedGridObjectGrid;
 
     private GridCellValue gridCellValue;
     private PlacedGridObject placedGridObject;
@@ -33,7 +33,6 @@ public class GridManager : MonoBehaviour
     [SerializeField] private float lowOpacityColor = 0.5f;
 
     private bool canPlace = false;
-    private bool inventoryClear = false;
 
     [SerializeField] private bool searchMode = false;
     [SerializeField] private float searchDelay = 1f;
@@ -45,11 +44,11 @@ public class GridManager : MonoBehaviour
 
     public class GridCoordinate
     {
-        public GridObject grid;
+        public OldGridObject grid;
         public int x;
         public int y;
 
-        public GridCoordinate(GridObject grid, int x, int y)
+        public GridCoordinate(OldGridObject grid, int x, int y)
         {
             this.grid = grid;
             this.x = x;
@@ -67,11 +66,11 @@ public class GridManager : MonoBehaviour
 
     public class LastEquippedTiles
     {
-        public Grid<GridCellValue> grid;
+        public OldGrid<GridCellValue> grid;
         public PlacedGridObject placedObj;
         public List<Vector2Int> coordinates = new List<Vector2Int>();
         
-        public LastEquippedTiles(Grid<GridCellValue> grid, PlacedGridObject placedObj, List<Vector2Int> coordinates)
+        public LastEquippedTiles(OldGrid<GridCellValue> grid, PlacedGridObject placedObj, List<Vector2Int> coordinates)
         {
             this.grid = grid;
             this.placedObj = placedObj;
@@ -96,7 +95,7 @@ public class GridManager : MonoBehaviour
 
     private void Start()
     {
-        foreach (GridObject gridObject in gridObjectList)
+        foreach (OldGridObject gridObject in gridObjectList)
         {
             if(gridObject.gameObject.activeSelf)
                 gridObject.AwakeScirpt();
@@ -125,7 +124,7 @@ public class GridManager : MonoBehaviour
 
     private void GetCurrentGridMouseIsIn()
     {
-        foreach (GridObject gridObject in gridObjectList)
+        foreach (OldGridObject gridObject in gridObjectList)
         {
             if (gridObject.IsMouseInThisGrid())
             {
@@ -191,7 +190,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void SetEquippedTiles(Grid<GridCellValue> theGrid, PlacedGridObject obj, Vector2Int origin)
+    private void SetEquippedTiles(OldGrid<GridCellValue> theGrid, PlacedGridObject obj, Vector2Int origin)
     {
         ResetCurrentEquippedTiles();
 
@@ -216,7 +215,7 @@ public class GridManager : MonoBehaviour
             lastEquippedTiles.placedObj.SetEquipStatus(false);
             foreach (Vector2Int coord in lastEquippedTiles.coordinates)
             {
-                Grid<GridCellValue> grid = lastEquippedTiles.grid;
+                OldGrid<GridCellValue> grid = lastEquippedTiles.grid;
                 GridCellValue cell = grid.GetGridCellValue(coord.x, coord.y);
                 GridTile tile = cell.GetGridTile();
                 tile.SetDefualtMat();
@@ -394,7 +393,7 @@ public class GridManager : MonoBehaviour
         originalPlacedGridObject = null;
     }
 
-    public void SpawnItemInGrid(Grid<GridCellValue> theGrid, ItemObject itemObj, Vector2Int itemObjPos, ItemObject.Dir dir, Canvas canvas)
+    public void SpawnItemInGrid(OldGrid<GridCellValue> theGrid, ItemObject itemObj, Vector2Int itemObjPos, ItemObject.Dir dir, Canvas canvas)
     {
         //print(itemObj);
         Vector2Int rotationOffset = itemObj.GetRotationOffset(dir);
@@ -449,7 +448,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private IEnumerator GridTraversal(GridObject gridToTraverse)
+    private IEnumerator GridTraversal(OldGridObject gridToTraverse)
     {
         if (gridToTraverse.GetIsSearchable())
         {
@@ -512,7 +511,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private int GetRowOfTopMostItem(GridObject grid)
+    private int GetRowOfTopMostItem(OldGridObject grid)
     {
         //print(grid.GetGridWidth());
         for (int row = grid.GetGridHeight()-1; row >=0; row--)
@@ -531,7 +530,7 @@ public class GridManager : MonoBehaviour
         return -1;
     }
 
-    private bool CheckTargetItemName(GridObject grid, int x, int y)
+    private bool CheckTargetItemName(OldGridObject grid, int x, int y)
     {
         return grid.GetGrid().GetGridCellValue(x, y).GetPlacedGridObject().GetObjectName() == targetItemName;
     }
@@ -555,7 +554,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void MoveGridArrow(GridObject grid, Vector2Int tile)
+    private void MoveGridArrow(OldGridObject grid, Vector2Int tile)
     {
         grid.RevealArrow();
         //grid.MoveArrow(grid.GetGrid().GetWorldPosition(tile.x,tile.y));

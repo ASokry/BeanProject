@@ -78,6 +78,7 @@ public class CharacterMotion : MonoBehaviour
         timer += Time.deltaTime;
         //print(timer);
 
+
         if(timer <= localWaitTime)
         {
             stopped = false;
@@ -151,6 +152,7 @@ public class CharacterMotion : MonoBehaviour
                 areaTargetBox.SetActive(true);
                 if (areaTargettedEnemies.Count > 0)
                 {
+                    //SetStop(true);
                     attackTimer += Time.deltaTime;
                     if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
                     {
@@ -176,6 +178,7 @@ public class CharacterMotion : MonoBehaviour
             else
             {
                 areaTargetBox.SetActive(false);
+                //SetStop(false);
             }
 
             if (weaponObject.aimType == WeaponObject.AimType.MeleeAreaTargeting) // handles attack hit and reload logic for area targetting weapons
@@ -183,6 +186,7 @@ public class CharacterMotion : MonoBehaviour
                 meleeTargetBox.SetActive(true);
                 if (areaTargettedEnemies.Count > 0)
                 {
+                    //SetStop(true);
                     attackTimer += Time.deltaTime;
                     if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
                     {
@@ -208,6 +212,7 @@ public class CharacterMotion : MonoBehaviour
             else
             {
                 meleeTargetBox.SetActive(false);
+               // SetStop(false);
             }
 
             if (weaponObject.curAmmo <= 0) // preforms reload logic when curShots runs out, for melee weapons this value will represent durability (unless we choose not to use durability)
@@ -292,6 +297,10 @@ public class CharacterMotion : MonoBehaviour
             localWaitTime = waitTime;
             stopped = true;
         }
+    }
+    public void SetStop(bool isStopped)
+    {
+        stopped = isStopped;
     }
     public void WalkToggle()
     {

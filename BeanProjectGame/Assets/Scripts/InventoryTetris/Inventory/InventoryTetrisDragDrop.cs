@@ -40,7 +40,8 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
         canvasGroup.alpha = .7f;
         canvasGroup.blocksRaycasts = false;
 
-        ItemTetrisSO.CreateVisualGrid(transform.GetChild(0), placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, inventoryTetris.GetGrid().GetCellSize());
+        //ItemTetrisSO.CreateVisualGrid(transform.GetChild(0), placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, inventoryTetris.GetGrid().GetCellSize());
+
         InventoryTetrisDragDropSystem.Instance.StartedDragging(inventoryTetris, placedObject);
     }
 

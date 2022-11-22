@@ -12,6 +12,10 @@ public class InventoryTetris : MonoBehaviour {
 
     [SerializeField, Range(1, 10)] private int gridWidth = 10;
     [SerializeField, Range(1, 10)] private int gridHeight = 10;
+    [SerializeField, Range(1, 50)] private float cellSize = 50f;
+
+    public int GetWidth() { return gridWidth; }
+    public int GetHeight() { return gridHeight; }
 
     private Grid<GridObject> grid;
     private RectTransform itemContainer;
@@ -20,7 +24,6 @@ public class InventoryTetris : MonoBehaviour {
     private void Awake() {
         Instance = this;
 
-        float cellSize = 50f;
         grid = new Grid<GridObject>(gridWidth, gridHeight, cellSize, new Vector3(0, 0, 0), (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
 
         itemContainer = transform.Find("ItemContainer").GetComponent<RectTransform>();

@@ -5,8 +5,8 @@ using UnityEngine;
 public class InventorySearch : MonoBehaviour
 {
     private bool searchState = false;
-
     [SerializeField] private bool inCombat = true;
+
     [SerializeField] private InventoryTetris inventoryTetris;
     [SerializeField] private InventoryArrow inventoryArrow;
 
@@ -34,12 +34,15 @@ public class InventorySearch : MonoBehaviour
         while (row >= 0 && searchState)
         {
             //Reveal and move the arrow along y axis of grid on left hand side
+            inventoryArrow.SetMax(inventoryTetris.GetWidth());
+            inventoryArrow.ResetFill();
             inventoryArrow.MoveArrow(0, row);
             inventoryArrow.Reveal();
 
             // search through each column of current row
             for (int col = 0; col < inventoryTetris.GetWidth(); col++)
             {
+                inventoryArrow.Fill();
                 yield return new WaitForSeconds(searchDelay);
 
                 if (!inventoryTetris.GetGrid().GetGridObject(col, row).HasPlacedObject())
@@ -56,8 +59,8 @@ public class InventorySearch : MonoBehaviour
                     //print("found it at: " + col + ", " + row);
 
                     //get reference to itemObject
-                    //itemObject = inventoryTetris.GetGrid().GetGridObject(col, row).GetPlacedGridObject().GetItemObject();
-                    InventorySearchSystem.Instance.foundItem = default;
+                    InventoryItem item = inventoryTetris.GetGrid().GetGridObject(col, row).GetPlacedObject().GetComponent<InventoryItem>();
+                    InventorySearchSystem.Instance.SetFoundItem(item);
                     //print(itemObject);
 
                     //after item is found, reset search state

@@ -119,7 +119,10 @@ public class InventoryTetris : MonoBehaviour {
             PlacedObject placedObject = PlacedObject.CreateCanvas(itemContainer, placedObjectWorldPosition, placedObjectOrigin, dir, itemTetrisSO);
             placedObject.transform.rotation = Quaternion.Euler(0, 0, -itemTetrisSO.GetRotationAngle(dir));
 
+            //Set InventoryTetris reference in applicable scripts
             placedObject.GetComponent<InventoryTetrisDragDrop>().Setup(this);
+            placedObject.GetComponent<InventoryGravity>().Setup(this);
+            //
 
             foreach (Vector2Int gridPosition in gridPositionList) {
                 grid.GetGridObject(gridPosition.x, gridPosition.y).SetPlacedObject(placedObject);

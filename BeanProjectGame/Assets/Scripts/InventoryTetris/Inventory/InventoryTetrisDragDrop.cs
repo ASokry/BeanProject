@@ -23,12 +23,14 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
 
     private InventoryTetris inventoryTetris;
     private PlacedObject placedObject;
+    private InventoryGravity inventoryGravity;
 
     private void Awake() {
         canvas = GetComponentInParent<Canvas>();
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         placedObject = GetComponent<PlacedObject>();
+        inventoryGravity = GetComponent<InventoryGravity>();
     }
 
     public void Setup(InventoryTetris inventoryTetris) {

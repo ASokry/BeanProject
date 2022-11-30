@@ -46,7 +46,7 @@ public class InventoryTetrisManualPlacement : MonoBehaviour {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(itemContainer, Input.mousePosition, null, out Vector2 anchoredPosition);
             
             Vector2Int placedObjectOrigin = inventoryTetris.GetGridPosition(anchoredPosition);
-
+            //print(placedObjectOrigin);
             bool tryPlaceItem = inventoryTetris.TryPlaceItem(placedObjectTypeSO as ItemTetrisSO, placedObjectOrigin, dir);
 
             if (tryPlaceItem) {

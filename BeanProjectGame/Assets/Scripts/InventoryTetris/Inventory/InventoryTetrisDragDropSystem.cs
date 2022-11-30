@@ -58,7 +58,7 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
         draggingInventoryTetris = inventoryTetris;
         draggingPlacedObject = placedObject;
 
-        //Cursor.visible = false;
+        Cursor.visible = false;
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(inventoryTetris.GetItemContainer(), Input.mousePosition, null, out Vector2 anchoredPosition);
         Vector2Int mouseGridPosition = inventoryTetris.GetGridPosition(anchoredPosition);

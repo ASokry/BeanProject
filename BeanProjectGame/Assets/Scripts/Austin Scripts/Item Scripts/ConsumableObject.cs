@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ConsumableObject : ItemObject
 {
-    public enum ConsumableType {Healing, Throwable, None};
+    public enum ConsumableType { Healing, Throwable, None };
 
     public ConsumableType consumableType;
 
@@ -14,18 +14,17 @@ public class ConsumableObject : ItemObject
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
-    [CustomEditor(typeof(ConsumableObject))]
+    /*[CustomEditor(typeof(ConsumableObject))]
     public class ConsumableObjectEditor : Editor
     {
 
-    }
-
+    }*/
 }

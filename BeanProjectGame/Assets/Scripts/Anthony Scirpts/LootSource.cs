@@ -12,7 +12,7 @@ public class LootSource : MonoBehaviour
     [SerializeField] private List<ItemObject.Dir> lootDirectionsList;
     [SerializeField] private List<Vector2Int> lootCoordinatesList;
 
-    [SerializeField] private GridObject targetGridObject;
+    [SerializeField] private OldGridObject targetGridObject;
 
     private void Start()
     {

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2574561379424253700}
   - component: {fileID: 6281715264500063249}
   - component: {fileID: 4508056216601553020}
+  - component: {fileID: -1664618262425807234}
   m_Layer: 5
   m_Name: Medkit
   m_TagString: Untagged
@@ -75,6 +76,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65c999629e3077d4fa04ae8834c49dc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-1664618262425807234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3907372399806227207}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a24bf11742b0724695e3cddd0a42476, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gravityState: 1
 --- !u!1001 &1350289940524158900
 PrefabInstance:
   m_ObjectHideFlags: 0

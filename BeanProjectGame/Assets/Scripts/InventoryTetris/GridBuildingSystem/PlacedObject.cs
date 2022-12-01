@@ -24,6 +24,7 @@ public class PlacedObject : MonoBehaviour {
         placedObject.placedObjectTypeSO = placedObjectTypeSO;
         placedObject.origin = origin;
         placedObject.dir = dir;
+        placedObject.id = placedObject.GetInstanceID();
 
         return placedObject;
     }
@@ -32,6 +33,7 @@ public class PlacedObject : MonoBehaviour {
     private PlacedObjectTypeSO placedObjectTypeSO;
     private Vector2Int origin;
     private PlacedObjectTypeSO.Dir dir;
+    private int id;
 
     public Vector2Int GetGridPosition() {
         return origin;
@@ -43,6 +45,11 @@ public class PlacedObject : MonoBehaviour {
 
     public PlacedObjectTypeSO.Dir GetDir() {
         return dir;
+    }
+
+    public int GetID()
+    {
+        return id;
     }
 
     public virtual void DestroySelf() {

@@ -25,7 +25,9 @@ public class InventoryTetrisAssets : MonoBehaviour {
     */
     public ItemTetrisSO GetItemTetrisSOFromName(string itemTetrisSOName) {
         foreach (ItemTetrisSO itemTetrisSO in itemTetrisSOArray) {
+            //print(itemTetrisSOName);
             if (itemTetrisSO.name == itemTetrisSOName) {
+                //print("found");
                 return itemTetrisSO;
             }
         }

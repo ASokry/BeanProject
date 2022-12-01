@@ -46,7 +46,7 @@ public class InventoryTetrisManualPlacement : MonoBehaviour {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(itemContainer, Input.mousePosition, null, out Vector2 anchoredPosition);
             
             Vector2Int placedObjectOrigin = inventoryTetris.GetGridPosition(anchoredPosition);
-            //print(placedObjectOrigin);
+            
             bool tryPlaceItem = inventoryTetris.TryPlaceItem(placedObjectTypeSO as ItemTetrisSO, placedObjectOrigin, dir);
 
             if (tryPlaceItem) {
@@ -60,7 +60,7 @@ public class InventoryTetrisManualPlacement : MonoBehaviour {
             }
         }
 
-        if (Input.GetMouseButtonDown(1)) { dir = PlacedObjectTypeSO.GetNextDir(dir); }
+        if (Input.GetMouseButtonDown(1) && placedObjectTypeSO != null) { dir = PlacedObjectTypeSO.GetNextDir(dir); }
 
         // Test item placements
         if (Input.GetKeyDown(KeyCode.Alpha1)) { placedObjectTypeSO = placedObjectTypeSOList[0]; RefreshSelectedObjectType(); }

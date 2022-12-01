@@ -85,11 +85,49 @@ public class InventoryTetris : MonoBehaviour {
         return grid.IsValidGridPosition(gridPosition);
     }
 
+    public bool CheckBuildItemPositions(List<Vector2Int> gridPositionList, PlacedObject placedObject)
+    {
+        foreach (Vector2Int gridPosition in gridPositionList)
+        {
+            bool isValidPosition = grid.IsValidGridPosition(gridPosition);
+            if (!isValidPosition)
+            {
+                // Not valid
+                return false;
+            }
+            GridObject gridObject = grid.GetGridObject(gridPosition.x, gridPosition.y);
+            print(gridPosition.x + ", " + gridPosition.y + ", " + gridObject.GetPlacedObject());
+            if (!gridObject.CanBuild() && gridObject.GetPlacedObject().GetID() != placedObject.GetID())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private bool CheckBuildItemPositions(List<Vector2Int> gridPositionList)
+    {
+        foreach (Vector2Int gridPosition in gridPositionList)
+        {
+            bool isValidPosition = grid.IsValidGridPosition(gridPosition);
+            if (!isValidPosition)
+            {
+                // Not valid
+                return false;
+            }
+            if (!grid.GetGridObject(gridPosition.x, gridPosition.y).CanBuild())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public bool TryPlaceItem(ItemTetrisSO itemTetrisSO, Vector2Int placedObjectOrigin, PlacedObjectTypeSO.Dir dir) {
         // Test Can Build
         List<Vector2Int> gridPositionList = itemTetrisSO.GetGridPositionList(placedObjectOrigin, dir);
-        bool canPlace = true;
+        bool canPlace = CheckBuildItemPositions(gridPositionList);
+        /*bool canPlace = true;
         foreach (Vector2Int gridPosition in gridPositionList) {
             bool isValidPosition = grid.IsValidGridPosition(gridPosition);
             if (!isValidPosition) {
@@ -101,7 +139,7 @@ public class InventoryTetris : MonoBehaviour {
                 canPlace = false;
                 break;
             }
-        }
+        }*/
 
         if (canPlace) {
             foreach (Vector2Int gridPosition in gridPositionList) {
@@ -121,7 +159,7 @@ public class InventoryTetris : MonoBehaviour {
 
             //Set InventoryTetris reference in applicable scripts
             placedObject.GetComponent<InventoryTetrisDragDrop>().Setup(this);
-            placedObject.GetComponent<InventoryGravity>().Setup(this);
+            //placedObject.GetComponent<InventoryGravity>().Setup(this);
             //
 
             foreach (Vector2Int gridPosition in gridPositionList) {

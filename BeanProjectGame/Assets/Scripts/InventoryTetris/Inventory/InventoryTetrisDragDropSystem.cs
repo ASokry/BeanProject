@@ -17,6 +17,10 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
     private Vector2 mouseDragAnchoredPositionOffset;
     private PlacedObjectTypeSO.Dir dir;
 
+    public PlacedObject GetPlacedObject()
+    {
+        return draggingPlacedObject;
+    }
 
     private void Awake() {
         Instance = this;
@@ -31,7 +35,7 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(1)) { dir = PlacedObjectTypeSO.GetNextDir(dir); }
+        if (Input.GetMouseButtonDown(1) && draggingPlacedObject != null) { dir = PlacedObjectTypeSO.GetNextDir(dir); }
 
         if (draggingPlacedObject != null) {
             // Calculate target position to move the dragged item

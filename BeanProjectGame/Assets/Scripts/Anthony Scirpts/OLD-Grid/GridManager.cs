@@ -178,7 +178,7 @@ public class GridManager : MonoBehaviour
             if (placedGridObject.GetComponent<WeaponObject>() != null)
             {
                 SetEquippedTiles(currentGridMouseIsIn, placedGridObject, placedGridObject.GetOrigin());
-                characterMotion.SetWeaponObject(placedGridObject.GetComponent<WeaponObject>());
+                //characterMotion.SetWeaponObject(placedGridObject.GetComponent<WeaponObject>());
             }
             else if(placedGridObject.GetComponent<ConsumableObject>() != null)
             {

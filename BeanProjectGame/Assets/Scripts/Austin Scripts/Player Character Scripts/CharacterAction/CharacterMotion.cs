@@ -6,7 +6,7 @@ public class CharacterMotion : MonoBehaviour
 {
     [Header("Script References")]
     public BulletTarget bulletTarget;
-    public GridManager gridManager;
+    //public GridManager gridManager;
     public EnemyManager enemyManager;
     public WeaponsList weaponList;
     public CharacterStats characterStats;
@@ -36,7 +36,7 @@ public class CharacterMotion : MonoBehaviour
     private float attackTimer;
     private float attackDelay;
     private bool stopped;
-    public WeaponObject weaponObject;
+    public InventoryWeapon weaponObject;
     public ConsumableObject consumableObject;
     //private int curDamage;
     public GameObject targettedEnemy;
@@ -66,7 +66,7 @@ public class CharacterMotion : MonoBehaviour
             gameObject.GetComponent<MeshRenderer>().enabled = false;
         }
 
-        healthBarUI.SetMaxHealth(curHealth);
+        //healthBarUI.SetMaxHealth(curHealth);//Health UI by Anthony
     }
 
     // Update is called once per frame
@@ -110,7 +110,7 @@ public class CharacterMotion : MonoBehaviour
         {
             attackDelay = weaponObject.timeBetweenAttacks;
 
-            if (weaponObject.aimType == WeaponObject.AimType.AutoTargeting) // handles attack hit and reload logic for autotargetting weapons
+            if (weaponObject.aimType == InventoryWeapon.AimType.AutoTargeting) // handles attack hit and reload logic for autotargetting weapons
             {
                 //print(weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse));
                 RaycastHit hit;
@@ -151,7 +151,7 @@ public class CharacterMotion : MonoBehaviour
                 }
             }
 
-            if (weaponObject.aimType == WeaponObject.AimType.AreaTargeting) // handles attack hit and reload logic for area targetting weapons
+            if (weaponObject.aimType == InventoryWeapon.AimType.AreaTargeting) // handles attack hit and reload logic for area targetting weapons
             {
                 areaTargetBox.SetActive(true);
                 if (areaTargettedEnemies.Count > 0)
@@ -183,7 +183,7 @@ public class CharacterMotion : MonoBehaviour
                 areaTargetBox.SetActive(false);
             }
 
-            if (weaponObject.aimType == WeaponObject.AimType.MeleeAreaTargeting) // handles attack hit and reload logic for area targetting weapons
+            if (weaponObject.aimType == InventoryWeapon.AimType.MeleeAreaTargeting) // handles attack hit and reload logic for area targetting weapons
             {
                 meleeTargetBox.SetActive(true);
                 if (areaTargettedEnemies.Count > 0)
@@ -217,33 +217,33 @@ public class CharacterMotion : MonoBehaviour
 
             if (weaponObject.curAmmo <= 0) // preforms reload logic when curShots runs out, for melee weapons this value will represent durability (unless we choose not to use durability)
             {
-                if (gridManager.foundedItem == null)
+                if (InventorySearchSystem.Instance.foundItem == null)
                 {
-                    gridManager.StartGridTraversal(weaponObject.ammoType);
+                    InventorySearchSystem.Instance.StartGridSearch(weaponObject.ammoType);
                 }
 
-                if (gridManager.foundedItem != null && gridManager.foundedItem.name == weaponObject.ammoType)
+                if (InventorySearchSystem.Instance.foundItem != null && InventorySearchSystem.Instance.foundItem.GetName() == weaponObject.ammoType)
                 {
                     weaponObject.SetCurAmmo(weaponObject.clipSize);
-                    gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);
-                    gridManager.foundedItem = null;
+                    //gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);//Anthony
+                    InventorySearchSystem.Instance.ResetSearchSystem();
                 }
             }
         }
 
         if(consumableObject != null) // if the script has a consumable object, imediately preform its effect and then set it to null and delete the object from the grid
         {
-            gridManager.StartGridTraversal(consumableObject.name);
+            InventorySearchSystem.Instance.StartGridSearch(consumableObject.name);
 
-            if(gridManager.foundedItem != null && gridManager.foundedItem.name == consumableObject.name)
+            if(InventorySearchSystem.Instance.foundItem != null && InventorySearchSystem.Instance.foundItem.GetName() == consumableObject.name)
             {
                 if (consumableObject.consumableType == ConsumableObject.ConsumableType.Healing)
                 {
                     if (curHealth < characterStats.health)
                     {
                         curHealth += consumableObject.healAmount;
-                        gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);
-                        gridManager.foundedItem = null;
+                        //gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);//Anthony
+                        InventorySearchSystem.Instance.ResetSearchSystem();
                         consumableObject = null;
                     }
                 }
@@ -327,7 +327,7 @@ public class CharacterMotion : MonoBehaviour
         lineRenderer.SetPosition(1, newTargetPosition);
     }
 
-    public void SetWeaponObject(WeaponObject weaponObject)
+    public void SetWeaponObject(InventoryWeapon weaponObject)
     {
         this.weaponObject = weaponObject;
     }

@@ -35,7 +35,12 @@ public class InventorySearchSystem : MonoBehaviour
         foundItem = inventoryItem;
     }
 
-    public IEnumerator SearchThroughGrids(string target)
+    public void StartGridSearch(string name)
+    {
+        StartCoroutine(SearchThroughGrids(name));
+    }
+
+    private IEnumerator SearchThroughGrids(string target)
     {
         int index = gridSearchList.Count-1;
         while (index >=0)

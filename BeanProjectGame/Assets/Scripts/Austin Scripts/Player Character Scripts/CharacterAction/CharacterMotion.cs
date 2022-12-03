@@ -78,13 +78,23 @@ public class CharacterMotion : MonoBehaviour
 
         characterAnimationManager.characterVelocity = (transform.position - previousPosition).magnitude / Time.deltaTime;
         previousPosition = transform.position;
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.right, out hit, .5f))
+        {
+            if (hit.transform.tag == "Enemy")
+            {
+                SetStop(true);
+            }
+        }
+
         //print(playerRigidbody.velocity.magnitude);
 
-        timer += Time.deltaTime;
+        //timer += Time.deltaTime;
         //print(timer);
 
 
-        if(timer <= localWaitTime)
+        /*if(timer <= localWaitTime)
         {
             stopped = false;
         }
@@ -114,8 +124,8 @@ public class CharacterMotion : MonoBehaviour
             if (weaponObject.aimType == InventoryWeapon.AimType.AutoTargeting) // handles attack hit and reload logic for autotargetting weapons
             {
                 //print(weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse));
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, transform.right, out hit))
+                RaycastHit distanceHit;
+                if (Physics.Raycast(transform.position, transform.right, out distanceHit))
                 {
                     if (hit.transform.tag == "Enemy")
                     {

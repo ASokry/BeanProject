@@ -79,10 +79,10 @@ public class CharacterMotion : MonoBehaviour
         characterAnimationManager.characterVelocity = (transform.position - previousPosition).magnitude / Time.deltaTime;
         previousPosition = transform.position;
 
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.right, out hit, .5f))
+        RaycastHit distanceHit;
+        if (Physics.Raycast(transform.position, transform.right, out distanceHit, .5f))
         {
-            if (hit.transform.tag == "Enemy")
+            if (distanceHit.transform.tag == "Enemy")
             {
                 SetStop(true);
             }
@@ -117,15 +117,16 @@ public class CharacterMotion : MonoBehaviour
         //the way these character stats are accessed is really ineffecient, when we develop stats more we need to go back and improve how stats are accessed so it isn't in the Update all the time.
         finesse = characterStats.curFinesse;
         strength = characterStats.curStrength;
-        if(weaponObject != null && stopped)
+        if(weaponObject != null /*&& stopped*/)
         {
             attackDelay = weaponObject.timeBetweenAttacks;
 
             if (weaponObject.aimType == InventoryWeapon.AimType.AutoTargeting) // handles attack hit and reload logic for autotargetting weapons
             {
+            
                 //print(weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse));
-                RaycastHit distanceHit;
-                if (Physics.Raycast(transform.position, transform.right, out distanceHit))
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, transform.right, out hit))
                 {
                     if (hit.transform.tag == "Enemy")
                     {
@@ -133,8 +134,9 @@ public class CharacterMotion : MonoBehaviour
                     }
                 }
 
-                if (targettedEnemy != null)
+                if (targettedEnemy != null && Vector3.Distance(transform.position, targettedEnemy.transform.position) <= weaponObject.range)
                 {
+                    SetStop(true);
                     targettedEnemyBehaviour = targettedEnemy.GetComponent<EnemyBehaviour>();
                     attackTimer += Time.deltaTime;
                     if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
@@ -159,6 +161,10 @@ public class CharacterMotion : MonoBehaviour
                         attackTimer = 0;
                     }
 
+                }
+                if(Vector3.Distance(transform.position, targettedEnemy.transform.position) >= weaponObject.range)
+                {
+                    //SetStop(false);
                 }
             }
 
@@ -298,7 +304,7 @@ public class CharacterMotion : MonoBehaviour
     public void TakeDamage(int damage)
     {
         curHealth -= damage;
-        healthBarUI.SetHealth(curHealth);
+        //healthBarUI.SetHealth(curHealth);
     }
     public void Stop(string waitType, float waitTime)
     {

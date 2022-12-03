@@ -961,7 +961,7 @@ GameObject:
   - component: {fileID: 112962638}
   - component: {fileID: 112962637}
   - component: {fileID: 112962636}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: GunAreaTargetBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5461,7 +5461,7 @@ GameObject:
   - component: {fileID: 642581263}
   - component: {fileID: 642581262}
   - component: {fileID: 642581261}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: 'MeleeAreaTargetBox '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8466,12 +8466,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ca77b3c0ad24c648b7ad5d447aac03d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  levelManager: {fileID: 0}
+  player: {fileID: 1766612368}
+  levelManager: {fileID: 1954734674}
   nearLeftEnemy: {fileID: 0}
   nearRightEnemy: {fileID: 0}
   projectileInstatiator: {fileID: 0}
-  enemyManager: {fileID: 0}
+  enemyManager: {fileID: 1954734675}
   enemyStats: {fileID: 11400000, guid: a5bbeabc483f4e345ae127a4890f5fd9, type: 2}
   characterAnimationManager: {fileID: 898215133}
   curEnemyHealth: 0
@@ -8553,7 +8553,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 898215132}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 37.2, y: 0.84, z: 0}
+  m_LocalPosition: {x: 140.8, y: 0.84, z: 0}
   m_LocalScale: {x: 2.5624, y: 5.906845, z: 2.5624}
   m_Children:
   - {fileID: 249641568}
@@ -12554,7 +12554,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1424115339}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 58.23, y: 0.98, z: 0.017368793}
+  m_LocalPosition: {x: 161.83, y: 0.98, z: 0.017368793}
   m_LocalScale: {x: 2.5624, y: 5.906845, z: 2.5624}
   m_Children:
   - {fileID: 893355168}
@@ -16170,12 +16170,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ca77b3c0ad24c648b7ad5d447aac03d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  levelManager: {fileID: 0}
+  player: {fileID: 1766612368}
+  levelManager: {fileID: 1954734674}
   nearLeftEnemy: {fileID: 0}
   nearRightEnemy: {fileID: 0}
   projectileInstatiator: {fileID: 0}
-  enemyManager: {fileID: 0}
+  enemyManager: {fileID: 1954734675}
   enemyStats: {fileID: 11400000, guid: a5bbeabc483f4e345ae127a4890f5fd9, type: 2}
   characterAnimationManager: {fileID: 1880526698}
   curEnemyHealth: 0
@@ -16257,7 +16257,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1880526697}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 46.59, y: 0.98, z: 0.017368793}
+  m_LocalPosition: {x: 150.19, y: 0.98, z: 0.017368793}
   m_LocalScale: {x: 2.5624, y: 5.906845, z: 2.5624}
   m_Children:
   - {fileID: 150967331}
@@ -18213,7 +18213,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2093850371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18301,7 +18301,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2093850370}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.54, y: 1.5947, z: 2.7164}
+  m_LocalPosition: {x: 117.14001, y: 1.5947, z: 2.7164}
   m_LocalScale: {x: 1, y: 10.061675, z: 11.131185}
   m_Children: []
   m_Father: {fileID: 0}

@@ -88,9 +88,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fe0a1c9e894bb14cb57085be10d2d35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemName: 
   itemType: 0
   weaponType: 0
   aimType: 0
+  range: 50
   damagePerShot: 10
   ammoType: H-Ammo
   clipSize: 6

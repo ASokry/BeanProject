@@ -6,11 +6,16 @@ public class InventoryGravitySystem : MonoBehaviour
 {
     public static InventoryGravitySystem Instance { get; private set; }
 
+    public delegate void GravityAction();
+    public static event GravityAction OnGravity;
+
     public enum GravitySystemState { Selecting, Starting, Processing, Finalizing, Reseting }
     [SerializeField] private GravitySystemState currentState = GravitySystemState.Selecting;
 
     [SerializeField] private List<InventoryGravity> gravityList = new List<InventoryGravity>();
     private InventoryGravity currentInventoryGravity;
+
+    [SerializeField] private float gravityDelay = 0.05f;
 
     private void Awake()
     {
@@ -19,15 +24,17 @@ public class InventoryGravitySystem : MonoBehaviour
 
     public void AddToList(InventoryGravity inventoryGravity)
     {
-        //print("add");
-        gravityList.Add(inventoryGravity);
+        if (!gravityList.Contains(inventoryGravity))
+        {
+            //print("add to gravity list");
+            gravityList.Add(inventoryGravity);
+        }
     }
 
     public void RemoveFromList(int index)
     {
-        //print("remove");
+        //print("remove from gravity list");
         gravityList.RemoveAt(index);
-        currentState = GravitySystemState.Selecting;
     }
 
     private void Update()
@@ -35,24 +42,35 @@ public class InventoryGravitySystem : MonoBehaviour
         if (currentState == GravitySystemState.Selecting && gravityList.Count > 0)
         {
             currentInventoryGravity = gravityList[0];
-            currentState = GravitySystemState.Processing;
+            currentState = GravitySystemState.Starting;
         }
 
-        if (currentState == GravitySystemState.Processing && gravityList.Count > 0)
+        if (currentState == GravitySystemState.Starting && gravityList.Count > 0)
         {
-            //Gravity(currentInventoryGravity);
-        }
-
-        foreach (InventoryGravity inventoryGravity in gravityList)
-        {
-            if (inventoryGravity.GetGravityState())
+            if (currentInventoryGravity.IsGravityOn())
             {
-                Gravity(inventoryGravity);
+                //print(currentInventoryGravity.name);
+                StartCoroutine(Gravity(currentInventoryGravity));
+                currentState = GravitySystemState.Processing;
             }
+            else
+            {
+                print("not affected by gravity");
+                RemoveFromList(0);
+                currentState = GravitySystemState.Finalizing;
+                return;
+            }
+        }
+
+        if (currentState == GravitySystemState.Finalizing)
+        {
+            //print("finalizing");
+            if (OnGravity != null) OnGravity();
+            currentState = GravitySystemState.Selecting;
         }
     }
 
-    private void Gravity(InventoryGravity inventoryGravity)
+    private IEnumerator Gravity(InventoryGravity inventoryGravity)
     {
         PlacedObject placedObject = inventoryGravity.GetPlacedObject();
         PlacedObjectTypeSO.Dir dir = placedObject.GetDir();
@@ -61,12 +79,17 @@ public class InventoryGravitySystem : MonoBehaviour
 
         List<Vector2Int> gridPositionList = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(rowBelow, dir);
         bool canPlace = inventoryTetris.CheckBuildItemPositions(gridPositionList, placedObject);
-        print(canPlace);
+        //print(canPlace);
 
-        /*if (canPlace)
+        if (canPlace)
         {
+            //print(inventoryGravity.name);
             inventoryTetris.RemoveItemAt(placedObject.GetGridPosition());
             inventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, rowBelow, dir);
-        }*/
+        }
+        yield return new WaitForSeconds(gravityDelay);
+
+        RemoveFromList(0);
+        currentState = GravitySystemState.Finalizing;
     }
 }

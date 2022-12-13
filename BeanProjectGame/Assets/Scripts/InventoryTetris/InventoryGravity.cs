@@ -6,71 +6,79 @@ public class InventoryGravity : MonoBehaviour
 {
     private InventoryTetris inventoryTetris;
     private PlacedObject placedObject;
-    private PlacedObjectTypeSO.Dir dir;
 
-    [SerializeField] private bool gravityState = true;
+    [SerializeField] private bool isGravity = true;
 
     public InventoryTetris GetInventoryTetris() { return inventoryTetris; }
     public PlacedObject GetPlacedObject() { return placedObject; }
-    public bool GetGravityState() { return gravityState; }
-    public void SetGravityState(bool b) { gravityState = b; }
+    public bool IsGravityOn() { return isGravity; }
+    public void ChangeGravity(bool b) { isGravity = b; }
 
     private void Awake()
     {
         placedObject = GetComponent<PlacedObject>();
-        dir = placedObject.GetDir();
-    }
-
-    private void Start()
-    {
-        InventoryGravitySystem.Instance.AddToList(this);
     }
 
     public void Setup(InventoryTetris inventoryTetris)
     {
         this.inventoryTetris = inventoryTetris;
+        AddToInventoryGravitySystem();
     }
 
-    private void Update()
+    private void AddToInventoryGravitySystem()
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        InventoryGravitySystem.Instance.AddToList(this);
+        if (isGravity)
         {
-            //Gravity();
+            InventoryGravitySystem.OnGravity += TryMoveDown;
         }
     }
 
-    // will need a gravity manager/systems
-    public void Gravity()
+    private void TryMoveDown()
     {
-        dir = placedObject.GetDir();
-        Vector2Int rowBelow = GetRowBelow();
-        //print(rowBelow);
-
-        //InventoryGravitySystem.Instance.RemoveFromList(0);
-
-        // Remove item from its current inventory
-        inventoryTetris.RemoveItemAt(placedObject.GetGridPosition());
-
-        bool tryPlaceItem = inventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, rowBelow, dir);
-
-        if (tryPlaceItem)
+        PlacedObjectTypeSO.Dir dir = placedObject.GetDir();
+        List<Vector2Int> gridPositionList = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(GetRowBelow(), dir);
+        bool canPlace = inventoryTetris.CheckBuildItemPositions(gridPositionList, placedObject);
+        //print(canPlace);
+        if (canPlace && isGravity)
         {
-            print("Item moved down");
-            gravityState = true;
-        }
-        else
-        {
-            print("Item cannnot move down");
-            gravityState = false;
-            inventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, placedObject.GetGridPosition(), dir);
+            InventoryGravitySystem.Instance.AddToList(this);
         }
     }
 
     public Vector2Int GetRowBelow()
     {
         Vector2Int currentPosition = placedObject.GetGridPosition();
-        Vector2Int targetPosition = new Vector2Int(currentPosition.x, currentPosition.y-1);
+        PlacedObjectTypeSO.Dir dir = placedObject.GetDir();
+        List<Vector2Int> currentPositionList = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(currentPosition,dir);
+        int lowestPositionY = currentPosition.y;
+        List<int> positionsBelowOrigin = new List<int>();
 
+        foreach (Vector2Int position in currentPositionList)
+        {
+            if (currentPosition.y > position.y && !positionsBelowOrigin.Contains(position.y))
+            {
+                positionsBelowOrigin.Add(position.y);
+            }
+
+            if (lowestPositionY > position.y)
+            {
+                lowestPositionY = position.y;
+            }
+        }
+
+        Vector2Int targetPosition = new Vector2Int(currentPosition.x, (lowestPositionY-1) + positionsBelowOrigin.Count);
+        //print(targetPosition);
         return targetPosition;
+    }
+
+    private void OnDestroy()
+    {
+        InventoryGravitySystem.OnGravity -= TryMoveDown;
+    }
+
+    private void OnDisable()
+    {
+        InventoryGravitySystem.OnGravity -= TryMoveDown;
     }
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 766254817549328410}
   - component: {fileID: 5618044272725263318}
   - component: {fileID: 20899218299103961}
+  - component: {fileID: 8845182660756100285}
   - component: {fileID: 405871854859483804}
   m_Layer: 5
   m_Name: SawnOff
@@ -76,6 +77,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65c999629e3077d4fa04ae8834c49dc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8845182660756100285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6838196751193260807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a24bf11742b0724695e3cddd0a42476, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gravityIsOn: 1
 --- !u!114 &405871854859483804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,6 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fe0a1c9e894bb14cb57085be10d2d35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemName: 
   itemType: 0
   weaponType: 1
   aimType: 1

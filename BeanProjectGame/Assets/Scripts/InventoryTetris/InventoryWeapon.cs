@@ -5,7 +5,7 @@ using UnityEngine;
 public class InventoryWeapon : InventoryItem
 {
     public enum WeaponType { Pistol, Shotgun, Specialty, Melee, None };
-    public enum AimType { AutoTargeting, AreaTargeting, MeleeAreaTargeting, None };
+    public enum AimType { AutoTargeting, AreaTargeting, None };
 
     public WeaponType weaponType = WeaponType.None;
     public AimType aimType = AimType.None;

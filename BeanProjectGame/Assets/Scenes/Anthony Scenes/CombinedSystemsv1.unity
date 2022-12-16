@@ -981,7 +981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterMotion: {fileID: 1766612370}
-  debugMode: 0
+  debugMode: 1
 --- !u!65 &112962637
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1051,12 +1051,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 112962635}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 30.015268, y: 0, z: 1.9007628}
-  m_LocalScale: {x: 50.23179, y: 14.570356, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5.5883727, y: 0.28770018, z: 0.024999857}
+  m_LocalScale: {x: 11.176745, y: 5.555212, z: 1}
   m_Children: []
-  m_Father: {fileID: 1766612376}
-  m_RootOrder: 3
+  m_Father: {fileID: 1216985629}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &117307755
 GameObject:
@@ -5467,7 +5467,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &642581261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5481,7 +5481,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterMotion: {fileID: 1766612370}
-  debugMode: 0
+  debugMode: 1
 --- !u!65 &642581262
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10845,6 +10845,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198386356}
   m_CullTransparentMesh: 1
+--- !u!1 &1216985628
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1216985629}
+  m_Layer: 0
+  m_Name: AreaTargetParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1216985629
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1216985628}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 4.899374, y: 0.024999946, z: 1.1461756}
+  m_LocalScale: {x: 4.494313, y: 2.6228263, z: 1}
+  m_Children:
+  - {fileID: 112962640}
+  m_Father: {fileID: 1766612376}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1230325116
 GameObject:
   m_ObjectHideFlags: 0
@@ -15003,7 +15034,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletTarget: {fileID: 1956923211}
   enemyManager: {fileID: 1954734675}
-  weaponList: {fileID: 11400000, guid: 97e17f049d9d97c47b5e5d330ca1a6ec, type: 2}
   characterStats: {fileID: 1766612371}
   characterAnimationManager: {fileID: 1766612372}
   playerRigidbody: {fileID: 1766612369}
@@ -15020,9 +15050,10 @@ MonoBehaviour:
   enemyDistance: 0
   areaTargettedEnemies: []
   areaEnemyBehaviours: []
+  areaTargetPivot: {fileID: 1216985628}
   areaTargetBox: {fileID: 112962635}
   meleeTargetBox: {fileID: 642581260}
-  debugMode: 0
+  debugMode: 1
 --- !u!114 &1766612371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15142,7 +15173,7 @@ Transform:
   - {fileID: 695950159}
   - {fileID: 1956923215}
   - {fileID: 616046148}
-  - {fileID: 112962640}
+  - {fileID: 1216985629}
   - {fileID: 642581265}
   - {fileID: 1668409472}
   m_Father: {fileID: 0}
@@ -18365,6 +18396,7 @@ MonoBehaviour:
   canvas: {fileID: 721245277}
   placedObjectTypeSOList:
   - {fileID: 11400000, guid: a50b3894438524341aa2bf8accb2182c, type: 2}
+  - {fileID: 11400000, guid: a3a9b74a1f8336b4ca9d2284725c868c, type: 2}
   - {fileID: 11400000, guid: e9da9ccc215d46f4fa35f11c3fb89dd0, type: 2}
   - {fileID: 11400000, guid: a12ad3635e1862446a1e32bbab6d6e9b, type: 2}
   - {fileID: 11400000, guid: f50b9fa07564db040b422c2f03375200, type: 2}

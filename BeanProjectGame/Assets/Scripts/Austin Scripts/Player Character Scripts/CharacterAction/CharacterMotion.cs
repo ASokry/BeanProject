@@ -8,7 +8,7 @@ public class CharacterMotion : MonoBehaviour
     public BulletTarget bulletTarget;
     //public GridManager gridManager;
     public EnemyManager enemyManager;
-    public WeaponsList weaponList;
+    //public WeaponsList weaponList;
     public CharacterStats characterStats;
     public CharacterAnimationManager characterAnimationManager;
 
@@ -46,6 +46,7 @@ public class CharacterMotion : MonoBehaviour
 
     public List<GameObject> areaTargettedEnemies;
     public List<EnemyBehaviour> areaEnemyBehaviours;
+    public GameObject areaTargetPivot;
     public GameObject areaTargetBox;
     public GameObject meleeTargetBox;
 
@@ -171,6 +172,7 @@ public class CharacterMotion : MonoBehaviour
             if (weaponObject.aimType == InventoryWeapon.AimType.AreaTargeting) // handles attack hit and reload logic for area targetting weapons
             {
                 areaTargetBox.SetActive(true);
+                areaTargetPivot.gameObject.transform.localScale = new Vector3(weaponObject.range, transform.localScale.y, transform.localScale.z);
                 if (areaTargettedEnemies.Count > 0)
                 {
                     //SetStop(true);
@@ -202,7 +204,7 @@ public class CharacterMotion : MonoBehaviour
                 //SetStop(false);
             }
 
-            if (weaponObject.aimType == InventoryWeapon.AimType.MeleeAreaTargeting) // handles attack hit and reload logic for area targetting weapons
+            /*if (weaponObject.aimType == InventoryWeapon.AimType.MeleeAreaTargeting) // handles attack hit and reload logic for area targetting weapons
             {
                 meleeTargetBox.SetActive(true);
                 if (areaTargettedEnemies.Count > 0)
@@ -234,7 +236,7 @@ public class CharacterMotion : MonoBehaviour
             {
                 meleeTargetBox.SetActive(false);
                // SetStop(false);
-            }
+            }*/
 
             if (weaponObject.curAmmo <= 0) // preforms reload logic when curShots runs out, for melee weapons this value will represent durability (unless we choose not to use durability)
             {

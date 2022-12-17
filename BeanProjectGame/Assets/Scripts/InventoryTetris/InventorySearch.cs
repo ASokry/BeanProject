@@ -12,6 +12,8 @@ public class InventorySearch : MonoBehaviour
 
     [SerializeField] private float searchDelay = 1f;
 
+    [SerializeField] private InventoryTetrisBackground inventoryTetrisBackground;
+
     public void StartGridTraversal(string target)
     {
         if ((target != null || target != "") && inCombat)
@@ -30,6 +32,8 @@ public class InventorySearch : MonoBehaviour
     {
         // Traverse through entire grid, starting at the top row
         int row = GetTopMostRow(inventoryTetris);
+        InventoryTileSystem.TileType searchType = InventoryTileSystem.TileType.Search;
+        InventoryTileSystem.TileType defaultType = InventoryTileSystem.TileType.Default;
 
         while (row >= 0 && searchState)
         {
@@ -42,11 +46,13 @@ public class InventorySearch : MonoBehaviour
             // search through each column of current row
             for (int col = 0; col < inventoryTetris.GetWidth(); col++)
             {
+                InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, new Vector2Int(row, col), searchType);
                 inventoryArrow.Fill();
                 yield return new WaitForSeconds(searchDelay);
 
                 if (!inventoryTetris.GetGrid().GetGridObject(col, row).HasPlacedObject())
                 {
+                    InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, new Vector2Int(row, col), defaultType);
                     continue; //if the placedGridObject is empty, then continue loop
                 }
 
@@ -67,8 +73,10 @@ public class InventorySearch : MonoBehaviour
                     searchState = false;
                     //Let GridSearchSystem know item was found
                     InventorySearchSystem.Instance.CanContinue(true);
+                    InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, new Vector2Int(row, col), defaultType);
                     break;
                 }
+                InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, new Vector2Int(row, col), defaultType);
             }
 
             // hide the arrow again

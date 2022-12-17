@@ -7,12 +7,14 @@ public class InventoryGravity : MonoBehaviour
     private InventoryTetris inventoryTetris;
     private PlacedObject placedObject;
 
-    [SerializeField] private bool isGravity = true;
+    [SerializeField] private bool gravity = true;
+    private bool inventoryTetrisGravity;
 
     public InventoryTetris GetInventoryTetris() { return inventoryTetris; }
     public PlacedObject GetPlacedObject() { return placedObject; }
-    public bool IsGravityOn() { return isGravity; }
-    public void ChangeGravity(bool b) { isGravity = b; }
+    public bool IsGravityOn() { return gravity; }
+    public void ChangeGravity(bool b) { gravity = b; }
+    public bool IsInventoryGravityOn() { return inventoryTetrisGravity; }
 
     private void Awake()
     {
@@ -22,15 +24,17 @@ public class InventoryGravity : MonoBehaviour
     public void Setup(InventoryTetris inventoryTetris)
     {
         this.inventoryTetris = inventoryTetris;
+        inventoryTetrisGravity = inventoryTetris.Gravity();
         AddToInventoryGravitySystem();
     }
 
     private void AddToInventoryGravitySystem()
     {
         InventoryGravitySystem.Instance.AddToList(this);
-        if (isGravity)
+        
+        if (gravity && inventoryTetrisGravity)
         {
-            InventoryGravitySystem.OnGravity += TryMoveDown;
+            InventoryGravitySystem.TriggerGravity += TryMoveDown;
         }
     }
 
@@ -40,7 +44,7 @@ public class InventoryGravity : MonoBehaviour
         List<Vector2Int> gridPositionList = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(GetRowBelow(), dir);
         bool canPlace = inventoryTetris.CheckBuildItemPositions(gridPositionList, placedObject);
         //print(canPlace);
-        if (canPlace && isGravity)
+        if (canPlace && gravity && inventoryTetrisGravity)
         {
             InventoryGravitySystem.Instance.AddToList(this);
         }
@@ -74,11 +78,11 @@ public class InventoryGravity : MonoBehaviour
 
     private void OnDestroy()
     {
-        InventoryGravitySystem.OnGravity -= TryMoveDown;
+        InventoryGravitySystem.TriggerGravity -= TryMoveDown;
     }
 
     private void OnDisable()
     {
-        InventoryGravitySystem.OnGravity -= TryMoveDown;
+        InventoryGravitySystem.TriggerGravity -= TryMoveDown;
     }
 }

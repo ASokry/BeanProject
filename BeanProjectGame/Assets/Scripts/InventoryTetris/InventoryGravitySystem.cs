@@ -7,7 +7,7 @@ public class InventoryGravitySystem : MonoBehaviour
     public static InventoryGravitySystem Instance { get; private set; }
 
     public delegate void GravityAction();
-    public static event GravityAction OnGravity;
+    public static event GravityAction TriggerGravity;
 
     public enum GravitySystemState { Selecting, Starting, Processing, Finalizing, Reseting }
     [SerializeField] private GravitySystemState currentState = GravitySystemState.Selecting;
@@ -16,6 +16,8 @@ public class InventoryGravitySystem : MonoBehaviour
     private InventoryGravity currentInventoryGravity;
 
     [SerializeField] private float gravityDelay = 0.05f;
+
+    public bool inCombat = false;// to be moved to GameManager/LevelManager etc.
 
     private void Awake()
     {
@@ -47,7 +49,7 @@ public class InventoryGravitySystem : MonoBehaviour
 
         if (currentState == GravitySystemState.Starting && gravityList.Count > 0)
         {
-            if (currentInventoryGravity.IsGravityOn())
+            if (currentInventoryGravity.IsGravityOn() && currentInventoryGravity.IsInventoryGravityOn())
             {
                 //print(currentInventoryGravity.name);
                 StartCoroutine(Gravity(currentInventoryGravity));
@@ -65,7 +67,7 @@ public class InventoryGravitySystem : MonoBehaviour
         if (currentState == GravitySystemState.Finalizing)
         {
             //print("finalizing");
-            if (OnGravity != null) OnGravity();
+            if (TriggerGravity != null) TriggerGravity();
             currentState = GravitySystemState.Selecting;
         }
     }

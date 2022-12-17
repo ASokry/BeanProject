@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class InventoryTetris : MonoBehaviour {
 
-    public static InventoryTetris Instance { get; private set; }
+    //public static InventoryTetris Instance { get; private set; }
 
 
     public event EventHandler<PlacedObject> OnObjectPlaced;
@@ -20,9 +20,10 @@ public class InventoryTetris : MonoBehaviour {
     private Grid<GridObject> grid;
     private RectTransform itemContainer;
 
-
+    [SerializeField] private bool inventoryTetrisGravity = false;
+    public bool Gravity() { return inventoryTetrisGravity; }
     private void Awake() {
-        Instance = this;
+        //Instance = this;
 
         grid = new Grid<GridObject>(gridWidth, gridHeight, cellSize, new Vector3(0, 0, 0), (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
 

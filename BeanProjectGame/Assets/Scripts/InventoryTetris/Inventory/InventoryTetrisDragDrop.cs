@@ -23,14 +23,12 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
 
     private InventoryTetris inventoryTetris;
     private PlacedObject placedObject;
-    private InventoryGravity inventoryGravity;
 
     private void Awake() {
         canvas = GetComponentInParent<Canvas>();
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         placedObject = GetComponent<PlacedObject>();
-        inventoryGravity = GetComponent<InventoryGravity>();
     }
 
     public void Setup(InventoryTetris inventoryTetris) {
@@ -38,13 +36,16 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
     }
 
     public void OnBeginDrag(PointerEventData eventData) {
-        //Debug.Log("OnBeginDrag");
-        canvasGroup.alpha = .7f;
-        canvasGroup.blocksRaycasts = false;
+        if (!InventoryGravitySystem.Instance.inCombat)
+        {
+            //Debug.Log("OnBeginDrag");
+            canvasGroup.alpha = .7f;
+            canvasGroup.blocksRaycasts = false;
 
-        //ItemTetrisSO.CreateVisualGrid(transform.GetChild(0), placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, inventoryTetris.GetGrid().GetCellSize());
+            //ItemTetrisSO.CreateVisualGrid(transform.GetChild(0), placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, inventoryTetris.GetGrid().GetCellSize());
 
-        InventoryTetrisDragDropSystem.Instance.StartedDragging(inventoryTetris, placedObject);
+            InventoryTetrisDragDropSystem.Instance.StartedDragging(inventoryTetris, placedObject);
+        }
     }
 
     public void OnDrag(PointerEventData eventData) {
@@ -53,11 +54,14 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
     }
 
     public void OnEndDrag(PointerEventData eventData) {
-        //Debug.Log("OnEndDrag");
-        canvasGroup.alpha = 1f;
-        canvasGroup.blocksRaycasts = true;
+        if (!InventoryGravitySystem.Instance.inCombat)
+        {
+            //Debug.Log("OnEndDrag");
+            canvasGroup.alpha = 1f;
+            canvasGroup.blocksRaycasts = true;
 
-        InventoryTetrisDragDropSystem.Instance.StoppedDragging(inventoryTetris, placedObject);
+            InventoryTetrisDragDropSystem.Instance.StoppedDragging(inventoryTetris, placedObject);
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData) {

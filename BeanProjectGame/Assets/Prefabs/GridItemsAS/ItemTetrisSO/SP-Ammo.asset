@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8deb5acad94106d41ae63ce2083c3644, type: 3}
+  m_Name: SP-Ammo
+  m_EditorClassIdentifier: 
+  nameString: SP-Ammo
+  prefab: {fileID: 1868796331889765845, guid: 71d5593a25d4e464dac66ee575099d51, type: 3}
+  visual: {fileID: 7179720732886243319, guid: 303d556c4a5639445a8be82103385a77, type: 3}
+  width: 2
+  height: 1
+  downCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  leftCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 0, y: -1}
+  upCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: -1, y: 0}
+  rightCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}

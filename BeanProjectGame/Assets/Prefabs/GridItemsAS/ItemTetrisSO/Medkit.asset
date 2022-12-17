@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8deb5acad94106d41ae63ce2083c3644, type: 3}
+  m_Name: Medkit
+  m_EditorClassIdentifier: 
+  nameString: Medkit
+  prefab: {fileID: 6368882160808004302, guid: cb81951a19e358648b42f8a6eec5e781, type: 3}
+  visual: {fileID: 3151460712171019340, guid: ae096998e2d8bbf4f8f95f36bf549c7f, type: 3}
+  width: 2
+  height: 2
+  downCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
+  leftCoordinatesList:
+  - {x: 1, y: 0}
+  - {x: 0, y: 0}
+  - {x: 1, y: -1}
+  - {x: 0, y: -1}
+  upCoordinatesList:
+  - {x: -1, y: -1}
+  - {x: 0, y: -1}
+  - {x: -1, y: 0}
+  - {x: 0, y: 0}
+  rightCoordinatesList:
+  - {x: 0, y: 1}
+  - {x: -1, y: 1}
+  - {x: 0, y: 0}
+  - {x: -1, y: 0}

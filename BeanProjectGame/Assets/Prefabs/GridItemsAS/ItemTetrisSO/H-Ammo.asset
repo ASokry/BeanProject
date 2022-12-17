@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8deb5acad94106d41ae63ce2083c3644, type: 3}
+  m_Name: H-Ammo
+  m_EditorClassIdentifier: 
+  nameString: H-Ammo
+  prefab: {fileID: 4075132251783644096, guid: 8424b7cb818aadc48956f7859ebafaf0, type: 3}
+  visual: {fileID: 5798693417713903067, guid: 3d4b49941f0dcdd4583bd56005836010, type: 3}
+  width: 1
+  height: 2
+  downCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  leftCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  upCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: 0, y: -1}
+  rightCoordinatesList:
+  - {x: 0, y: 0}
+  - {x: -1, y: 0}

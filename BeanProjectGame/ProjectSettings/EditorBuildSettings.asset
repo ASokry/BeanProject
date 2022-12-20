@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Anthony Scenes/CodeMonkeyGridTest.unity
-    guid: 165153d7823a9f14fafb62e7f09caec3
+    path: Assets/Scenes/Anthony Scenes/DEMO.unity
+    guid: 727015b08721ef74a85ff67e3ffc23f0
   m_configObjects: {}

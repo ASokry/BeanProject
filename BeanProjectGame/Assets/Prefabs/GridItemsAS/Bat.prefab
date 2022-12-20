@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8787007125554410541}
   - component: {fileID: 7225734880657793901}
   - component: {fileID: 6198938264011117872}
-  - component: {fileID: -2231363247095689377}
+  - component: {fileID: -8362154426489473264}
   m_Layer: 5
   m_Name: Bat
   m_TagString: Untagged
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65c999629e3077d4fa04ae8834c49dc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-2231363247095689377
+--- !u!114 &-8362154426489473264
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,10 +85,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1799315344547664350}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a24bf11742b0724695e3cddd0a42476, type: 3}
+  m_Script: {fileID: 11500000, guid: 7fe0a1c9e894bb14cb57085be10d2d35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravityIsOn: 1
+  itemName: 
+  itemType: 0
+  weaponType: 3
+  aimType: 1
+  range: 5
+  damagePerShot: 10
+  ammoType: 
+  clipSize: 10000000
+  curAmmo: 10000000
+  timeBetweenAttacks: 1
+  baseWeaponAccuracy: 20
+  specialEffects:
+  - Knockback
 --- !u!1001 &6690094731415109528
 PrefabInstance:
   m_ObjectHideFlags: 0

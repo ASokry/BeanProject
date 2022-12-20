@@ -8,7 +8,7 @@ public class CharacterMotion : MonoBehaviour
     public BulletTarget bulletTarget;
     //public GridManager gridManager;
     public EnemyManager enemyManager;
-    public WeaponsList weaponList;
+    //public WeaponsList weaponList;
     public CharacterStats characterStats;
     public CharacterAnimationManager characterAnimationManager;
 
@@ -46,6 +46,7 @@ public class CharacterMotion : MonoBehaviour
 
     public List<GameObject> areaTargettedEnemies;
     public List<EnemyBehaviour> areaEnemyBehaviours;
+    public GameObject areaTargetPivot;
     public GameObject areaTargetBox;
     public GameObject meleeTargetBox;
 
@@ -78,13 +79,23 @@ public class CharacterMotion : MonoBehaviour
 
         characterAnimationManager.characterVelocity = (transform.position - previousPosition).magnitude / Time.deltaTime;
         previousPosition = transform.position;
+
+        RaycastHit distanceHit;
+        if (Physics.Raycast(transform.position, transform.right, out distanceHit, .5f))
+        {
+            if (distanceHit.transform.tag == "Enemy")
+            {
+                SetStop(true);
+            }
+        }
+
         //print(playerRigidbody.velocity.magnitude);
 
-        timer += Time.deltaTime;
+        //timer += Time.deltaTime;
         //print(timer);
 
 
-        if(timer <= localWaitTime)
+        /*if(timer <= localWaitTime)
         {
             stopped = false;
         }
@@ -107,12 +118,13 @@ public class CharacterMotion : MonoBehaviour
         //the way these character stats are accessed is really ineffecient, when we develop stats more we need to go back and improve how stats are accessed so it isn't in the Update all the time.
         finesse = characterStats.curFinesse;
         strength = characterStats.curStrength;
-        if(weaponObject != null && stopped)
+        if(weaponObject != null /*&& stopped*/)
         {
             attackDelay = weaponObject.timeBetweenAttacks;
 
             if (weaponObject.aimType == InventoryWeapon.AimType.AutoTargeting) // handles attack hit and reload logic for autotargetting weapons
             {
+            
                 //print(weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse));
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position, transform.right, out hit))
@@ -123,8 +135,9 @@ public class CharacterMotion : MonoBehaviour
                     }
                 }
 
-                if (targettedEnemy != null)
+                if (targettedEnemy != null && Vector3.Distance(transform.position, targettedEnemy.transform.position) <= weaponObject.range)
                 {
+                    SetStop(true);
                     targettedEnemyBehaviour = targettedEnemy.GetComponent<EnemyBehaviour>();
                     attackTimer += Time.deltaTime;
                     if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
@@ -150,11 +163,16 @@ public class CharacterMotion : MonoBehaviour
                     }
 
                 }
+                if(Vector3.Distance(transform.position, targettedEnemy.transform.position) >= weaponObject.range)
+                {
+                    //SetStop(false);
+                }
             }
 
             if (weaponObject.aimType == InventoryWeapon.AimType.AreaTargeting) // handles attack hit and reload logic for area targetting weapons
             {
                 areaTargetBox.SetActive(true);
+                areaTargetPivot.gameObject.transform.localScale = new Vector3(weaponObject.range, transform.localScale.y, transform.localScale.z);
                 if (areaTargettedEnemies.Count > 0)
                 {
                     //SetStop(true);
@@ -186,7 +204,7 @@ public class CharacterMotion : MonoBehaviour
                 //SetStop(false);
             }
 
-            if (weaponObject.aimType == InventoryWeapon.AimType.MeleeAreaTargeting) // handles attack hit and reload logic for area targetting weapons
+            /*if (weaponObject.aimType == InventoryWeapon.AimType.MeleeAreaTargeting) // handles attack hit and reload logic for area targetting weapons
             {
                 meleeTargetBox.SetActive(true);
                 if (areaTargettedEnemies.Count > 0)
@@ -218,7 +236,7 @@ public class CharacterMotion : MonoBehaviour
             {
                 meleeTargetBox.SetActive(false);
                // SetStop(false);
-            }
+            }*/
 
             if (weaponObject.curAmmo <= 0) // preforms reload logic when curShots runs out, for melee weapons this value will represent durability (unless we choose not to use durability)
             {
@@ -288,7 +306,7 @@ public class CharacterMotion : MonoBehaviour
     public void TakeDamage(int damage)
     {
         curHealth -= damage;
-        healthBarUI.SetHealth(curHealth);
+        //healthBarUI.SetHealth(curHealth);
     }
     public void Stop(string waitType, float waitTime)
     {

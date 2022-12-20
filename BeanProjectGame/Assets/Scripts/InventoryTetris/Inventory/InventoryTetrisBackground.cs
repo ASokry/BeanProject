@@ -6,15 +6,23 @@ using UnityEngine.UI;
 public class InventoryTetrisBackground : MonoBehaviour {
 
     [SerializeField] private InventoryTetris inventoryTetris;
+    [SerializeField] private InventoryTile inventoryTile;
+
+    private Dictionary<Vector2Int, InventoryTile> inventoryTileDictionary = new Dictionary<Vector2Int, InventoryTile>();
+    public Dictionary<Vector2Int, InventoryTile> GetInventoryTileDictionary() { return inventoryTileDictionary; }
 
     private void Start() {
         // Create background
-        Transform template = transform.Find("Template");
-        template.gameObject.SetActive(false);
+        //Transform template = transform.Find("Template");
+        //template.gameObject.SetActive(false);
+        inventoryTile.gameObject.SetActive(false);
 
         for (int x = 0; x < inventoryTetris.GetGrid().GetWidth(); x++) {
             for (int y = 0; y < inventoryTetris.GetGrid().GetHeight(); y++) {
-                Transform backgroundSingleTransform = Instantiate(template, transform);
+                Transform backgroundSingleTransform = Instantiate(inventoryTile.transform, transform);
+                InventoryTile tile = backgroundSingleTransform.GetComponent<InventoryTile>();
+                tile.Setup(inventoryTetris);
+                inventoryTileDictionary.Add(new Vector2Int(x,y), tile);
                 backgroundSingleTransform.gameObject.SetActive(true);
             }
         }

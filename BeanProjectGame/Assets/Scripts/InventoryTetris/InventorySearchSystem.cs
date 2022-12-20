@@ -21,7 +21,7 @@ public class InventorySearchSystem : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.S) && foundItem == null)
         {
-            StartCoroutine(SearchThroughGrids("H-Ammo"));
+            StartGridSearch("H-Ammo");
         }
     }
 

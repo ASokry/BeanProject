@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class InventoryTetris : MonoBehaviour {
 
-    public static InventoryTetris Instance { get; private set; }
+    //public static InventoryTetris Instance { get; private set; }
 
 
     public event EventHandler<PlacedObject> OnObjectPlaced;
@@ -20,9 +20,10 @@ public class InventoryTetris : MonoBehaviour {
     private Grid<GridObject> grid;
     private RectTransform itemContainer;
 
-
+    [SerializeField] private bool inventoryTetrisGravity = false;
+    public bool Gravity() { return inventoryTetrisGravity; }
     private void Awake() {
-        Instance = this;
+        //Instance = this;
 
         grid = new Grid<GridObject>(gridWidth, gridHeight, cellSize, new Vector3(0, 0, 0), (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
 
@@ -89,16 +90,18 @@ public class InventoryTetris : MonoBehaviour {
     {
         foreach (Vector2Int gridPosition in gridPositionList)
         {
+            //print(gridPosition);
             bool isValidPosition = grid.IsValidGridPosition(gridPosition);
             if (!isValidPosition)
             {
                 // Not valid
                 return false;
             }
+
             GridObject gridObject = grid.GetGridObject(gridPosition.x, gridPosition.y);
-            print(gridPosition.x + ", " + gridPosition.y + ", " + gridObject.GetPlacedObject());
             if (!gridObject.CanBuild() && gridObject.GetPlacedObject().GetID() != placedObject.GetID())
             {
+                //print("there's a different item at" + ", " + gridPosition);
                 return false;
             }
         }
@@ -153,16 +156,17 @@ public class InventoryTetris : MonoBehaviour {
         if (canPlace) {
             Vector2Int rotationOffset = itemTetrisSO.GetRotationOffset(dir);
             Vector3 placedObjectWorldPosition = grid.GetWorldPosition(placedObjectOrigin.x, placedObjectOrigin.y) + new Vector3(rotationOffset.x, rotationOffset.y) * grid.GetCellSize();
-
+            
             PlacedObject placedObject = PlacedObject.CreateCanvas(itemContainer, placedObjectWorldPosition, placedObjectOrigin, dir, itemTetrisSO);
             placedObject.transform.rotation = Quaternion.Euler(0, 0, -itemTetrisSO.GetRotationAngle(dir));
 
             //Set InventoryTetris reference in applicable scripts
             placedObject.GetComponent<InventoryTetrisDragDrop>().Setup(this);
-            //placedObject.GetComponent<InventoryGravity>().Setup(this);
+            placedObject.GetComponent<InventoryGravity>().Setup(this);
             //
 
             foreach (Vector2Int gridPosition in gridPositionList) {
+                //print(gridPosition);
                 grid.GetGridObject(gridPosition.x, gridPosition.y).SetPlacedObject(placedObject);
             }
 

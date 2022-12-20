@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 1530984616861727424}
   - component: {fileID: 2868585860738382733}
   - component: {fileID: 4135697843947895248}
+  - component: {fileID: 7468040987086604629}
+  - component: {fileID: -6054590232459318006}
   m_Layer: 5
   m_Name: SP-Ammo
   m_TagString: Untagged
@@ -75,6 +77,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65c999629e3077d4fa04ae8834c49dc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7468040987086604629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5850580992791910787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a24bf11742b0724695e3cddd0a42476, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gravityIsOn: 1
+--- !u!114 &-6054590232459318006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5850580992791910787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 337bf2ebb0c87c942b5f4474a02ae972, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: SP-Ammo
+  itemType: 2
 --- !u!1001 &2883778372551190629
 PrefabInstance:
   m_ObjectHideFlags: 0

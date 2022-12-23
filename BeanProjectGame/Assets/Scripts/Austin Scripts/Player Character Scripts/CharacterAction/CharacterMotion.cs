@@ -142,6 +142,7 @@ public class CharacterMotion : MonoBehaviour
                     attackTimer += Time.deltaTime;
                     if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
                     {
+                        characterAnimationManager.Attack();
                         float hitRoll = Random.Range(0, 100);
                         if (hitRoll <= weaponObject.baseWeaponAccuracy + ((weaponObject.baseWeaponAccuracy * .1) * finesse))
                         {
@@ -179,6 +180,7 @@ public class CharacterMotion : MonoBehaviour
                     attackTimer += Time.deltaTime;
                     if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
                     {
+                        characterAnimationManager.Attack();
                         for (int i = 0; i < areaTargettedEnemies.Count; i++)
                         {
                             float hitRoll = Random.Range(0, 100);

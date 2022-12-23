@@ -87,8 +87,8 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
 
         //Cursor.visible = true;
 
-        // Remove item from its current inventory
-        fromInventoryTetris.RemoveItemAt(placedObject.GetGridPosition());
+        // Remove item from its current inventory(old method)
+        //fromInventoryTetris.RemoveItemAt(placedObject.GetGridPosition());
 
         InventoryTetris toInventoryTetris = null;
 
@@ -99,7 +99,7 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
             Vector2Int placedObjectOrigin = inventoryTetris.GetGridPosition(anchoredPosition);
             placedObjectOrigin = placedObjectOrigin - mouseDragGridPositionOffset;
 
-            if (inventoryTetris.IsValidGridPosition(placedObjectOrigin)) {
+            if (inventoryTetris.IsValidGridPosition(placedObjectOrigin) && inventoryTetris.GetActiveGrid()) {
                 toInventoryTetris = inventoryTetris;
                 break;
             }
@@ -112,7 +112,24 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
             Vector2Int placedObjectOrigin = toInventoryTetris.GetGridPosition(anchoredPosition);
             placedObjectOrigin = placedObjectOrigin - mouseDragGridPositionOffset;
 
-            bool tryPlaceItem = toInventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, placedObjectOrigin, dir);
+            //Check if item can be moved to new coordinates
+            List<Vector2Int> gridPositionList = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(placedObjectOrigin, dir);
+            bool tryMoveItem = toInventoryTetris.CheckBuildItemPositions(gridPositionList, placedObject);
+            if (tryMoveItem)
+            {
+                //Item Moved!
+                toInventoryTetris.TryMoveItem(placedObject, placedObjectOrigin, dir);
+            }
+            else
+            {
+                // Cannot move item here!
+                print("Cannot Drop Item Here!");
+                // Drop on original position
+                fromInventoryTetris.RemoveItemAt(placedObject.GetGridPosition());
+                fromInventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, placedObject.GetGridPosition(), placedObject.GetDir());
+            }
+            
+            /*bool tryPlaceItem = toInventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, placedObjectOrigin, dir);
 
             if (tryPlaceItem) {
                 // Item placed!
@@ -124,7 +141,7 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
 
                 // Drop on original position
                 fromInventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, placedObject.GetGridPosition(), placedObject.GetDir());
-            }
+            }*/
         } else {
             // Not on top of any Inventory Tetris!
 
@@ -134,6 +151,7 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
             //FunctionTimer.Create(() => { TooltipCanvas.HideTooltip_Static(); }, 2f, "HideTooltip", true, true);
 
             // Drop on original position
+            fromInventoryTetris.RemoveItemAt(placedObject.GetGridPosition());
             fromInventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, placedObject.GetGridPosition(), placedObject.GetDir());
         }
     }

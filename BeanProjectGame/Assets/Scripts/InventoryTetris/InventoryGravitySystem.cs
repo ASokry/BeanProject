@@ -86,8 +86,9 @@ public class InventoryGravitySystem : MonoBehaviour
         if (canPlace)
         {
             //print(inventoryGravity.name);
-            inventoryTetris.RemoveItemAt(placedObject.GetGridPosition());
-            inventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, rowBelow, dir);
+            //inventoryTetris.RemoveItemAt(placedObject.GetGridPosition());
+            //inventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, rowBelow, dir);
+            inventoryTetris.TryMoveItem(placedObject, rowBelow, dir);
         }
         yield return new WaitForSeconds(gravityDelay);
 

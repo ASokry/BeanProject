@@ -7,6 +7,7 @@ public class InventorySearchSystem : MonoBehaviour
     public static InventorySearchSystem Instance { get; private set; }
 
     [SerializeField] private List<InventorySearch> gridSearchList;
+    private bool isSearching = false;
     private bool canContinue = false;
     public void CanContinue(bool b) { canContinue = b; }
 
@@ -19,7 +20,7 @@ public class InventorySearchSystem : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S) && foundItem == null)
+        if (Input.GetKeyDown(KeyCode.S) && foundItem == null && !isSearching)
         {
             StartGridSearch("H-Ammo");
         }
@@ -42,6 +43,7 @@ public class InventorySearchSystem : MonoBehaviour
 
     private IEnumerator SearchThroughGrids(string target)
     {
+        isSearching = true;
         int index = gridSearchList.Count-1;
         while (index >=0)
         {
@@ -52,13 +54,15 @@ public class InventorySearchSystem : MonoBehaviour
             //currently set to always be null, see InventorySearch
             if (foundItem != null)
             {
+                isSearching = false;
                 yield break;
             }
 
             index--;
             canContinue = false;
         }
-        print("done");
+        //print("Search is done");
+        isSearching = false;
     }
 
     //Must use following method after we're done using foundItem in Austin's script 

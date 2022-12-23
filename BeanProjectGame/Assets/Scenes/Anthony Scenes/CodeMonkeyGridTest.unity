@@ -12171,6 +12171,7 @@ MonoBehaviour:
   gridWidth: 10
   gridHeight: 10
   cellSize: 50
+  isActiveGrid: 0
   inventoryTetrisGravity: 0
 --- !u!224 &1544979336
 RectTransform:
@@ -16473,6 +16474,7 @@ MonoBehaviour:
   gridWidth: 10
   gridHeight: 10
   cellSize: 50
+  isActiveGrid: 1
   inventoryTetrisGravity: 1
 --- !u!114 &2096610784
 MonoBehaviour:
@@ -16488,6 +16490,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inCombat: 1
   inventoryTetris: {fileID: 2096610783}
+  useArrow: 0
   inventoryArrow: {fileID: 1605951568}
   searchDelay: 0.2
   inventoryTetrisBackground: {fileID: 1878452376}

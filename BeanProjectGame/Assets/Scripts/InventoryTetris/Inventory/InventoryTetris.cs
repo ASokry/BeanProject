@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryTetris : MonoBehaviour {
-
-    //public static InventoryTetris Instance { get; private set; }
-
-
     public event EventHandler<PlacedObject> OnObjectPlaced;
 
     [SerializeField, Range(1, 10)] private int gridWidth = 10;
@@ -19,12 +15,13 @@ public class InventoryTetris : MonoBehaviour {
 
     private Grid<GridObject> grid;
     private RectTransform itemContainer;
+    [SerializeField] private bool isActiveGrid = true;
+    public void SetActiveGrid(bool b) { isActiveGrid = b; }
+    public bool GetActiveGrid() { return isActiveGrid; }
 
     [SerializeField] private bool inventoryTetrisGravity = false;
     public bool Gravity() { return inventoryTetrisGravity; }
     private void Awake() {
-        //Instance = this;
-
         grid = new Grid<GridObject>(gridWidth, gridHeight, cellSize, new Vector3(0, 0, 0), (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
 
         itemContainer = transform.Find("ItemContainer").GetComponent<RectTransform>();
@@ -130,19 +127,6 @@ public class InventoryTetris : MonoBehaviour {
         // Test Can Build
         List<Vector2Int> gridPositionList = itemTetrisSO.GetGridPositionList(placedObjectOrigin, dir);
         bool canPlace = CheckBuildItemPositions(gridPositionList);
-        /*bool canPlace = true;
-        foreach (Vector2Int gridPosition in gridPositionList) {
-            bool isValidPosition = grid.IsValidGridPosition(gridPosition);
-            if (!isValidPosition) {
-                // Not valid
-                canPlace = false;
-                break;
-            }
-            if (!grid.GetGridObject(gridPosition.x, gridPosition.y).CanBuild()) {
-                canPlace = false;
-                break;
-            }
-        }*/
 
         if (canPlace) {
             foreach (Vector2Int gridPosition in gridPositionList) {
@@ -164,6 +148,7 @@ public class InventoryTetris : MonoBehaviour {
             placedObject.GetComponent<InventoryTetrisDragDrop>().Setup(this);
             placedObject.GetComponent<InventoryGravity>().Setup(this);
             //
+            
 
             foreach (Vector2Int gridPosition in gridPositionList) {
                 //print(gridPosition);
@@ -180,6 +165,45 @@ public class InventoryTetris : MonoBehaviour {
         }
     }
 
+    public void TryMoveItem(PlacedObject placedObject, Vector2Int placedObjectOrigin, PlacedObjectTypeSO.Dir dir)
+    {
+        PlacedObjectTypeSO placedObjectTypeSO = placedObject.GetPlacedObjectTypeSO();
+        List<Vector2Int> gridPositionList = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(placedObjectOrigin, dir);
+        bool canPlace = CheckBuildItemPositions(gridPositionList, placedObject);
+
+        if (canPlace)
+        {
+            ClearItemAt(placedObject.GetGridPosition());
+            Vector2Int rotationOffset = placedObjectTypeSO.GetRotationOffset(dir);
+            Vector3 placedObjectWorldPosition = grid.GetWorldPosition(placedObjectOrigin.x, placedObjectOrigin.y) + new Vector3(rotationOffset.x, rotationOffset.y) * grid.GetCellSize();
+
+            placedObject.MoveCanvas(itemContainer, placedObjectWorldPosition, placedObjectOrigin, dir);
+            placedObject.transform.rotation = Quaternion.Euler(0, 0, -placedObjectTypeSO.GetRotationAngle(dir));
+
+            //Set InventoryTetris reference in applicable scripts
+            placedObject.GetComponent<InventoryTetrisDragDrop>().Setup(this);
+            placedObject.GetComponent<InventoryGravity>().Setup(this);
+            //
+
+
+            foreach (Vector2Int gridPosition in gridPositionList)
+            {
+                //print(gridPosition);
+                grid.GetGridObject(gridPosition.x, gridPosition.y).SetPlacedObject(placedObject);
+            }
+
+            OnObjectPlaced?.Invoke(this, placedObject);
+
+            // Object Moved!
+            //print("Moved");
+        }
+        else
+        {
+            // Object CANNOT be Moved!
+            //print("Cannot Move");
+        }
+    }
+
     public void RemoveItemAt(Vector2Int removeGridPosition) {
         PlacedObject placedObject = grid.GetGridObject(removeGridPosition.x, removeGridPosition.y).GetPlacedObject();
 
@@ -189,6 +213,20 @@ public class InventoryTetris : MonoBehaviour {
 
             List<Vector2Int> gridPositionList = placedObject.GetGridPositionList();
             foreach (Vector2Int gridPosition in gridPositionList) {
+                grid.GetGridObject(gridPosition.x, gridPosition.y).ClearPlacedObject();
+            }
+        }
+    }
+
+    public void ClearItemAt(Vector2Int removeGridPosition)
+    {
+        PlacedObject placedObject = grid.GetGridObject(removeGridPosition.x, removeGridPosition.y).GetPlacedObject();
+        if (placedObject != null)
+        {
+            //Clear PlacedObject data from gridObject
+            List<Vector2Int> gridPositionList = placedObject.GetGridPositionList();
+            foreach (Vector2Int gridPosition in gridPositionList)
+            {
                 grid.GetGridObject(gridPosition.x, gridPosition.y).ClearPlacedObject();
             }
         }

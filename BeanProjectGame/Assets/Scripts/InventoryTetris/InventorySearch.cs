@@ -8,6 +8,7 @@ public class InventorySearch : MonoBehaviour
     [SerializeField] private bool inCombat = true;
 
     [SerializeField] private InventoryTetris inventoryTetris;
+    [SerializeField] private bool useArrow = false;
     [SerializeField] private InventoryArrow inventoryArrow;
 
     [SerializeField] private float searchDelay = 1f;
@@ -38,16 +39,19 @@ public class InventorySearch : MonoBehaviour
         while (row >= 0 && searchState)
         {
             //Reveal and move the arrow along y axis of grid on left hand side
-            inventoryArrow.SetMax(inventoryTetris.GetWidth());
-            inventoryArrow.ResetFill();
-            inventoryArrow.MoveArrow(0, row);
-            inventoryArrow.Reveal();
+            if (useArrow)
+            {
+                inventoryArrow.SetMax(inventoryTetris.GetWidth());
+                inventoryArrow.ResetFill();
+                inventoryArrow.MoveArrow(0, row);
+                inventoryArrow.Reveal();
+            }
 
             // search through each column of current row
             for (int col = 0; col < inventoryTetris.GetWidth(); col++)
             {
                 InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, new Vector2Int(row, col), searchType);
-                inventoryArrow.Fill();
+                if (useArrow) { inventoryArrow.Fill(); }
                 yield return new WaitForSeconds(searchDelay);
 
                 if (!inventoryTetris.GetGrid().GetGridObject(col, row).HasPlacedObject())
@@ -80,7 +84,7 @@ public class InventorySearch : MonoBehaviour
             }
 
             // hide the arrow again
-            inventoryArrow.Hide();
+            if (useArrow) { inventoryArrow.Hide(); }
 
             //increment row counter, so we can go down to next row
             row--;

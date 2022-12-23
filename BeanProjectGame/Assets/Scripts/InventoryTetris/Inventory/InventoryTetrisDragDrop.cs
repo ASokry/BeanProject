@@ -36,7 +36,7 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
     }
 
     public void OnBeginDrag(PointerEventData eventData) {
-        if (!InventoryGravitySystem.Instance.inCombat)
+        if (!InventoryGravitySystem.Instance.inCombat && Input.GetMouseButton(0) && !InventoryTetrisDragDropSystem.Instance.GetPlacedObject())
         {
             //Debug.Log("OnBeginDrag");
             canvasGroup.alpha = .7f;
@@ -54,7 +54,7 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
     }
 
     public void OnEndDrag(PointerEventData eventData) {
-        if (!InventoryGravitySystem.Instance.inCombat)
+        if (!InventoryGravitySystem.Instance.inCombat && Input.GetMouseButtonUp(0) && InventoryTetrisDragDropSystem.Instance.GetPlacedObject())
         {
             //Debug.Log("OnEndDrag");
             canvasGroup.alpha = 1f;

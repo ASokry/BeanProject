@@ -173,7 +173,7 @@ public class CharacterMotion : MonoBehaviour
             if (weaponObject.aimType == InventoryWeapon.AimType.AreaTargeting) // handles attack hit and reload logic for area targetting weapons
             {
                 areaTargetBox.SetActive(true);
-                areaTargetPivot.gameObject.transform.localScale = new Vector3(weaponObject.range, transform.localScale.y, transform.localScale.z);
+                areaTargetPivot.gameObject.transform.localScale = new Vector3(weaponObject.range, areaTargetBox.transform.localScale.y, areaTargetBox.transform.localScale.z);
                 if (areaTargettedEnemies.Count > 0)
                 {
                     //SetStop(true);

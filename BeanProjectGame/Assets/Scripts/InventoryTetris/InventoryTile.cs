@@ -10,7 +10,12 @@ public class InventoryTile : MonoBehaviour
     private Image image;
     private Sprite defaultSprite;
 
-    private void Start()
+    public Image GetImage()
+    {
+        return image;
+    }
+
+    private void Awake()
     {
         image = GetComponent<Image>();
         defaultSprite = image.sprite;
@@ -21,10 +26,16 @@ public class InventoryTile : MonoBehaviour
         this.inventoryTetris = inventoryTetris;
     }
 
+    public bool IsNull()
+    {
+        return isNullTile;
+    }
+
     public void SetNull()
     {
         isNullTile = true;
         image.sprite = null;
+        //image.enabled = false;
     }
 
     public void SetImageSprite(Sprite sprite)
@@ -34,6 +45,26 @@ public class InventoryTile : MonoBehaviour
 
     public void ResetSprite()
     {
+        isNullTile = false;
         image.sprite = defaultSprite;
+    }
+
+    public void SetColor(Color color)
+    {
+        image.color = color;
+    }
+
+    public void SetOpacity(float opacity)
+    {
+        Color color = image.color;
+        color.a = Mathf.Clamp01(opacity);
+        image.color = color;
+    }
+
+    public void ResetColor()
+    {
+        Color defualtColor = Color.white;
+        defualtColor.a = 0;
+        image.color = defualtColor;
     }
 }

@@ -6,12 +6,19 @@ using UnityEngine;
 public class InventoryTetris : MonoBehaviour {
     public event EventHandler<PlacedObject> OnObjectPlaced;
 
-    [SerializeField, Range(1, 10)] private int gridWidth = 10;
-    [SerializeField, Range(1, 10)] private int gridHeight = 10;
+    [SerializeField, Range(1, 10)] private int gridWidthMax = 10;
+    [SerializeField, Range(1, 10)] private int gridHeightMax = 10;
     [SerializeField, Range(1, 50)] private float cellSize = 50f;
 
-    public int GetWidth() { return gridWidth; }
-    public int GetHeight() { return gridHeight; }
+    [SerializeField] private bool nullTiles = false;
+    [SerializeField, Range(0, 10)] private int gridWidthMin = 0;
+    [SerializeField, Range(0, 10)] private int gridHeightMin = 0;
+    [SerializeField] private InventoryTetrisBackground inventoryTetrisBackground;
+    [SerializeField] private List<Vector2Int> customNullTiles = new List<Vector2Int>();
+    [SerializeField] private bool upgradeTiles = false;
+
+    public int GetWidth() { return gridWidthMax; }
+    public int GetHeight() { return gridHeightMax; }
 
     private Grid<GridObject> grid;
     private RectTransform itemContainer;
@@ -22,11 +29,24 @@ public class InventoryTetris : MonoBehaviour {
     [SerializeField] private bool inventoryTetrisGravity = false;
     public bool Gravity() { return inventoryTetrisGravity; }
     private void Awake() {
-        grid = new Grid<GridObject>(gridWidth, gridHeight, cellSize, new Vector3(0, 0, 0), (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
+        grid = new Grid<GridObject>(gridWidthMax, gridHeightMax, cellSize, new Vector3(0, 0, 0), (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
+
+        if (nullTiles && !inventoryTetrisBackground) Debug.LogError("inventoryTetrisBackground Reference is missing");
 
         itemContainer = transform.Find("ItemContainer").GetComponent<RectTransform>();
 
         transform.Find("BackgroundTempVisual").gameObject.SetActive(false);
+    }
+
+    private void Start()
+    {
+        CalculateNullRowsCols();
+        CalculateCustomNullTiles();
+    }
+
+    private void Update()
+    {
+        ExpandGrid();
     }
 
     public class GridObject {
@@ -83,6 +103,101 @@ public class InventoryTetris : MonoBehaviour {
         return grid.IsValidGridPosition(gridPosition);
     }
 
+    private void CalculateCustomNullTiles()
+    {
+        if (nullTiles && customNullTiles.Count > 0)
+        {
+            SetNullTiles(customNullTiles);
+        }
+    }
+
+    private void CalculateNullRowsCols()
+    {
+        if (nullTiles == true && (gridWidthMin > 0 && gridHeightMin > 0))
+        {
+            int xRemainder = gridWidthMax - gridWidthMin;
+            int yRemainder = gridHeightMax - gridHeightMin;
+            int xRightNums = xRemainder / 2;
+            int xTopNums = yRemainder / 2;
+            //print(colRemainder + ", " + colRightNums + ": " + rowRemainder + ", " + rowTopNums);
+            List<int> xNums = new List<int>();
+            List<int> yNums = new List<int>();
+
+            int count = 0;
+            while (xNums.Count != xRemainder || yNums.Count != yRemainder)
+            {
+                if (xNums.Count != xRemainder)
+                {
+                    int num = xNums.Count > xRightNums ? (count + gridWidthMin) : count;
+                    xNums.Add(num);
+                }
+
+                if (yNums.Count != yRemainder)
+                {
+                    int num = yNums.Count < xTopNums ? count : (count + gridHeightMin);
+                    yNums.Add(num);
+                }
+
+                count++;
+            }
+            //foreach (int i in colNums) print(i);
+
+            List<Vector2Int> tiles = new List<Vector2Int>();
+            count = 0;
+            while (count < gridWidthMax || count < gridHeightMax)
+            {
+                if (count < gridWidthMax)
+                {
+                    foreach (int x in xNums)
+                    {
+                        //print(col);
+                        Vector2Int coordinate = new Vector2Int(x, count);
+                        if (!tiles.Contains(coordinate)) tiles.Add(coordinate);
+                    }
+                }
+
+                if (count < gridHeightMax)
+                {
+                    foreach (int y in yNums)
+                    {
+                        Vector2Int coordinate = new Vector2Int(count, y); //print(coordinate);
+                        if (!tiles.Contains(coordinate)) tiles.Add(coordinate);
+                    }
+                }
+                count++;
+            }
+            //foreach (Vector2Int i in tiles) print(i);
+            SetNullTiles(tiles);
+        }
+    }
+
+    private void SetNullTiles(List<Vector2Int> coordinates)
+    {
+        if (inventoryTetrisBackground)
+        {
+            foreach (Vector2Int coord in coordinates)
+            {
+                //print(coord);
+                InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, coord, InventoryTileSystem.TileType.Null);
+            }
+        }
+    }
+
+    private void ExpandGrid()
+    {
+        if (upgradeTiles && !InventoryTetrisDragDropSystem.Instance.GetPlacedObject() && Input.GetMouseButtonDown(0))
+        {
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(itemContainer, Input.mousePosition, null, out Vector2 anchoredPosition);
+            Vector2Int mouseGridPosition = GetGridPosition(anchoredPosition);
+            inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(mouseGridPosition, out InventoryTile tile);
+            if (tile.IsNull())
+            {
+                //print("Expand");
+                InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, mouseGridPosition, InventoryTileSystem.TileType.Default);
+            }
+        }
+    }
+
     public bool CheckBuildItemPositions(List<Vector2Int> gridPositionList, PlacedObject placedObject)
     {
         foreach (Vector2Int gridPosition in gridPositionList)
@@ -93,6 +208,12 @@ public class InventoryTetris : MonoBehaviour {
             {
                 // Not valid
                 return false;
+            }
+
+            if (inventoryTetrisBackground)
+            {
+                inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(gridPosition, out InventoryTile tile);
+                if (tile.IsNull()) return false;
             }
 
             GridObject gridObject = grid.GetGridObject(gridPosition.x, gridPosition.y);
@@ -115,10 +236,14 @@ public class InventoryTetris : MonoBehaviour {
                 // Not valid
                 return false;
             }
-            if (!grid.GetGridObject(gridPosition.x, gridPosition.y).CanBuild())
+
+            if (inventoryTetrisBackground)
             {
-                return false;
+                inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(gridPosition, out InventoryTile tile);
+                if (tile.IsNull()) return false;
             }
+            
+            if (!grid.GetGridObject(gridPosition.x, gridPosition.y).CanBuild()) return false;
         }
         return true;
     }

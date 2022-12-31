@@ -3252,6 +3252,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 425884368}
   m_CullTransparentMesh: 1
+--- !u!1 &428539420
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 428539421}
+  - component: {fileID: 428539422}
+  m_Layer: 5
+  m_Name: InventoryTetrisOverlay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &428539421
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428539420}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 2128014960}
+  m_Father: {fileID: 721245278}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -595, y: -339}
+  m_SizeDelta: {x: 500, y: 500}
+  m_Pivot: {x: 0, y: 0}
+--- !u!114 &428539422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428539420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 6
+  m_StartCorner: 2
+  m_StartAxis: 0
+  m_CellSize: {x: 50, y: 50}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &440361347
 GameObject:
   m_ObjectHideFlags: 0
@@ -5943,6 +6004,7 @@ RectTransform:
   - {fileID: 1494179682}
   - {fileID: 2096610781}
   - {fileID: 1544979336}
+  - {fileID: 428539421}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -11672,7 +11734,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b70cb3e78b9fb542b8589430fa72bec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  searchTile: {fileID: 21300000, guid: 626a6bdc54a71374a842883e50715b52, type: 3}
+  differentTile: {fileID: 0}
+  overlayOpacity: 0.5
 --- !u!4 &1459399930
 Transform:
   m_ObjectHideFlags: 0
@@ -11815,6 +11878,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryTetris: {fileID: 1544979334}
   inventoryTile: {fileID: 2014944070}
+  overlay: 0
+  inventoryOverlay: {fileID: 0}
+  tileOverlay: {fileID: 0}
 --- !u!114 &1494179684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12168,9 +12234,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98d148b033c07f840996b03106e26a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridWidth: 10
-  gridHeight: 10
+  gridWidthMax: 10
+  gridHeightMax: 10
   cellSize: 50
+  nullTiles: 0
+  gridWidthMin: 0
+  gridHeightMin: 0
+  inventoryTetrisBackground: {fileID: 0}
+  customNullTiles: []
   isActiveGrid: 0
   inventoryTetrisGravity: 0
 --- !u!224 &1544979336
@@ -14508,6 +14579,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryTetris: {fileID: 2096610783}
   inventoryTile: {fileID: 360756339}
+  overlay: 1
+  inventoryOverlay: {fileID: 428539421}
+  tileOverlay: {fileID: 2128014963}
 --- !u!114 &1878452377
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16471,9 +16545,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98d148b033c07f840996b03106e26a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridWidth: 10
-  gridHeight: 10
+  gridWidthMax: 10
+  gridHeightMax: 10
   cellSize: 50
+  nullTiles: 1
+  gridWidthMin: 5
+  gridHeightMin: 7
+  inventoryTetrisBackground: {fileID: 1878452376}
+  customNullTiles: []
   isActiveGrid: 1
   inventoryTetrisGravity: 1
 --- !u!114 &2096610784
@@ -16804,6 +16883,95 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2125251131}
   m_CullTransparentMesh: 1
+--- !u!1 &2128014959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2128014960}
+  - component: {fileID: 2128014962}
+  - component: {fileID: 2128014961}
+  - component: {fileID: 2128014963}
+  m_Layer: 0
+  m_Name: OverlayTile
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &2128014960
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128014959}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 428539421}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -500}
+  m_SizeDelta: {x: 50, y: 50}
+  m_Pivot: {x: 0, y: 0}
+--- !u!114 &2128014961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128014959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2128014962
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128014959}
+  m_CullTransparentMesh: 1
+--- !u!114 &2128014963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128014959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79bc0f541cbfd724cb2fdfefd5f564f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isNullTile: 0
 --- !u!1 &2132729100
 GameObject:
   m_ObjectHideFlags: 0

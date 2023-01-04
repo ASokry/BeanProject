@@ -53,6 +53,7 @@ public class InventoryTetrisBackground : MonoBehaviour {
         GetComponent<RectTransform>().sizeDelta = new Vector2(inventoryTetris.GetGrid().GetWidth(), inventoryTetris.GetGrid().GetHeight()) * inventoryTetris.GetGrid().GetCellSize();
 
         GetComponent<RectTransform>().anchoredPosition = inventoryTetris.GetComponent<RectTransform>().anchoredPosition;
+        inventoryTetris.SetupTiles();
     }
 
     /*private void Update()

@@ -10,12 +10,12 @@ public class InventoryTetris : MonoBehaviour {
     [SerializeField, Range(1, 10)] private int gridHeightMax = 10;
     [SerializeField, Range(1, 50)] private float cellSize = 50f;
 
-    [SerializeField] private bool nullTiles = false;
+    [SerializeField] private bool startWithNullTiles = false;
     [SerializeField, Range(0, 10)] private int gridWidthMin = 0;
     [SerializeField, Range(0, 10)] private int gridHeightMin = 0;
     [SerializeField] private InventoryTetrisBackground inventoryTetrisBackground;
     [SerializeField] private List<Vector2Int> customNullTiles = new List<Vector2Int>();
-    [SerializeField] private bool upgradeTiles = false;
+    [SerializeField] private bool allowUpgradeTiles = false;
 
     public int GetWidth() { return gridWidthMax; }
     public int GetHeight() { return gridHeightMax; }
@@ -31,14 +31,14 @@ public class InventoryTetris : MonoBehaviour {
     private void Awake() {
         grid = new Grid<GridObject>(gridWidthMax, gridHeightMax, cellSize, new Vector3(0, 0, 0), (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
 
-        if (nullTiles && !inventoryTetrisBackground) Debug.LogError("inventoryTetrisBackground Reference is missing");
+        if (startWithNullTiles && !inventoryTetrisBackground) Debug.LogError("inventoryTetrisBackground Reference is missing");
 
         itemContainer = transform.Find("ItemContainer").GetComponent<RectTransform>();
 
         transform.Find("BackgroundTempVisual").gameObject.SetActive(false);
     }
 
-    private void Start()
+    public void SetupTiles()
     {
         CalculateNullRowsCols();
         CalculateCustomNullTiles();
@@ -46,7 +46,11 @@ public class InventoryTetris : MonoBehaviour {
 
     private void Update()
     {
-        ExpandGrid();
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            ShowUpgradeableTiles();
+        }
+        ClickToExpandGrid();
     }
 
     public class GridObject {
@@ -105,7 +109,7 @@ public class InventoryTetris : MonoBehaviour {
 
     private void CalculateCustomNullTiles()
     {
-        if (nullTiles && customNullTiles.Count > 0)
+        if (startWithNullTiles && customNullTiles.Count > 0)
         {
             SetNullTiles(customNullTiles);
         }
@@ -113,7 +117,7 @@ public class InventoryTetris : MonoBehaviour {
 
     private void CalculateNullRowsCols()
     {
-        if (nullTiles == true && (gridWidthMin > 0 && gridHeightMin > 0))
+        if (startWithNullTiles == true && (gridWidthMin > 0 && gridHeightMin > 0))
         {
             int xRemainder = gridWidthMax - gridWidthMin;
             int yRemainder = gridHeightMax - gridHeightMin;
@@ -183,19 +187,60 @@ public class InventoryTetris : MonoBehaviour {
         }
     }
 
-    private void ExpandGrid()
+    private bool CanUpgrade()
     {
-        if (upgradeTiles && !InventoryTetrisDragDropSystem.Instance.GetPlacedObject() && Input.GetMouseButtonDown(0))
+        return InventoryGridManager.Instance.GetCurrentState() == InventoryGridManager.InventoryState.Upgrading && InventoryGridManager.Instance.CheckUpgradePoints() > 0;
+    }
+
+    private void ShowUpgradeableTiles()
+    {
+        if (allowUpgradeTiles && CanUpgrade())
+        {
+            Dictionary<Vector2Int, InventoryTile> tiles = inventoryTetrisBackground.GetInventoryTileDictionary();
+            foreach (KeyValuePair<Vector2Int, InventoryTile> valuePair in tiles)
+            {
+                if (valuePair.Value.IsUpgradeable() || !valuePair.Value.IsNull()) continue;
+                Vector2Int leftTileCoord = new Vector2Int(valuePair.Key.x - 1, valuePair.Key.y);
+                Vector2Int rightTileCoord = new Vector2Int(valuePair.Key.x + 1, valuePair.Key.y);
+                Vector2Int belowTileCoord = new Vector2Int(valuePair.Key.x, valuePair.Key.y - 1);
+                Vector2Int aboveTileCoord = new Vector2Int(valuePair.Key.x, valuePair.Key.y + 1);
+                Vector2Int[] adjacentCoordinates = { leftTileCoord, rightTileCoord, belowTileCoord, aboveTileCoord };
+                foreach (Vector2Int coordinate in adjacentCoordinates)
+                {
+                    tiles.TryGetValue(coordinate, out InventoryTile neighborTile);
+                    if (neighborTile && (!neighborTile.IsNull() && !neighborTile.IsUpgradeable()))
+                    {
+                        //print(valuePair.Key);
+                        valuePair.Value.SetUpgradeable(true);
+                        InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, valuePair.Key, InventoryTileSystem.TileOverlayType.Upgradeable);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void ClickToExpandGrid()
+    {
+        if (CanUpgrade() && allowUpgradeTiles && !InventoryTetrisDragDropSystem.Instance.GetPlacedObject() && Input.GetMouseButtonDown(0))
         {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(itemContainer, Input.mousePosition, null, out Vector2 anchoredPosition);
             Vector2Int mouseGridPosition = GetGridPosition(anchoredPosition);
             inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(mouseGridPosition, out InventoryTile tile);
-            if (tile.IsNull())
+            if (tile && tile.IsNull() && tile.IsUpgradeable())
             {
                 //print("Expand");
-                InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, mouseGridPosition, InventoryTileSystem.TileType.Default);
+                UpgradeTile(mouseGridPosition);
             }
         }
+    }
+
+    private void UpgradeTile(Vector2Int coordinate)
+    {
+        InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, InventoryTileSystem.TileOverlayType.Default);
+        InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, coordinate, InventoryTileSystem.TileType.Default);
+        InventoryGridManager.Instance.SetUpgradePoints(InventoryGridManager.Instance.CheckUpgradePoints() - 1);
+        InventoryGravitySystem.Instance.TriggerGravitySystem();
     }
 
     public bool CheckBuildItemPositions(List<Vector2Int> gridPositionList, PlacedObject placedObject)

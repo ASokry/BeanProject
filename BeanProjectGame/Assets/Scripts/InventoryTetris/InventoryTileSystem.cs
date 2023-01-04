@@ -9,7 +9,7 @@ public class InventoryTileSystem : MonoBehaviour
     public enum TileType { Default, Null}
     [SerializeField] private Sprite differentTile;
 
-    public enum TileOverlayType { Default, Search, None}
+    public enum TileOverlayType { Default, Search, Upgradeable}
     [SerializeField, Range(0, 1)] private float overlayOpacity = 0.5f;
     
 
@@ -34,6 +34,10 @@ public class InventoryTileSystem : MonoBehaviour
                 break;
             case TileOverlayType.Search:
                 tile.SetColor(Color.cyan);
+                tile.SetOpacity(overlayOpacity);
+                break;
+            case TileOverlayType.Upgradeable:
+                tile.SetColor(Color.yellow);
                 tile.SetOpacity(overlayOpacity);
                 break;
             default:

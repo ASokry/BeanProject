@@ -6,14 +6,10 @@ using UnityEngine.UI;
 public class InventoryTile : MonoBehaviour
 {
     [SerializeField] private bool isNullTile = false;
+    [SerializeField] private bool canBeUpgraded = false;
     private InventoryTetris inventoryTetris;
     private Image image;
     private Sprite defaultSprite;
-
-    public Image GetImage()
-    {
-        return image;
-    }
 
     private void Awake()
     {
@@ -38,6 +34,16 @@ public class InventoryTile : MonoBehaviour
         //image.enabled = false;
     }
 
+    public bool IsUpgradeable()
+    {
+        return canBeUpgraded;
+    }
+
+    public void SetUpgradeable(bool b)
+    {
+        canBeUpgraded = b;
+    }
+
     public void SetImageSprite(Sprite sprite)
     {
         image.sprite = sprite;
@@ -46,6 +52,7 @@ public class InventoryTile : MonoBehaviour
     public void ResetSprite()
     {
         isNullTile = false;
+        canBeUpgraded = false;
         image.sprite = defaultSprite;
     }
 

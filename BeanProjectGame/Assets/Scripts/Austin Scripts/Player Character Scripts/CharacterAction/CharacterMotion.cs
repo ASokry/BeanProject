@@ -44,8 +44,9 @@ public class CharacterMotion : MonoBehaviour
 
     public float enemyDistance;
 
-    public List<GameObject> areaTargettedEnemies;
-    public List<EnemyBehaviour> areaEnemyBehaviours;
+    [HideInInspector] public List<GameObject> areaTargettedEnemies;
+    [HideInInspector] public List<EnemyBehaviour> areaEnemyBehaviours;
+    public List<GameObject> areaProjectiles;
     public GameObject areaTargetPivot;
     public GameObject areaTargetBox;
     public GameObject meleeTargetBox;
@@ -74,7 +75,7 @@ public class CharacterMotion : MonoBehaviour
     void Update()
     {
 
-
+        Debug.DrawRay(this.transform.position, transform.right, color: Color.red);
         transform.Translate(Vector3.right * curSpeed * Time.deltaTime);
 
         characterAnimationManager.characterVelocity = (transform.position - previousPosition).magnitude / Time.deltaTime;
@@ -124,7 +125,7 @@ public class CharacterMotion : MonoBehaviour
 
             if (weaponObject.aimType == InventoryWeapon.AimType.AutoTargeting) // handles attack hit and reload logic for autotargetting weapons
             {
-            
+
                 //print(weaponList.weapons[equippedWeapon].baseWeaponAccuracy + ((weaponList.weapons[equippedWeapon].baseWeaponAccuracy * .1) * finesse));
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position, transform.right, out hit))
@@ -133,12 +134,20 @@ public class CharacterMotion : MonoBehaviour
                     {
                         targettedEnemy = hit.transform.gameObject;
                     }
+                    if(hit.transform.tag == "Projectile")
+                    {
+                        targettedEnemy = hit.transform.gameObject;
+                    }
                 }
 
                 if (targettedEnemy != null && Vector3.Distance(transform.position, targettedEnemy.transform.position) <= weaponObject.range)
                 {
                     SetStop(true);
-                    targettedEnemyBehaviour = targettedEnemy.GetComponent<EnemyBehaviour>();
+                    if(targettedEnemy.tag == "Enemy")
+                    {
+                        targettedEnemyBehaviour = targettedEnemy.GetComponent<EnemyBehaviour>();
+                    }
+
                     attackTimer += Time.deltaTime;
                     if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
                     {
@@ -146,11 +155,19 @@ public class CharacterMotion : MonoBehaviour
                         float hitRoll = Random.Range(0, 100);
                         if (hitRoll <= weaponObject.baseWeaponAccuracy + ((weaponObject.baseWeaponAccuracy * .1) * finesse))
                         {
-                            AttackEnemy(weaponObject.damagePerShot);
-                            AssignTarget(targettedEnemy.transform.position);
-                            for (int e = 0; e < weaponObject.specialEffects.Length; e++)
+                            if(targettedEnemyBehaviour != null)
                             {
-                                CallWeaponEffect(weaponObject.specialEffects[e], targettedEnemyBehaviour);
+                                AttackEnemy(weaponObject.damagePerShot);
+                                AssignTarget(targettedEnemy.transform.position);
+                                for (int e = 0; e < weaponObject.specialEffects.Length; e++)
+                                {
+                                    CallWeaponEffect(weaponObject.specialEffects[e], targettedEnemyBehaviour);
+                                }
+                            }
+                            else
+                            {
+                                targettedEnemy.SendMessage("DamageProjectile", weaponObject.damagePerShot);
+                                AssignTarget(targettedEnemy.transform.position);
                             }
                         }
                         else
@@ -174,12 +191,27 @@ public class CharacterMotion : MonoBehaviour
             {
                 areaTargetBox.SetActive(true);
                 areaTargetPivot.gameObject.transform.localScale = new Vector3(weaponObject.range, areaTargetBox.transform.localScale.y, areaTargetBox.transform.localScale.z);
-                if (areaTargettedEnemies.Count > 0)
+                if (areaTargettedEnemies.Count > 0 || areaProjectiles.Count > 0)
                 {
                     //SetStop(true);
                     attackTimer += Time.deltaTime;
                     if (attackTimer >= attackDelay && weaponObject.curAmmo > 0)
                     {
+                        if(areaProjectiles.Count > 0)
+                        {
+                            foreach(GameObject projectile in areaProjectiles)
+                            {
+                                float hitRoll = Random.Range(0, 100);
+                                if (hitRoll <= weaponObject.baseWeaponAccuracy + ((weaponObject.baseWeaponAccuracy * .1) * finesse))
+                                {
+                                    projectile.SendMessage("DamageProjectile", weaponObject.damagePerShot + ((weaponObject.damagePerShot * .1f) * strength));
+                                }
+                            }
+                        }
+                        /*if(Vector3.Distance(transform.position, targettedEnemy.transform.position) <= weaponObject.range)
+                        {
+
+                        }*/
                         characterAnimationManager.Attack();
                         for (int i = 0; i < areaTargettedEnemies.Count; i++)
                         {
@@ -343,6 +375,11 @@ public class CharacterMotion : MonoBehaviour
     public void AttackEnemy(float curDamage)
     {
         targettedEnemyBehaviour.AffectHealth(curDamage);
+    }
+
+    public void AttackProjectile(float curDamage)
+    {
+
     }
 
     public void AreaAttackEnemy(float curDamage, EnemyBehaviour areaTargetEnemy)

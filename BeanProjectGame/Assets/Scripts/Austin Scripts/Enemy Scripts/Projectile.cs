@@ -7,6 +7,8 @@ public class Projectile : MonoBehaviour
     public bool mayMoveForward;
     public float speed;
     public int damage;
+    public float maxHealth;
+    public float curHealth;
     private CharacterMotion characterMotion;
     private GameObject player;
     // Start is called before the first frame update
@@ -18,6 +20,7 @@ public class Projectile : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
         characterMotion = player.GetComponent<CharacterMotion>();
+        curHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -28,6 +31,11 @@ public class Projectile : MonoBehaviour
             transform.Translate(-transform.right * speed * Time.deltaTime);
         }
 
+        if(curHealth <= 0)
+        {
+            characterMotion.areaProjectiles.Remove(gameObject);
+            Destroy(gameObject);
+        }
     }
 
     public void BugEmerged()
@@ -39,9 +47,14 @@ public class Projectile : MonoBehaviour
     {
         if(other.tag == "Player")
         {
-            print("Dammage");
+            print("Damage");
             characterMotion.TakeDamage(damage);
             Destroy(gameObject);
         }
+    }
+
+    public void DamageProjectile(float damage)
+    {
+        curHealth -= damage;
     }
 }

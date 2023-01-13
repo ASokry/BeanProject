@@ -111,7 +111,7 @@ MonoBehaviour:
   ammoType: 
   clipSize: 10000000
   curAmmo: 10000000
-  timeBetweenAttacks: 1
+  timeBetweenAttacks: 0.3
   baseWeaponAccuracy: 20
   specialEffects:
   - Knockback

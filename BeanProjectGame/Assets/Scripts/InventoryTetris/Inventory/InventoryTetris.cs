@@ -15,10 +15,14 @@ public class InventoryTetris : MonoBehaviour {
     [SerializeField, Range(0, 10)] private int gridHeightMin = 0;
     [SerializeField] private InventoryTetrisBackground inventoryTetrisBackground;
     [SerializeField] private List<Vector2Int> customNullTiles = new List<Vector2Int>();
-    [SerializeField] private bool allowUpgradeTiles = false;
 
-    public int GetWidth() { return gridWidthMax; }
-    public int GetHeight() { return gridHeightMax; }
+    [SerializeField] private bool allowUpgradeTiles = false;
+    private List<Vector2Int> allUpgradeableTiles = new List<Vector2Int>();
+    private List<Vector2Int> tilesToUpdgrade = new List<Vector2Int>();
+
+    public int GetWidthMax() { return gridWidthMax; }
+    public int GetHeightMax() { return gridHeightMax; }
+    public InventoryTetrisBackground GetInventoryTetrisBackground() { return inventoryTetrisBackground; }
 
     private Grid<GridObject> grid;
     private RectTransform itemContainer;
@@ -38,6 +42,11 @@ public class InventoryTetris : MonoBehaviour {
         transform.Find("BackgroundTempVisual").gameObject.SetActive(false);
     }
 
+    private void Start()
+    {
+        InventoryGridManager.Instance.AddToManager(this);
+    }
+
     public void SetupTiles()
     {
         CalculateNullRowsCols();
@@ -46,8 +55,10 @@ public class InventoryTetris : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.U))
+        if (Input.GetKeyDown(KeyCode.U) && InventoryGridManager.Instance.GetCurrentState() != InventoryGridManager.InventoryState.Upgrading)
         {
+            InventoryGridManager.Instance.SetCurrentState(InventoryGridManager.InventoryState.Upgrading);
+            InventoryGridManager.Instance.SetStartingUpgradePoints(3);
             ShowUpgradeableTiles();
         }
         ClickToExpandGrid();
@@ -182,7 +193,7 @@ public class InventoryTetris : MonoBehaviour {
             foreach (Vector2Int coord in coordinates)
             {
                 //print(coord);
-                InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, coord, InventoryTileSystem.TileType.Null);
+                InventoryTileSystem.Instance.SetTileSprite(inventoryTetrisBackground, coord, InventoryTileSystem.TileType.Null);
             }
         }
     }
@@ -194,6 +205,7 @@ public class InventoryTetris : MonoBehaviour {
 
     private void ShowUpgradeableTiles()
     {
+        //print(allowUpgradeTiles && CanUpgrade());
         if (allowUpgradeTiles && CanUpgrade())
         {
             Dictionary<Vector2Int, InventoryTile> tiles = inventoryTetrisBackground.GetInventoryTileDictionary();
@@ -207,12 +219,17 @@ public class InventoryTetris : MonoBehaviour {
                 Vector2Int[] adjacentCoordinates = { leftTileCoord, rightTileCoord, belowTileCoord, aboveTileCoord };
                 foreach (Vector2Int coordinate in adjacentCoordinates)
                 {
-                    tiles.TryGetValue(coordinate, out InventoryTile neighborTile);
-                    if (neighborTile && (!neighborTile.IsNull() && !neighborTile.IsUpgradeable()))
+                    bool isTileNull = InventoryTileSystem.Instance.IsTileNull(inventoryTetrisBackground, coordinate);
+                    bool isTileUpgradeable = InventoryTileSystem.Instance.IsTileUpgradeable(inventoryTetrisBackground, coordinate);
+                    //if(allowUpgradeTiles) print(!isTileNull && !isTileUpgradeable);
+                    if (!isTileNull && !isTileUpgradeable)
                     {
                         //print(valuePair.Key);
-                        valuePair.Value.SetUpgradeable(true);
+                        //valuePair.Value.SetUpgradeable(true);
+                        //Set tile upgradeable status to true (tile can now be upgraded when selected)
+                        InventoryTileSystem.Instance.SetTileUpgradeable(inventoryTetrisBackground, valuePair.Key, true);
                         InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, valuePair.Key, InventoryTileSystem.TileOverlayType.Upgradeable);
+                        allUpgradeableTiles.Add(valuePair.Key);
                         break;
                     }
                 }
@@ -226,21 +243,68 @@ public class InventoryTetris : MonoBehaviour {
         {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(itemContainer, Input.mousePosition, null, out Vector2 anchoredPosition);
             Vector2Int mouseGridPosition = GetGridPosition(anchoredPosition);
-            inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(mouseGridPosition, out InventoryTile tile);
-            if (tile && tile.IsNull() && tile.IsUpgradeable())
+            bool isValidPosition = grid.IsValidGridPosition(mouseGridPosition);
+            bool isTileNull = InventoryTileSystem.Instance.IsTileNull(inventoryTetrisBackground, mouseGridPosition);
+            bool isTileUpgradeable = InventoryTileSystem.Instance.IsTileUpgradeable(inventoryTetrisBackground, mouseGridPosition);
+            if (isValidPosition && isTileNull && isTileUpgradeable)
             {
-                //print("Expand");
-                UpgradeTile(mouseGridPosition);
+                //print(mouseGridPosition);
+                AddToUpgradeList(mouseGridPosition);
+                //UpgradeTile(mouseGridPosition);
             }
+        }
+    }
+
+    private void AddToUpgradeList(Vector2Int coordinate)
+    {
+        tilesToUpdgrade.Add(coordinate);
+        InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, InventoryTileSystem.TileOverlayType.Default);
+        InventoryTileSystem.Instance.SetTileSprite(inventoryTetrisBackground, coordinate, InventoryTileSystem.TileType.Upgrade);
+        InventoryGridManager.Instance.SetUpgradePoints(InventoryGridManager.Instance.CheckUpgradePoints() - 1);
+    }
+
+    public void UpgradeTiles()
+    {
+        if (allowUpgradeTiles)
+        {
+            foreach (Vector2Int coordinate in tilesToUpdgrade)
+            {
+                UpgradeTile(coordinate);
+                allUpgradeableTiles.Remove(coordinate);
+            }
+            tilesToUpdgrade.Clear();
+            ClearAllUpgradeableTiles();
+            InventoryGravitySystem.Instance.TriggerGravitySystem();
         }
     }
 
     private void UpgradeTile(Vector2Int coordinate)
     {
         InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, InventoryTileSystem.TileOverlayType.Default);
-        InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, coordinate, InventoryTileSystem.TileType.Default);
-        InventoryGridManager.Instance.SetUpgradePoints(InventoryGridManager.Instance.CheckUpgradePoints() - 1);
-        InventoryGravitySystem.Instance.TriggerGravitySystem();
+        InventoryTileSystem.Instance.SetTileSprite(inventoryTetrisBackground, coordinate, InventoryTileSystem.TileType.Default);
+        //InventoryGridManager.Instance.SetUpgradePoints(InventoryGridManager.Instance.CheckUpgradePoints() - 1);
+        //InventoryGravitySystem.Instance.TriggerGravitySystem();
+    }
+
+    private void ClearAllUpgradeableTiles()
+    {
+        foreach (Vector2Int coordinate in allUpgradeableTiles)
+        {
+            InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, InventoryTileSystem.TileOverlayType.Default);
+            InventoryTileSystem.Instance.SetTileSprite(inventoryTetrisBackground, coordinate, InventoryTileSystem.TileType.Null);
+            InventoryTileSystem.Instance.SetTileUpgradeable(inventoryTetrisBackground, coordinate, false);
+        }
+        allUpgradeableTiles.Clear();
+    }
+
+    public void ResetUpgradeables()
+    {
+        if (allowUpgradeTiles)
+        {
+            ClearAllUpgradeableTiles();
+            tilesToUpdgrade.Clear();
+            ShowUpgradeableTiles();
+        }
     }
 
     public bool CheckBuildItemPositions(List<Vector2Int> gridPositionList, PlacedObject placedObject)
@@ -255,10 +319,9 @@ public class InventoryTetris : MonoBehaviour {
                 return false;
             }
 
-            if (inventoryTetrisBackground)
+            if (inventoryTetrisBackground && InventoryTileSystem.Instance.IsTileNull(inventoryTetrisBackground, gridPosition))
             {
-                inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(gridPosition, out InventoryTile tile);
-                if (tile.IsNull()) return false;
+                return false;
             }
 
             GridObject gridObject = grid.GetGridObject(gridPosition.x, gridPosition.y);
@@ -343,7 +406,7 @@ public class InventoryTetris : MonoBehaviour {
 
         if (canPlace)
         {
-            ClearItemAt(placedObject.GetGridPosition());
+            //ClearItemAt(placedObject.GetGridPosition());
             Vector2Int rotationOffset = placedObjectTypeSO.GetRotationOffset(dir);
             Vector3 placedObjectWorldPosition = grid.GetWorldPosition(placedObjectOrigin.x, placedObjectOrigin.y) + new Vector3(rotationOffset.x, rotationOffset.y) * grid.GetCellSize();
 
@@ -363,7 +426,7 @@ public class InventoryTetris : MonoBehaviour {
             }
 
             OnObjectPlaced?.Invoke(this, placedObject);
-
+            
             // Object Moved!
             //print("Moved");
         }

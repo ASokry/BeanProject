@@ -16,15 +16,11 @@ public class InventoryConsumable : InventoryItem
     public virtual void Use()
     {
         //Use Consumable
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            count--;
-        }
     }
 
     public void PrintText()
     {
-        if (Input.GetKeyDown(KeyCode.O))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             print(gameObject.GetInstanceID() + ": " + count);
         }

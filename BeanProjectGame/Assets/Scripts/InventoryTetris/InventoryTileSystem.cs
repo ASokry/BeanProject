@@ -6,8 +6,8 @@ public class InventoryTileSystem : MonoBehaviour
 {
     public static InventoryTileSystem Instance { get; private set; }
 
-    public enum TileType { Default, Null}
-    [SerializeField] private Sprite differentTile;
+    public enum TileType { Default, Null, Upgrade}
+    [SerializeField] private Sprite upgradeTile;
 
     public enum TileOverlayType { Default, Search, Upgradeable}
     [SerializeField, Range(0, 1)] private float overlayOpacity = 0.5f;
@@ -16,6 +16,39 @@ public class InventoryTileSystem : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+    }
+
+    public bool IsTileNull(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinates)
+    {
+        inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(coordinates, out InventoryTile tile);
+        if (tile == null)
+        {
+            //print("Coordinates does not exsist: " + coordinates);
+            return true;
+        }
+        return tile.IsNull();
+    }
+
+    public bool IsTileUpgradeable(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinates)
+    {
+        inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(coordinates, out InventoryTile tile);
+        if (tile == null)
+        {
+            //print("Coordinates does not exsist: " + coordinates);
+            return false;
+        }
+        return tile.IsUpgradeable();
+    }
+
+    public void SetTileUpgradeable(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinates, bool b)
+    {
+        inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(coordinates, out InventoryTile tile);
+        if (tile == null)
+        {
+            //print("Coordinates does not exsist: " + coordinates);
+            return;
+        }
+        tile.SetUpgradeable(b);
     }
 
     public void SetTileOverlay(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinates, TileOverlayType tileOverlay)
@@ -46,7 +79,7 @@ public class InventoryTileSystem : MonoBehaviour
         }
     }
 
-    public void SetTile(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinates, TileType tileType)
+    public void SetTileSprite(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinates, TileType tileType)
     {
         inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(coordinates, out InventoryTile tile);
         if (tile == null)
@@ -62,6 +95,9 @@ public class InventoryTileSystem : MonoBehaviour
                 break;
             case TileType.Null:
                 tile.SetNull();
+                break;
+            case TileType.Upgrade:
+                tile.SetImageSprite(upgradeTile);
                 break;
             default:
                 tile.ResetSprite();

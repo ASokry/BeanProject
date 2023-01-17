@@ -31,6 +31,7 @@ public class InventoryTile : MonoBehaviour
     {
         isNullTile = true;
         image.sprite = null;
+        //image.sprite = defaultSprite;
         //image.enabled = false;
     }
 
@@ -46,6 +47,7 @@ public class InventoryTile : MonoBehaviour
 
     public void SetImageSprite(Sprite sprite)
     {
+        image.enabled = true;
         image.sprite = sprite;
     }
 
@@ -53,11 +55,13 @@ public class InventoryTile : MonoBehaviour
     {
         isNullTile = false;
         canBeUpgraded = false;
+        image.enabled = true;
         image.sprite = defaultSprite;
     }
 
     public void SetColor(Color color)
     {
+        image.enabled = true;
         image.color = color;
     }
 
@@ -70,6 +74,7 @@ public class InventoryTile : MonoBehaviour
 
     public void ResetColor()
     {
+        image.enabled = true;
         Color defualtColor = Color.white;
         defualtColor.a = 0;
         image.color = defualtColor;

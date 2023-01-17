@@ -20,10 +20,7 @@ public class InventorySearchSystem : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S) && foundItem == null && !isSearching)
-        {
-            StartGridSearch("H-Ammo");
-        }
+        StartGridSearch("H-Ammo");
     }
 
     public void AddToSearchList(InventorySearch gridSearch)
@@ -36,9 +33,17 @@ public class InventorySearchSystem : MonoBehaviour
         foundItem = inventoryItem;
     }
 
+    private bool CanSearch()
+    {
+        return InventoryGridManager.Instance.GetCurrentState() == InventoryGridManager.InventoryState.Locked && foundItem == null && !isSearching;
+    }
+
     public void StartGridSearch(string name)
     {
-        StartCoroutine(SearchThroughGrids(name));
+        if (Input.GetKeyDown(KeyCode.S) && CanSearch())
+        {
+            StartCoroutine(SearchThroughGrids(name));
+        }
     }
 
     private IEnumerator SearchThroughGrids(string target)
@@ -65,7 +70,7 @@ public class InventorySearchSystem : MonoBehaviour
         isSearching = false;
     }
 
-    //Must use following method after we're done using foundItem in Austin's script 
+    //Must use this method after we're done using foundItem in Austin's script 
     public void ResetSearchSystem()
     {
         foundItem = null;

@@ -4,25 +4,17 @@ using UnityEngine;
 
 public class InventoryConsumable : InventoryItem
 {
-    //Dummy Script, will be rewritten after further testing item memory
-    private int count = 3;
-
-    private void Update()
-    {
-        Use();
-        PrintText();
-    }
-
+    // Indiviual consumable items will override virtual methods
     public virtual void Use()
     {
         //Use Consumable
+        print("Using Consumable");
     }
 
-    public void PrintText()
+    public virtual void DestroyThisConsumable()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            print(gameObject.GetInstanceID() + ": " + count);
-        }
+        //Method for destroying the consumable
+        print("Destroying this Consumable");
+        Destroy(this);
     }
 }

@@ -19,6 +19,7 @@ public class InventoryTetrisTesting : MonoBehaviour {
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Space)) {
             outerInventoryTetrisBackground.gameObject.SetActive(true);
+            outerInventoryTetris.SetActiveGrid(true);
             outerInventoryTetris.Load(addItemTetrisSaveList[addItemTetrisSaveListIndex]);
 
             addItemTetrisSaveListIndex = (addItemTetrisSaveListIndex + 1) % addItemTetrisSaveList.Count;

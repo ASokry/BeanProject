@@ -8,11 +8,12 @@ public class InventorySearch : MonoBehaviour
     [SerializeField] private bool inCombat = true;
 
     [SerializeField] private InventoryTetris inventoryTetris;
+    [SerializeField] private bool useArrow = false;
     [SerializeField] private InventoryArrow inventoryArrow;
 
     [SerializeField] private float searchDelay = 1f;
 
-    [SerializeField] private InventoryTetrisBackground inventoryTetrisBackground;
+    //[SerializeField] private InventoryTetrisBackground inventoryTetrisBackground;
 
     public void StartGridTraversal(string target)
     {
@@ -31,28 +32,37 @@ public class InventorySearch : MonoBehaviour
     private IEnumerator GridTraversal(string target)
     {
         // Traverse through entire grid, starting at the top row
-        int row = GetTopMostRow(inventoryTetris);
-        InventoryTileSystem.TileType searchType = InventoryTileSystem.TileType.Search;
-        InventoryTileSystem.TileType defaultType = InventoryTileSystem.TileType.Default;
+        int row = GetStartingRow(inventoryTetris);
+        InventoryTetrisBackground inventoryTetrisBackground = inventoryTetris.GetInventoryTetrisBackground();
+        InventoryTileSystem.TileOverlayType searchType = InventoryTileSystem.TileOverlayType.Search;
+        InventoryTileSystem.TileOverlayType defaultType = InventoryTileSystem.TileOverlayType.Default;
 
         while (row >= 0 && searchState)
         {
             //Reveal and move the arrow along y axis of grid on left hand side
-            inventoryArrow.SetMax(inventoryTetris.GetWidth());
-            inventoryArrow.ResetFill();
-            inventoryArrow.MoveArrow(0, row);
-            inventoryArrow.Reveal();
+            if (useArrow)
+            {
+                inventoryArrow.SetMax(inventoryTetris.GetWidthMax());
+                inventoryArrow.ResetFill();
+                inventoryArrow.MoveArrow(0, row);
+                inventoryArrow.Reveal();
+            }
 
             // search through each column of current row
-            for (int col = 0; col < inventoryTetris.GetWidth(); col++)
+            int column = GetStartingCol(inventoryTetris, row);
+            if (column < 0) { print("there are no columns to traverse"); break; }
+            for (int col = column; col < inventoryTetris.GetWidthMax(); col++)
             {
-                InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, new Vector2Int(row, col), searchType);
-                inventoryArrow.Fill();
+                Vector2Int coordinate = new Vector2Int(col, row);
+                if (CheckIfTileIsNull(coordinate.x, coordinate.y)) continue;// if coordinates are null, then continue loop
+
+                InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, searchType);
+                if (useArrow) { inventoryArrow.Fill(); }
                 yield return new WaitForSeconds(searchDelay);
 
                 if (!inventoryTetris.GetGrid().GetGridObject(col, row).HasPlacedObject())
                 {
-                    InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, new Vector2Int(row, col), defaultType);
+                    InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, defaultType);
                     continue; //if the placedGridObject is empty, then continue loop
                 }
 
@@ -66,21 +76,22 @@ public class InventorySearch : MonoBehaviour
 
                     //get reference to itemObject
                     InventoryItem item = inventoryTetris.GetGrid().GetGridObject(col, row).GetPlacedObject().GetComponent<InventoryItem>();
-                    InventorySearchSystem.Instance.SetFoundItem(item);
+                    Vector2Int itemCoordinates = new Vector2Int(col, row);
+                    InventorySearchSystem.Instance.SetFoundItem(item, inventoryTetris, itemCoordinates);
                     //print(itemObject);
 
                     //after item is found, reset search state
                     searchState = false;
                     //Let GridSearchSystem know item was found
                     InventorySearchSystem.Instance.CanContinue(true);
-                    InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, new Vector2Int(row, col), defaultType);
+                    InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, defaultType);
                     break;
                 }
-                InventoryTileSystem.Instance.SetTile(inventoryTetrisBackground, new Vector2Int(row, col), defaultType);
+                InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, defaultType);
             }
 
             // hide the arrow again
-            inventoryArrow.Hide();
+            if (useArrow) { inventoryArrow.Hide(); }
 
             //increment row counter, so we can go down to next row
             row--;
@@ -88,21 +99,40 @@ public class InventorySearch : MonoBehaviour
         InventorySearchSystem.Instance.CanContinue(true);
     }
 
-    public int GetTopMostRow(InventoryTetris inventoryTetris)
+    private int GetStartingRow(InventoryTetris inventoryTetris)
     {
-        for (int row = inventoryTetris.GetHeight() - 1; row >= 0; row--)
+        for (int row = inventoryTetris.GetHeightMax() - 1; row >= 0; row--)
         {
             //print(row);
-            for (int col = 0; col < inventoryTetris.GetWidth(); col++)
+            for (int col = 0; col < inventoryTetris.GetWidthMax(); col++)
             {
                 //print(col);
+                if (CheckIfTileIsNull(col, row)) continue;
                 if (inventoryTetris.GetGrid().GetGridObject(col, row).HasPlacedObject())
                 {
                     return row;
                 }
             }
         }
-
         return -1;
+    }
+
+    private int GetStartingCol(InventoryTetris inventoryTetris, int row)
+    {
+        for (int col = 0; col < inventoryTetris.GetWidthMax(); col++)
+        {
+            //print(col);
+            if (CheckIfTileIsNull(col, row)) continue;
+            return col;
+        }
+        return -1;
+    }
+
+    private bool CheckIfTileIsNull(int x, int y)
+    {
+        Vector2Int coordinate = new Vector2Int(x, y);
+        InventoryTetrisBackground inventoryTetrisBackground = inventoryTetris.GetInventoryTetrisBackground();
+        //print(InventoryTileSystem.Instance.IsTileNull(inventoryTetrisBackground, coordinate));
+        return InventoryTileSystem.Instance.IsTileNull(inventoryTetrisBackground, coordinate);
     }
 }

@@ -10,4 +10,11 @@ public class InventoryItem : MonoBehaviour
 
     public string GetName() { return itemName; }
     public ItemType GetItemType() { return itemType; }
+
+    public virtual void DestroyThisItemOnGrid(InventoryTetris inventoryTetris, Vector2Int cooridnate)
+    {
+        //Method for destroying the consumable
+        print("Destroying this item");
+        inventoryTetris.RemoveItemAt(cooridnate);
+    }
 }

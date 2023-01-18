@@ -16,9 +16,9 @@ public class MedKit : InventoryConsumable
         }
     }
 
-    public override void DestroyThisConsumable()
+    /*public override void DestroyThisItem()
     {
-        base.DestroyThisConsumable();
+        base.DestroyThisItem();
         if (charges <= 0)
         {
             Destroy(this);
@@ -27,5 +27,5 @@ public class MedKit : InventoryConsumable
         {
             print("Still has charges, cannot be destroyed");
         }
-    }
+    }*/
 }

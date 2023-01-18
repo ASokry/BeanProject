@@ -283,6 +283,7 @@ public class CharacterMotion : MonoBehaviour
                 {
                     weaponObject.SetCurAmmo(weaponObject.clipSize);
                     //gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);//Anthony
+                    InventorySearchSystem.Instance.DestroyFoundItem();
                     InventorySearchSystem.Instance.ResetSearchSystem();
                 }
             }

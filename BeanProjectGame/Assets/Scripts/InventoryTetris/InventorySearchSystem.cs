@@ -12,15 +12,12 @@ public class InventorySearchSystem : MonoBehaviour
     public void CanContinue(bool b) { canContinue = b; }
 
     public InventoryItem foundItem;
+    private InventoryTetris foundItemInventoryTetris;
+    private Vector2Int foundItemCoordinate;
 
     private void Awake()
     {
         Instance = this;
-    }
-
-    private void Update()
-    {
-        StartGridSearch("H-Ammo");
     }
 
     public void AddToSearchList(InventorySearch gridSearch)
@@ -28,19 +25,23 @@ public class InventorySearchSystem : MonoBehaviour
         gridSearchList.Add(gridSearch);
     }
 
-    public void SetFoundItem(InventoryItem inventoryItem)
+    public void SetFoundItem(InventoryItem inventoryItem, InventoryTetris inventoryTetris, Vector2Int coordinate)
     {
         foundItem = inventoryItem;
+        foundItemInventoryTetris = inventoryTetris;
+        foundItemCoordinate = coordinate;
     }
 
     private bool CanSearch()
     {
-        return InventoryGridManager.Instance.GetCurrentState() == InventoryGridManager.InventoryState.Locked && foundItem == null && !isSearching;
+        //return InventoryGridManager.Instance.GetCurrentState() == InventoryGridManager.InventoryState.Locked && foundItem == null && !isSearching;
+        return foundItem == null && !isSearching;
     }
 
     public void StartGridSearch(string name)
     {
-        if (Input.GetKeyDown(KeyCode.S) && CanSearch())
+        //if (Input.GetKeyDown(KeyCode.S) && CanSearch())
+        if (CanSearch())
         {
             StartCoroutine(SearchThroughGrids(name));
         }
@@ -74,5 +75,10 @@ public class InventorySearchSystem : MonoBehaviour
     public void ResetSearchSystem()
     {
         foundItem = null;
+    }
+
+    public void DestroyFoundItem()
+    {
+        foundItem.DestroyThisItemOnGrid(foundItemInventoryTetris, foundItemCoordinate);
     }
 }

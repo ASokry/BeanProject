@@ -76,7 +76,8 @@ public class InventorySearch : MonoBehaviour
 
                     //get reference to itemObject
                     InventoryItem item = inventoryTetris.GetGrid().GetGridObject(col, row).GetPlacedObject().GetComponent<InventoryItem>();
-                    InventorySearchSystem.Instance.SetFoundItem(item);
+                    Vector2Int itemCoordinates = new Vector2Int(col, row);
+                    InventorySearchSystem.Instance.SetFoundItem(item, inventoryTetris, itemCoordinates);
                     //print(itemObject);
 
                     //after item is found, reset search state

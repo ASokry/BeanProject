@@ -26,6 +26,7 @@ public class InventoryTetris : MonoBehaviour {
 
     private Grid<GridObject> grid;
     private RectTransform itemContainer;
+
     [SerializeField] private bool isActiveGrid = true;
     public void SetActiveGrid(bool b) { isActiveGrid = b; }
     public bool GetActiveGrid() { return isActiveGrid; }

@@ -1,19 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MedKit : InventoryConsumable
 {
-    private int charges = 1;
+    [SerializeField] private int healAmount;
 
     public override void Use()
     {
         base.Use();
-        if (charges > 0)
-        {
-            print("Using Medkit");
-            charges--;
-        }
+        print("Using Medkit");
     }
 
     /*public override void DestroyThisItem()

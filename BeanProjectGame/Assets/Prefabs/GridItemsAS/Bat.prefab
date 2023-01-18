@@ -106,7 +106,8 @@ MonoBehaviour:
   itemType: 0
   weaponType: 3
   aimType: 1
-  range: 5
+  range: 10
+  minnimumRange: 6
   damagePerShot: 10
   ammoType: 
   clipSize: 10000000

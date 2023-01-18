@@ -10,6 +10,7 @@ public class InventoryWeapon : InventoryItem
     public WeaponType weaponType = WeaponType.None;
     public AimType aimType = AimType.None;
     public float range;
+    public float minnimumRange;
     public float damagePerShot;
     public string ammoType;
     public int clipSize;

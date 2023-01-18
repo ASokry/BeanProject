@@ -28,6 +28,11 @@ public class AreaTargetting : MonoBehaviour
             characterMotion.areaTargettedEnemies.Add(other.gameObject);
             characterMotion.areaEnemyBehaviours.Add(other.gameObject.GetComponent<EnemyBehaviour>());
         }
+
+        if(other.tag == "Projectile")
+        {
+            characterMotion.areaProjectiles.Add(other.gameObject);
+        }
     }
     private void OnTriggerExit(Collider other)
     {
@@ -35,6 +40,11 @@ public class AreaTargetting : MonoBehaviour
         {
             characterMotion.areaTargettedEnemies.Remove(other.gameObject);
             characterMotion.areaEnemyBehaviours.Remove(other.gameObject.GetComponent<EnemyBehaviour>());
+        }
+
+        if(other.tag == "Projectile")
+        {
+            characterMotion.areaProjectiles.Remove(other.gameObject);
         }
     }
 }

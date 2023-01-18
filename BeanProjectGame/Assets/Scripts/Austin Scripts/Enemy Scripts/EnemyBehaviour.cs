@@ -155,6 +155,7 @@ public class EnemyBehaviour : MonoBehaviour
                     attackTimer += Time.deltaTime;
                     if(attackTimer >= enemyAttacks[i].timeBetweenAttacks)
                     {
+                        characterAnimationManager.Attack();
                         float hitRoll = Random.Range(0, 100);
                         if(hitRoll <= enemyAttacks[i].attackAccuracy)
                         {

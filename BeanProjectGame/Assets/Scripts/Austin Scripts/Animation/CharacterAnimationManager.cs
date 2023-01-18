@@ -22,4 +22,9 @@ public class CharacterAnimationManager : MonoBehaviour
     {
         animator.SetTrigger("Die");
     }
+
+    public void Attack()
+    {
+        animator.SetTrigger("Attack");
+    }
 }

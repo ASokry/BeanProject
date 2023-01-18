@@ -111,7 +111,7 @@ MonoBehaviour:
   ammoType: H-Ammo
   clipSize: 6
   curAmmo: 6
-  timeBetweenAttacks: 1
+  timeBetweenAttacks: 0.2
   baseWeaponAccuracy: 60
   specialEffects: []
 --- !u!1001 &1367670619644370482

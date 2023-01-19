@@ -68,7 +68,7 @@ public class InventorySearch : MonoBehaviour
 
                 PlacedObject placedObject = inventoryTetris.GetGrid().GetGridObject(col, row).GetPlacedObject();
                 PlacedObjectTypeSO itemTetrisSO = placedObject.GetPlacedObjectTypeSO();
-
+                //print(itemTetrisSO.nameString + ", " + target);
                 if (itemTetrisSO.nameString == target)
                 {
                     //if we found a matching targetItemname, then use the item

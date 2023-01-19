@@ -13,6 +13,11 @@ public class MedKit : InventoryConsumable
         print("Using Medkit");
     }
 
+    public override int GetHealAmount()
+    {
+        base.GetHealAmount();
+    }
+
     /*public override void DestroyThisItem()
     {
         base.DestroyThisItem();

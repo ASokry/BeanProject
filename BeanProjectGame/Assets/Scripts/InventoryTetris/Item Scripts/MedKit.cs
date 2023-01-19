@@ -13,6 +13,12 @@ public class MedKit : InventoryConsumable
         print("Using Medkit");
     }
 
+    public override int GetHealAmount()
+    {
+        base.GetHealAmount();
+        return healAmount;//cannot be used due to parent/sub class referencing
+    }
+
     /*public override void DestroyThisItem()
     {
         base.DestroyThisItem();

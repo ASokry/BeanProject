@@ -40,7 +40,7 @@ public class CharacterMotion : MonoBehaviour
     private bool moveBackwards;
     public InventoryWeapon weaponObject;
     private InventoryWeapon prevWeaponObject;
-    public ConsumableObject consumableObject;
+    public InventoryConsumable consumableObject;
     //private int curDamage;
     public GameObject targettedEnemy;
     public EnemyBehaviour targettedEnemyBehaviour;
@@ -149,17 +149,22 @@ public class CharacterMotion : MonoBehaviour
 
         if(consumableObject != null) // if the script has a consumable object, imediately preform its effect and then set it to null and delete the object from the grid
         {
-            InventorySearchSystem.Instance.StartGridSearch(consumableObject.name);
+            InventorySearchSystem.Instance.StartGridSearch(consumableObject.GetName());
 
-            if(InventorySearchSystem.Instance.foundItem != null && InventorySearchSystem.Instance.foundItem.GetName() == consumableObject.name)
+            if(InventorySearchSystem.Instance.foundItem != null && InventorySearchSystem.Instance.foundItem.GetName() == consumableObject.GetName())
             {
-                if (consumableObject.consumableType == ConsumableObject.ConsumableType.Healing)
+                if (consumableObject.GetConsumableType() == InventoryConsumable.ConsumableType.Healing)
                 {
                     if (curHealth < characterStats.health)
                     {
-                        curHealth += consumableObject.healAmount;
+                        curHealth += consumableObject.GetHealAmount();
                         //gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);//Anthony
                         InventorySearchSystem.Instance.DestroyFoundItem();
+                        InventorySearchSystem.Instance.ResetSearchSystem();
+                        consumableObject = null;
+                    }
+                    else
+                    {
                         InventorySearchSystem.Instance.ResetSearchSystem();
                         consumableObject = null;
                     }
@@ -284,7 +289,7 @@ public class CharacterMotion : MonoBehaviour
             if (areaTargettedEnemies.Count > 0 || areaProjectiles.Count > 0)
             {
                 // checks distance for each enemy and projectile in target box, if any are too low it stops the player, else statement may lead to problems, we should check that out at some point
-                if(areaTargettedEnemies.Count > 0)
+                if (areaTargettedEnemies.Count > 0)
                 {
                     foreach (GameObject enemy in areaTargettedEnemies)
                     {
@@ -303,7 +308,7 @@ public class CharacterMotion : MonoBehaviour
                     }
                 }
 
-                if(areaProjectiles.Count > 0)
+                if (areaProjectiles.Count > 0)
                 {
                     foreach (GameObject projectile in areaProjectiles)
                     {
@@ -321,7 +326,7 @@ public class CharacterMotion : MonoBehaviour
                         }
                     }
                 }
-   
+
 
                 //SetStop(true);
                 attackTimer += Time.deltaTime;
@@ -339,30 +344,70 @@ public class CharacterMotion : MonoBehaviour
                         }
                     }
 
-                    characterAnimationManager.Attack();
-                    for (int i = 0; i < areaTargettedEnemies.Count; i++)
+                    if (weaponObject.curAmmo <= 0) // preforms reload logic when curShots runs out, for melee weapons this value will represent durability (unless we choose not to use durability)
                     {
-                        float hitRoll = Random.Range(0, 100);
-                        if (hitRoll <= weaponObject.baseWeaponAccuracy + ((weaponObject.baseWeaponAccuracy * .1) * finesse))
+                        if (InventorySearchSystem.Instance.foundItem == null)
                         {
-                            float damageDealt = weaponObject.damagePerShot + ((weaponObject.damagePerShot * .1f) * strength);
-                            AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
-                            for (int e = 0; e < weaponObject.specialEffects.Length; e++)
-                            {
-                                CallWeaponEffect(weaponObject.specialEffects[e], areaEnemyBehaviours[i]);
-                            }
-                            //print(damageDealt);
+                            InventorySearchSystem.Instance.StartGridSearch(weaponObject.ammoType);
+                        }
+
+                        if (InventorySearchSystem.Instance.foundItem != null && InventorySearchSystem.Instance.foundItem.GetName() == weaponObject.ammoType)
+                        {
+                            weaponObject.SetCurAmmo(weaponObject.clipSize);
+                            //gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);//Anthony
+                            InventorySearchSystem.Instance.DestroyFoundItem();
+                            InventorySearchSystem.Instance.ResetSearchSystem();
                         }
                     }
-                    weaponObject.SetCurAmmo(-1);
-                    attackTimer = 0;
+                }
+
+                if (consumableObject != null) // if the script has a consumable object, imediately preform its effect and then set it to null and delete the object from the grid
+                {
+                    InventorySearchSystem.Instance.StartGridSearch(consumableObject.GetName());
+
+                    if (InventorySearchSystem.Instance.foundItem != null && InventorySearchSystem.Instance.foundItem.GetName() == consumableObject.GetName())
+                    {
+                        if (consumableObject.GetConsumableType() == InventoryConsumable.ConsumableType.Healing)
+                        {
+                            if (curHealth < characterStats.health)
+                            {
+                                curHealth += consumableObject.GetHealAmount();
+                                //gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);//Anthony
+                                InventorySearchSystem.Instance.DestroyFoundItem();
+                                InventorySearchSystem.Instance.ResetSearchSystem();
+                                consumableObject = null;
+                            }
+                            else
+                            {
+                                InventorySearchSystem.Instance.ResetSearchSystem();
+                                consumableObject = null;
+                                characterAnimationManager.Attack();
+                                for (int i = 0; i < areaTargettedEnemies.Count; i++)
+                                {
+                                    float hitRoll = Random.Range(0, 100);
+                                    if (hitRoll <= weaponObject.baseWeaponAccuracy + ((weaponObject.baseWeaponAccuracy * .1) * finesse))
+                                    {
+                                        float damageDealt = weaponObject.damagePerShot + ((weaponObject.damagePerShot * .1f) * strength);
+                                        AreaAttackEnemy(damageDealt, areaEnemyBehaviours[i]);
+                                        for (int e = 0; e < weaponObject.specialEffects.Length; e++)
+                                        {
+                                            CallWeaponEffect(weaponObject.specialEffects[e], areaEnemyBehaviours[i]);
+                                        }
+                                        //print(damageDealt);
+                                    }
+                                }
+                                weaponObject.SetCurAmmo(-1);
+                                attackTimer = 0;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        areaTargetBox.SetActive(false);
+                        //SetStop(false);
+                    }
                 }
             }
-        }
-        else
-        {
-            areaTargetBox.SetActive(false);
-            //SetStop(false);
         }
     }
 
@@ -446,7 +491,7 @@ public class CharacterMotion : MonoBehaviour
         this.weaponObject = weaponObject;
     }
 
-    public void SetConsumableObject(ConsumableObject consumableObject)
+    public void SetConsumableObject(InventoryConsumable consumableObject)
     {
         this.consumableObject = consumableObject;
     }

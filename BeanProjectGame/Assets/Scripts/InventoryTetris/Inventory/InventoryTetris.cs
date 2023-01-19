@@ -56,11 +56,16 @@ public class InventoryTetris : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.U) && InventoryGridManager.Instance.GetCurrentState() != InventoryGridManager.InventoryState.Upgrading)
+        if (Input.GetKeyDown(KeyCode.U))
         {
-            InventoryGridManager.Instance.SetCurrentState(InventoryGridManager.InventoryState.Upgrading);
+            if(InventoryGridManager.Instance.GetCurrentState() != InventoryGridManager.InventoryState.Upgrading)
+            {
+                InventoryGridManager.Instance.SetCurrentState(InventoryGridManager.InventoryState.Upgrading);
+            }
+            
             InventoryGridManager.Instance.SetStartingUpgradePoints(3);
             ShowUpgradeableTiles();
+            //print("done");
         }
         ClickToExpandGrid();
     }
@@ -206,9 +211,10 @@ public class InventoryTetris : MonoBehaviour {
 
     private void ShowUpgradeableTiles()
     {
-        //print(allowUpgradeTiles && CanUpgrade());
+        print(allowUpgradeTiles && CanUpgrade());
         if (allowUpgradeTiles && CanUpgrade())
         {
+            //print("here");
             Dictionary<Vector2Int, InventoryTile> tiles = inventoryTetrisBackground.GetInventoryTileDictionary();
             foreach (KeyValuePair<Vector2Int, InventoryTile> valuePair in tiles)
             {

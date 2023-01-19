@@ -15,6 +15,15 @@ public class InventoryPrep : MonoBehaviour
         Instance = this;
     }
 
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+
+            print(IsInventoryPrepped(0));
+        }
+    }
+
     public bool IsInventoryPrepped(int index)
     {
         if (inventoriesToPrep.Count <= 0)

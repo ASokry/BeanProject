@@ -11,6 +11,7 @@ public class CharacterMotion : MonoBehaviour
     //public WeaponsList weaponList;
     public CharacterStats characterStats;
     public CharacterAnimationManager characterAnimationManager;
+    //private 
 
     [Header("Component References")]
     public Rigidbody playerRigidbody;
@@ -181,6 +182,8 @@ public class CharacterMotion : MonoBehaviour
         }
 
     }
+    bool inventoryPrep = InventoryPrep.Instance.IsInventoryPrepped(0);
+
     public void AutoTargetting()
     {
         if (weaponObject.aimType == InventoryWeapon.AimType.AutoTargeting) // handles attack hit and reload logic for autotargetting weapons

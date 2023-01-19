@@ -56,13 +56,13 @@ public class InventoryTetris : MonoBehaviour {
 
     private void Update()
     {
-        /*if (Input.GetKeyDown(KeyCode.U) && InventoryGridManager.Instance.GetCurrentState() != InventoryGridManager.InventoryState.Upgrading)
+        if (Input.GetKeyDown(KeyCode.U) && InventoryGridManager.Instance.GetCurrentState() != InventoryGridManager.InventoryState.Upgrading)
         {
             InventoryGridManager.Instance.SetCurrentState(InventoryGridManager.InventoryState.Upgrading);
             InventoryGridManager.Instance.SetStartingUpgradePoints(3);
             ShowUpgradeableTiles();
         }
-        ClickToExpandGrid();*/
+        ClickToExpandGrid();
     }
 
     public class GridObject {

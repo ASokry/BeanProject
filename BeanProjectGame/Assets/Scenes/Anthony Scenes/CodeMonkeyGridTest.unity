@@ -17060,14 +17060,14 @@ MonoBehaviour:
   gridWidthMax: 10
   gridHeightMax: 10
   cellSize: 50
-  startWithNullTiles: 0
+  startWithNullTiles: 1
   gridWidthMin: 5
   gridHeightMin: 7
   inventoryTetrisBackground: {fileID: 1878452376}
   customNullTiles: []
   allowUpgradeTiles: 1
   isActiveGrid: 1
-  inventoryTetrisGravity: 0
+  inventoryTetrisGravity: 1
 --- !u!114 &2096610784
 MonoBehaviour:
   m_ObjectHideFlags: 0

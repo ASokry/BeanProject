@@ -16,6 +16,7 @@ public class MedKit : InventoryConsumable
     public override int GetHealAmount()
     {
         base.GetHealAmount();
+        return healAmount;//cannot be used due to parent/sub class referencing
     }
 
     /*public override void DestroyThisItem()

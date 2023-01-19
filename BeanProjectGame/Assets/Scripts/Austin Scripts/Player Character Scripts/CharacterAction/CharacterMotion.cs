@@ -43,6 +43,7 @@ public class CharacterMotion : MonoBehaviour
     public InventoryWeapon weaponObject;
     private InventoryWeapon prevWeaponObject;
     public ConsumableObject consumableObject;
+    public InventoryConsumable consumableObject;
     //private int curDamage;
     public GameObject targettedEnemy;
     public EnemyBehaviour targettedEnemyBehaviour;

@@ -16814,8 +16814,9 @@ MonoBehaviour:
   inventoryTetris: {fileID: 2096610783}
   outerInventoryTetris: {fileID: 1544979334}
   addItemTetrisSaveList:
-  - '{"addItemTetrisList":[{"itemTetrisSOName":"Knife","gridPosition":{"x":0,"y":4},"dir":2},{"itemTetrisSOName":"Medkit","gridPosition":{"x":0,"y":8},"dir":0},{"itemTetrisSOName":"SH-Ammo","gridPosition":{"x":3,"y":0},"dir":3},{"itemTetrisSOName":"SP-Ammo","gridPosition":{"x":5,"y":0},"dir":0},{"itemTetrisSOName":"38Revolver","gridPosition":{"x":8,"y":6},"dir":1},{"itemTetrisSOName":"Bat","gridPosition":{"x":6,"y":9},"dir":3},{"itemTetrisSOName":"H-Ammo","gridPosition":{"x":8,"y":0},"dir":1}]}'
-  - '{"addItemTetrisList":[{"itemTetrisSOName":"H-Ammo","gridPosition":{"x":2,"y":3},"dir":0},{"itemTetrisSOName":"SP-Ammo","gridPosition":{"x":3,"y":3},"dir":0},{"itemTetrisSOName":"SH-Ammo","gridPosition":{"x":4,"y":4},"dir":3},{"itemTetrisSOName":"Medkit","gridPosition":{"x":3,"y":5},"dir":0},{"itemTetrisSOName":"Knife","gridPosition":{"x":5,"y":4},"dir":2},{"itemTetrisSOName":"38Revolver","gridPosition":{"x":6,"y":6},"dir":1},{"itemTetrisSOName":"Bat","gridPosition":{"x":6,"y":2},"dir":3}]}'
+  - '{"addItemTetrisList":[{"itemTetrisSOName":"H-Ammo","gridPosition":{"x":3,"y":3},"dir":1},{"itemTetrisSOName":"H-Ammo","gridPosition":{"x":5,"y":3},"dir":0},{"itemTetrisSOName":"38Revolver","gridPosition":{"x":4,"y":5},"dir":0}]}'
+  - '{"addItemTetrisList":[{"itemTetrisSOName":"SawnOff","gridPosition":{"x":1,"y":4},"dir":3},{"itemTetrisSOName":"SH-Ammo","gridPosition":{"x":2,"y":6},"dir":2},{"itemTetrisSOName":"Medkit","gridPosition":{"x":2,"y":1},"dir":0},{"itemTetrisSOName":"SH-Ammo","gridPosition":{"x":2,"y":7},"dir":1}]}'
+  - '{"addItemTetrisList":[{"itemTetrisSOName":"SH-Ammo","gridPosition":{"x":4,"y":9},"dir":3},{"itemTetrisSOName":"SH-Ammo","gridPosition":{"x":5,"y":0},"dir":3},{"itemTetrisSOName":"Knife","gridPosition":{"x":7,"y":0},"dir":3},{"itemTetrisSOName":"H-Ammo","gridPosition":{"x":7,"y":1},"dir":1},{"itemTetrisSOName":"38Revolver","gridPosition":{"x":8,"y":5},"dir":1},{"itemTetrisSOName":"Medkit","gridPosition":{"x":7,"y":7},"dir":0}]}'
 --- !u!4 &2084491601
 Transform:
   m_ObjectHideFlags: 0

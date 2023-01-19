@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class InventoryConsumable : InventoryItem
 {
+    public enum ConsumableType { Heal };
+
     // Indiviual consumable items will override virtual methods
     public virtual void Use()
     {

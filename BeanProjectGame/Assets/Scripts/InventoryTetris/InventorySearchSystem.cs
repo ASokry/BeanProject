@@ -75,6 +75,8 @@ public class InventorySearchSystem : MonoBehaviour
     public void ResetSearchSystem()
     {
         foundItem = null;
+        foundItemInventoryTetris = null;
+        foundItemCoordinate = Vector2Int.zero;
     }
 
     public void DestroyFoundItem()

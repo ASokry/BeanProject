@@ -182,7 +182,7 @@ public class GridManager : MonoBehaviour
             }
             else if(placedGridObject.GetComponent<ConsumableObject>() != null)
             {
-                characterMotion.SetConsumableObject(placedGridObject.GetComponent<ConsumableObject>());
+                //characterMotion.SetConsumableObject(placedGridObject.GetComponent<ConsumableObject>());
             }
 
             gridCellValue = null;

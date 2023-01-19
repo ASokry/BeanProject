@@ -37,7 +37,7 @@ public class CharacterMotion : MonoBehaviour
     private float attackDelay;
     private bool stopped;
     public InventoryWeapon weaponObject;
-    public ConsumableObject consumableObject;
+    public InventoryConsumable consumableObject;
     //private int curDamage;
     public GameObject targettedEnemy;
     public EnemyBehaviour targettedEnemyBehaviour;
@@ -291,16 +291,22 @@ public class CharacterMotion : MonoBehaviour
 
         if(consumableObject != null) // if the script has a consumable object, imediately preform its effect and then set it to null and delete the object from the grid
         {
-            InventorySearchSystem.Instance.StartGridSearch(consumableObject.name);
+            InventorySearchSystem.Instance.StartGridSearch(consumableObject.GetName());
 
-            if(InventorySearchSystem.Instance.foundItem != null && InventorySearchSystem.Instance.foundItem.GetName() == consumableObject.name)
+            if(InventorySearchSystem.Instance.foundItem != null && InventorySearchSystem.Instance.foundItem.GetName() == consumableObject.GetName())
             {
-                if (consumableObject.consumableType == ConsumableObject.ConsumableType.Healing)
+                if (consumableObject.GetConsumableType() == InventoryConsumable.ConsumableType.Healing)
                 {
                     if (curHealth < characterStats.health)
                     {
-                        curHealth += consumableObject.healAmount;
+                        curHealth += consumableObject.GetHealAmount();
                         //gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);//Anthony
+                        InventorySearchSystem.Instance.DestroyFoundItem();
+                        InventorySearchSystem.Instance.ResetSearchSystem();
+                        consumableObject = null;
+                    }
+                    else
+                    {
                         InventorySearchSystem.Instance.ResetSearchSystem();
                         consumableObject = null;
                     }
@@ -399,7 +405,7 @@ public class CharacterMotion : MonoBehaviour
         this.weaponObject = weaponObject;
     }
 
-    public void SetConsumableObject(ConsumableObject consumableObject)
+    public void SetConsumableObject(InventoryConsumable consumableObject)
     {
         this.consumableObject = consumableObject;
     }

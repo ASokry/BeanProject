@@ -48,7 +48,7 @@ public class Projectile : MonoBehaviour
         if(other.tag == "Player")
         {
             print("Damage");
-            characterMotion.TakeDamage(damage);
+            characterMotion.AffectHealth(-damage);
             Destroy(gameObject);
         }
     }

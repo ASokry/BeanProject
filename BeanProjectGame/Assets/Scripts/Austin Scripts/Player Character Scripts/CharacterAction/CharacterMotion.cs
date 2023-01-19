@@ -11,6 +11,8 @@ public class CharacterMotion : MonoBehaviour
     //public WeaponsList weaponList;
     public CharacterStats characterStats;
     public CharacterAnimationManager characterAnimationManager;
+    public UIBar healthBar;
+    public WeaponPanel weaponPanel;
     //private 
 
     [Header("Component References")]
@@ -63,6 +65,7 @@ public class CharacterMotion : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        healthBar.SetMaxHealth(characterStats.health);
         curSpeed = walkSpeed;
         curHealth = characterStats.health;
         isDead = false;
@@ -93,6 +96,15 @@ public class CharacterMotion : MonoBehaviour
                 SetStop(true);
             }
         }
+        /*bool inventoryPrepped = InventoryPrep.Instance.IsInventoryPrepped(0);
+        if (inventoryPrepped)
+        {
+            SetStop(true);
+        }
+        else
+        {
+            SetStop(false);
+        }*/
 
         if (stopped)
         {
@@ -140,6 +152,7 @@ public class CharacterMotion : MonoBehaviour
                 if (InventorySearchSystem.Instance.foundItem != null && InventorySearchSystem.Instance.foundItem.GetName() == weaponObject.ammoType)
                 {
                     weaponObject.SetCurAmmo(weaponObject.clipSize);
+                    weaponPanel.UpdateAmmoCount(weaponObject.curAmmo, weaponObject.clipSize);
                     //gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);//Anthony
                     InventorySearchSystem.Instance.DestroyFoundItem();
                     InventorySearchSystem.Instance.ResetSearchSystem();
@@ -157,7 +170,8 @@ public class CharacterMotion : MonoBehaviour
                 {
                     if (curHealth < characterStats.health)
                     {
-                        curHealth += consumableObject.healAmount;
+                        AffectHealth(consumableObject.healAmount);
+                        //curHealth += consumableObject.healAmount;
                         //gridManager.DestoryGridItem(gridManager.foundedItemCoordinates);//Anthony
                         InventorySearchSystem.Instance.DestroyFoundItem();
                         InventorySearchSystem.Instance.ResetSearchSystem();
@@ -177,7 +191,6 @@ public class CharacterMotion : MonoBehaviour
         }
 
     }
-    bool inventoryPrep = InventoryPrep.Instance.IsInventoryPrepped(0);
 
     public void AutoTargetting()
     {
@@ -263,6 +276,7 @@ public class CharacterMotion : MonoBehaviour
                         AssignTarget(missTarget);
                     }
                     weaponObject.SetCurAmmo(-1);
+                    weaponPanel.UpdateAmmoCount(weaponObject.curAmmo, weaponObject.clipSize);
                     attackTimer = 0;
                 }
 
@@ -355,6 +369,7 @@ public class CharacterMotion : MonoBehaviour
                         }
                     }
                     weaponObject.SetCurAmmo(-1);
+                    weaponPanel.UpdateAmmoCount(weaponObject.curAmmo, weaponObject.clipSize);
                     attackTimer = 0;
                 }
             }
@@ -384,10 +399,10 @@ public class CharacterMotion : MonoBehaviour
     {
         print("dead");
     }
-    public void TakeDamage(int damage)
+    public void AffectHealth(int damage)
     {
-        curHealth -= damage;
-        //healthBarUI.SetHealth(curHealth);
+        curHealth += damage;
+        healthBar.SetHealth(curHealth);
     }
     public void Stop(string waitType, float waitTime)
     {
@@ -444,6 +459,8 @@ public class CharacterMotion : MonoBehaviour
     {
         prevWeaponObject = this.weaponObject;
         this.weaponObject = weaponObject;
+        weaponPanel.PopulateInformation(weaponObject.name, weaponObject.damagePerShot);
+        weaponPanel.UpdateAmmoCount(weaponObject.curAmmo, weaponObject.clipSize);
     }
 
     public void SetConsumableObject(ConsumableObject consumableObject)

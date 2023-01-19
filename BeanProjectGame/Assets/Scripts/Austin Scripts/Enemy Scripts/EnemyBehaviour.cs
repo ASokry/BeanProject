@@ -210,7 +210,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void Attack(int damage)
     {
-        characterMotion.TakeDamage(damage);
+        characterMotion.AffectHealth(-damage);
     }
 
     public void AffectHealth(float damage)

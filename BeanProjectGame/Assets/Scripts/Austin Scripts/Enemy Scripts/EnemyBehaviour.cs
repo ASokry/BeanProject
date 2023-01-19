@@ -195,9 +195,10 @@ public class EnemyBehaviour : MonoBehaviour
 
         if (beingKnockedBack)
         {
+            Vector3 directionToPlayerX = new Vector3(directionToPlayer.x, 0, 0);
             if(Vector3.Distance(knockBackStartPos, transform.position) < knockbackDistance)
             {
-                transform.Translate(-directionToPlayer * knockBackSpeed * Time.deltaTime);
+                transform.Translate(-directionToPlayerX * knockBackSpeed * Time.deltaTime);
             }
             else
             {

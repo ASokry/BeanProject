@@ -106,8 +106,8 @@ MonoBehaviour:
   itemType: 0
   weaponType: 1
   aimType: 1
-  range: 6
-  minnimumRange: 2
+  range: 10
+  minnimumRange: 6
   damagePerShot: 10
   ammoType: SH-Ammo
   clipSize: 2

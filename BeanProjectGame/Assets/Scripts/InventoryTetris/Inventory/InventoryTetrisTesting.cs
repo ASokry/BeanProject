@@ -23,6 +23,8 @@ public class InventoryTetrisTesting : MonoBehaviour {
             outerInventoryTetris.Load(addItemTetrisSaveList[addItemTetrisSaveListIndex]);
 
             addItemTetrisSaveListIndex = (addItemTetrisSaveListIndex + 1) % addItemTetrisSaveList.Count;
+
+            InventoryPrep.Instance.ChangeText("Drag all items into left Grid");//temp, will remove after playtest
         }
 
         if (Input.GetKeyDown(KeyCode.P)) {

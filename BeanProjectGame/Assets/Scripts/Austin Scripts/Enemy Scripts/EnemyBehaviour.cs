@@ -234,6 +234,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void DeathAnimComplete()
     {
+        print("Called");
         enemyManager.enemies.Remove(gameObject);
         Destroy(gameObject);
     }

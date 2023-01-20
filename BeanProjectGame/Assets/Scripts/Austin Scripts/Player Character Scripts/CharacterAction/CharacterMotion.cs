@@ -38,7 +38,7 @@ public class CharacterMotion : MonoBehaviour
     private float localWaitTime;
     private float attackTimer;
     private float attackDelay;
-    private bool stopped;
+    [SerializeField] private bool stopped;
     private bool moveBackwards;
     public InventoryWeapon weaponObject;
     private InventoryWeapon prevWeaponObject;
@@ -75,14 +75,14 @@ public class CharacterMotion : MonoBehaviour
             gameObject.GetComponent<MeshRenderer>().enabled = false;
         }
 
+        SetStop(true);//temp, will remove after playtest
         //healthBarUI.SetMaxHealth(curHealth);//Health UI by Anthony
     }
-    //int prepped = 0;
 
     // Update is called once per frame
     void Update()
     {
-
+        
         Debug.DrawRay(this.transform.position, transform.right, color: Color.red);
         transform.Translate(Vector3.right * curSpeed * Time.deltaTime);
 
@@ -97,21 +97,6 @@ public class CharacterMotion : MonoBehaviour
                 SetStop(true);
             }
         }
-
-        //bool inventoryPrepped = InventoryPrep.Instance.IsInventoryPrepped(0);
-        //if (inventoryPrepped)
-        //{
-        //    SetStop(false);
-        //}
-        //else
-        //{
-        //    if (prepped == 0)
-        //    {
-        //        prepped++;
-        //        SetStop(true);
-        //    }
-
-        //}
 
         if (stopped)
         {
@@ -129,6 +114,7 @@ public class CharacterMotion : MonoBehaviour
 
         if(prevWeaponObject != weaponObject) // if the weapon object changes, resets movement values to default values, potentially fragile, let's keep an eye on this
         {
+            print("here");
             if (moveBackwards)
             {
                 moveBackwards = false;
@@ -473,7 +459,7 @@ public class CharacterMotion : MonoBehaviour
     {
         prevWeaponObject = this.weaponObject;
         this.weaponObject = weaponObject;
-        weaponPanel.PopulateInformation(weaponObject.name, weaponObject.damagePerShot);
+        weaponPanel.PopulateInformation(weaponObject.GetName(), weaponObject.damagePerShot);
         weaponPanel.UpdateAmmoCount(weaponObject.curAmmo, weaponObject.clipSize);
     }
 

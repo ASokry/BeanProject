@@ -77,6 +77,7 @@ public class CharacterMotion : MonoBehaviour
 
         //healthBarUI.SetMaxHealth(curHealth);//Health UI by Anthony
     }
+    //int prepped = 0;
 
     // Update is called once per frame
     void Update()
@@ -96,15 +97,21 @@ public class CharacterMotion : MonoBehaviour
                 SetStop(true);
             }
         }
-        /*bool inventoryPrepped = InventoryPrep.Instance.IsInventoryPrepped(0);
-        if (inventoryPrepped)
-        {
-            SetStop(true);
-        }
-        else
-        {
-            SetStop(false);
-        }*/
+
+        //bool inventoryPrepped = InventoryPrep.Instance.IsInventoryPrepped(0);
+        //if (inventoryPrepped)
+        //{
+        //    SetStop(false);
+        //}
+        //else
+        //{
+        //    if (prepped == 0)
+        //    {
+        //        prepped++;
+        //        SetStop(true);
+        //    }
+
+        //}
 
         if (stopped)
         {

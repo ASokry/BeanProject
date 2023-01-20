@@ -106,7 +106,7 @@ MonoBehaviour:
   itemType: 0
   weaponType: 0
   aimType: 0
-  range: 12
+  range: 30
   minnimumRange: 5
   damagePerShot: 10
   ammoType: H-Ammo

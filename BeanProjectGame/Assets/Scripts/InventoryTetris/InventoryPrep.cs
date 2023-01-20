@@ -20,7 +20,7 @@ public class InventoryPrep : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C))
         {
 
-            print(IsInventoryPrepped(0));
+            //print(IsInventoryPrepped(0));
         }
     }
 

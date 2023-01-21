@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement; //temp, for playtest
 
 public class InventoryGridManager : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class InventoryGridManager : MonoBehaviour
     [SerializeField] private int currentUpgradePoints = 0;
 
     private List<InventoryTetris> inventoryTetrisList = new List<InventoryTetris>();
+    [SerializeField] private EnemyManager enemyManager;
 
     public InventoryState GetCurrentState() { return currentState; }
     public void SetCurrentState(InventoryState state) { currentState = state; }
@@ -80,6 +82,14 @@ public class InventoryGridManager : MonoBehaviour
             {
                 inventoryTetris.ResetUpgradeables();
             }
+        }
+    }
+
+    public void GoToMenuScreen()
+    {
+        if (enemyManager.enemies.Count < 2)
+        {
+
         }
     }
 }

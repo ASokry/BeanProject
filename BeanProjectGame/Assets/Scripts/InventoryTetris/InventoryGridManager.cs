@@ -56,6 +56,17 @@ public class InventoryGridManager : MonoBehaviour
         {
             upgradeUI.SetActive(false);
         }
+
+        //temp
+        if (enemyManager.enemies.Count <= 2 && enemyManager.disabledEnemies.Count <= 0)
+        {
+            foreach (GameObject enemy in enemyManager.enemies)
+            {
+                if(enemy == null) GoToMenuScreen();
+            }
+        }
+        if(Input.GetKeyDown(KeyCode.Escape)) GoToMenuScreen();
+        //
     }
 
     public void UseUpgradePoints()
@@ -85,11 +96,10 @@ public class InventoryGridManager : MonoBehaviour
         }
     }
 
+    //temp
     public void GoToMenuScreen()
     {
-        if (enemyManager.enemies.Count < 2)
-        {
-
-        }
+        print("go");
+        SceneManager.LoadScene(1);
     }
 }

@@ -8,4 +8,9 @@ public class PlayTestUI : MonoBehaviour
         Scene scene = SceneManager.GetActiveScene(); 
         SceneManager.LoadScene(scene.name);
     }
+
+    public void RestartFromBeginning()
+    {
+        SceneManager.LoadScene(0);
+    }
 }

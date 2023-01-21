@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Anthony Scenes/DEMO.unity
-    guid: 727015b08721ef74a85ff67e3ffc23f0
+    path: Assets/Scenes/Anthony Scenes/DEMOv2.unity
+    guid: 2b4e7ffff36bd7844bbd5c853dba286e
+  - enabled: 1
+    path: Assets/Scenes/Anthony Scenes/ForDemo01_20_2023.unity
+    guid: 497c4b72cac951a4999874e37c5dfa1f
   m_configObjects: {}

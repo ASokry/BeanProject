@@ -398,6 +398,7 @@ public class CharacterMotion : MonoBehaviour
     public void DeathAnimComplete()
     {
         print("dead");
+        InventoryGridManager.Instance.GoToMenuScreen();
     }
     public void AffectHealth(int damage)
     {

@@ -114,7 +114,7 @@ public class CharacterMotion : MonoBehaviour
 
         if(prevWeaponObject != weaponObject) // if the weapon object changes, resets movement values to default values, potentially fragile, let's keep an eye on this
         {
-            print("here");
+            //print("here");
             if (moveBackwards)
             {
                 moveBackwards = false;

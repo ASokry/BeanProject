@@ -29,6 +29,13 @@ public class PlacedObject : MonoBehaviour {
         return placedObject;
     }
 
+    public void MoveCanvas(Transform parent, Vector2 anchoredPosition, Vector2Int origin, PlacedObjectTypeSO.Dir dir)
+    {
+        transform.SetParent(parent);
+        GetComponent<RectTransform>().anchoredPosition = anchoredPosition;
+        this.origin = origin;
+        this.dir = dir;
+    }
 
     private PlacedObjectTypeSO placedObjectTypeSO;
     private Vector2Int origin;

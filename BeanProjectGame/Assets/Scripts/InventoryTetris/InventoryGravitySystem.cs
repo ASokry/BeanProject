@@ -8,6 +8,7 @@ public class InventoryGravitySystem : MonoBehaviour
 
     public delegate void GravityAction();
     public static event GravityAction TriggerGravity;
+    public void TriggerGravitySystem() { if (TriggerGravity != null) TriggerGravity(); }
 
     public enum GravitySystemState { Selecting, Starting, Processing, Finalizing, Reseting }
     [SerializeField] private GravitySystemState currentState = GravitySystemState.Selecting;
@@ -16,8 +17,6 @@ public class InventoryGravitySystem : MonoBehaviour
     private InventoryGravity currentInventoryGravity;
 
     [SerializeField] private float gravityDelay = 0.05f;
-
-    public bool inCombat = false;// to be moved to GameManager/LevelManager etc.
 
     private void Awake()
     {
@@ -57,7 +56,7 @@ public class InventoryGravitySystem : MonoBehaviour
             }
             else
             {
-                print("not affected by gravity");
+                //print("not affected by gravity");
                 RemoveFromList(0);
                 currentState = GravitySystemState.Finalizing;
                 return;
@@ -86,8 +85,10 @@ public class InventoryGravitySystem : MonoBehaviour
         if (canPlace)
         {
             //print(inventoryGravity.name);
-            inventoryTetris.RemoveItemAt(placedObject.GetGridPosition());
-            inventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, rowBelow, dir);
+            //inventoryTetris.RemoveItemAt(placedObject.GetGridPosition());
+            //inventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, rowBelow, dir);
+            inventoryTetris.ClearItemAt(placedObject.GetGridPosition());
+            inventoryTetris.TryMoveItem(placedObject, rowBelow, dir);
         }
         yield return new WaitForSeconds(gravityDelay);
 

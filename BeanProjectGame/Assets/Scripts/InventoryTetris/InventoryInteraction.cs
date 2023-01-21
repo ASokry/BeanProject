@@ -10,11 +10,12 @@ public class InventoryInteraction : MonoBehaviour
     private void Update()
     {
         EquipWeapon();
+        SelectConsumable();
     }
 
     private void EquipWeapon()
     {
-        if (Input.GetMouseButtonDown(1) && !InventoryTetrisDragDropSystem.Instance.GetPlacedObject())
+        if (Input.GetMouseButtonDown(1) && !InventoryTetrisDragDropSystem.Instance.GetPlacedObject() && InventoryPrep.Instance.canEquip)
         {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(inventoryTetris.GetItemContainer(), Input.mousePosition, null, out Vector2 anchoredPosition);
             Vector2Int mouseGridPosition = inventoryTetris.GetGridPosition(anchoredPosition);
@@ -24,6 +25,22 @@ public class InventoryInteraction : MonoBehaviour
             if (inventoryWeapon != null)
             {
                 characterMotion.SetWeaponObject(inventoryWeapon);
+            }
+        }
+    }
+
+    private void SelectConsumable()
+    {
+        if (Input.GetMouseButtonDown(1) && !InventoryTetrisDragDropSystem.Instance.GetPlacedObject() && InventoryPrep.Instance.canEquip)
+        {
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(inventoryTetris.GetItemContainer(), Input.mousePosition, null, out Vector2 anchoredPosition);
+            Vector2Int mouseGridPosition = inventoryTetris.GetGridPosition(anchoredPosition);
+            PlacedObject placedObject = inventoryTetris.GetGrid().GetGridObject(mouseGridPosition.x, mouseGridPosition.y).GetPlacedObject();
+            InventoryConsumable inventoryConsumable = placedObject.GetComponent<InventoryConsumable>();
+
+            if (inventoryConsumable != null)
+            {
+                characterMotion.SetConsumableObject(inventoryConsumable);
             }
         }
     }

@@ -155,6 +155,7 @@ public class EnemyBehaviour : MonoBehaviour
                     attackTimer += Time.deltaTime;
                     if(attackTimer >= enemyAttacks[i].timeBetweenAttacks)
                     {
+                        characterAnimationManager.Attack();
                         float hitRoll = Random.Range(0, 100);
                         if(hitRoll <= enemyAttacks[i].attackAccuracy)
                         {
@@ -194,9 +195,10 @@ public class EnemyBehaviour : MonoBehaviour
 
         if (beingKnockedBack)
         {
+            Vector3 directionToPlayerX = new Vector3(directionToPlayer.x, 0, 0);
             if(Vector3.Distance(knockBackStartPos, transform.position) < knockbackDistance)
             {
-                transform.Translate(-directionToPlayer * knockBackSpeed * Time.deltaTime);
+                transform.Translate(-directionToPlayerX * knockBackSpeed * Time.deltaTime);
             }
             else
             {
@@ -208,7 +210,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void Attack(int damage)
     {
-        characterMotion.TakeDamage(damage);
+        characterMotion.AffectHealth(-damage);
     }
 
     public void AffectHealth(float damage)
@@ -232,6 +234,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void DeathAnimComplete()
     {
+        print("Called");
         enemyManager.enemies.Remove(gameObject);
         Destroy(gameObject);
     }

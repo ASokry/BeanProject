@@ -23,6 +23,6 @@ MonoBehaviour:
   - attackRange: Far
     attackType: Projectile
     damage: 10
-    timeBetweenAttacks: 2
+    timeBetweenAttacks: 4
     attackAccuracy: 100
-    projectile: {fileID: 4911565816004461244, guid: 16acc09d56e80a4478ef085ef9b7275c, type: 3}
+    projectile: {fileID: 3747839137700192548, guid: 1be46454115b0ba48813bcdb1f7ab9b5, type: 3}

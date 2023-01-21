@@ -9,6 +9,7 @@ TagManager:
   - Grid
   - GridCamera
   - GridCanvas
+  - Projectile
   layers:
   - Default
   - TransparentFX

@@ -10,12 +10,20 @@ public class InventoryTile : MonoBehaviour
     private InventoryTetris inventoryTetris;
     private Image image;
     private Sprite defaultSprite;
+    private InventoryTileSystem.TileType currentType;
+    private Color defaultOverlay = Color.white;
+    private InventoryTileSystem.TileOverlayType currentOverlayType;
 
     private void Awake()
     {
         image = GetComponent<Image>();
         defaultSprite = image.sprite;
+        currentType = InventoryTileSystem.TileType.Default;
+        defaultOverlay.a = 0;
+        currentOverlayType = InventoryTileSystem.TileOverlayType.Default;
     }
+    public InventoryTileSystem.TileType CurrentSpriteType() { return currentType; }
+    public InventoryTileSystem.TileOverlayType CurrentOverlayType() { return currentOverlayType; }
 
     public void Setup(InventoryTetris inventoryTetris)
     {
@@ -45,10 +53,11 @@ public class InventoryTile : MonoBehaviour
         canBeUpgraded = b;
     }
 
-    public void SetImageSprite(Sprite sprite)
+    public void SetImageSprite(Sprite sprite, InventoryTileSystem.TileType type)
     {
         image.enabled = true;
         image.sprite = sprite;
+        currentType = type;
     }
 
     public void ResetSprite()
@@ -57,12 +66,14 @@ public class InventoryTile : MonoBehaviour
         canBeUpgraded = false;
         image.enabled = true;
         image.sprite = defaultSprite;
+        currentType = InventoryTileSystem.TileType.Default;
     }
 
-    public void SetColor(Color color)
+    public void SetColor(Color color, InventoryTileSystem.TileOverlayType overlayType)
     {
         image.enabled = true;
         image.color = color;
+        currentOverlayType = overlayType;
     }
 
     public void SetOpacity(float opacity)
@@ -75,8 +86,7 @@ public class InventoryTile : MonoBehaviour
     public void ResetColor()
     {
         image.enabled = true;
-        Color defualtColor = Color.white;
-        defualtColor.a = 0;
-        image.color = defualtColor;
+        image.color = defaultOverlay;
+        currentOverlayType = InventoryTileSystem.TileOverlayType.Default;
     }
 }

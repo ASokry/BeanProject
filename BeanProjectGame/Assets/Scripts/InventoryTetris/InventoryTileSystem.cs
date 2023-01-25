@@ -6,12 +6,11 @@ public class InventoryTileSystem : MonoBehaviour
 {
     public static InventoryTileSystem Instance { get; private set; }
 
-    public enum TileType { Default, Null, Upgrade}
+    public enum TileType { None, Default, Null, Upgrade}
     [SerializeField] private Sprite upgradeTile;
 
-    public enum TileOverlayType { Default, Search, Upgradeable}
+    public enum TileOverlayType { None, Default, Search, Upgradeable, Equipped}
     [SerializeField, Range(0, 1)] private float overlayOpacity = 0.5f;
-    
 
     private void Awake()
     {
@@ -66,17 +65,37 @@ public class InventoryTileSystem : MonoBehaviour
                 tile.ResetColor();
                 break;
             case TileOverlayType.Search:
-                tile.SetColor(Color.cyan);
+                tile.SetColor(Color.cyan, tileOverlay);
                 tile.SetOpacity(overlayOpacity);
                 break;
             case TileOverlayType.Upgradeable:
-                tile.SetColor(Color.yellow);
+                tile.SetColor(Color.magenta, tileOverlay);
+                tile.SetOpacity(overlayOpacity);
+                break;
+            case TileOverlayType.Equipped:
+                tile.SetColor(Color.yellow, tileOverlay);
                 tile.SetOpacity(overlayOpacity);
                 break;
             default:
                 tile.ResetColor();
                 break;
         }
+    }
+
+    public void SetMultiTileOverlay(InventoryTetrisBackground inventoryTetrisBackground, List<Vector2Int> coordinates, TileOverlayType tileOverlay)
+    {
+        foreach (Vector2Int coordinate in coordinates) SetTileOverlay(inventoryTetrisBackground, coordinate, tileOverlay);
+    }
+
+    public TileOverlayType CurrentOverlayTypeAt(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinate)
+    {
+        inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(coordinate, out InventoryTile tile);
+        if (tile == null)
+        {
+            //print("Coordinates does not exsist: " + coordinates);
+            return TileOverlayType.None;
+        }
+        return tile.CurrentOverlayType();
     }
 
     public void SetTileSprite(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinates, TileType tileType)
@@ -97,11 +116,22 @@ public class InventoryTileSystem : MonoBehaviour
                 tile.SetNull();
                 break;
             case TileType.Upgrade:
-                tile.SetImageSprite(upgradeTile);
+                tile.SetImageSprite(upgradeTile, tileType);
                 break;
             default:
                 tile.ResetSprite();
                 break;
         }
+    }
+
+    public TileType CurrentTileTypeAt(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinate)
+    {
+        inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(coordinate, out InventoryTile tile);
+        if (tile == null)
+        {
+            //print("Coordinates does not exsist: " + coordinates);
+            return TileType.None;
+        }
+        return tile.CurrentSpriteType();
     }
 }

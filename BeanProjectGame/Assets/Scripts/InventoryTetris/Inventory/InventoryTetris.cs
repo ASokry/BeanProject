@@ -33,6 +33,9 @@ public class InventoryTetris : MonoBehaviour {
 
     [SerializeField] private bool inventoryTetrisGravity = false;
     public bool Gravity() { return inventoryTetrisGravity; }
+
+    [SerializeField] private InventoryInteraction inventoryInteraction;
+    
     private void Awake() {
         grid = new Grid<GridObject>(gridWidthMax, gridHeightMax, cellSize, new Vector3(0, 0, 0), (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
 
@@ -463,6 +466,9 @@ public class InventoryTetris : MonoBehaviour {
         PlacedObject placedObject = grid.GetGridObject(removeGridPosition.x, removeGridPosition.y).GetPlacedObject();
         if (placedObject != null)
         {
+            //reset necessary scripts
+            if (inventoryInteraction) inventoryInteraction.ResetLastEquipped();
+
             //Clear PlacedObject data from gridObject
             List<Vector2Int> gridPositionList = placedObject.GetGridPositionList();
             foreach (Vector2Int gridPosition in gridPositionList)

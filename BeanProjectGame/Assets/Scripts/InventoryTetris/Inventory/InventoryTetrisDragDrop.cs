@@ -35,13 +35,8 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
         this.inventoryTetris = inventoryTetris;
     }
 
-    private bool CheckInCombat()
-    {
-        return InventoryGridManager.Instance.GetCurrentState() == InventoryGridManager.InventoryState.Locked;
-    }
-
     public void OnBeginDrag(PointerEventData eventData) {
-        if (!CheckInCombat() && Input.GetMouseButton(0) && !InventoryTetrisDragDropSystem.Instance.GetPlacedObject())
+        if (Input.GetMouseButton(0) && !InventoryTetrisDragDropSystem.Instance.GetPlacedObject())
         {
             //Debug.Log("OnBeginDrag");
             canvasGroup.alpha = .7f;
@@ -59,7 +54,7 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
     }
 
     public void OnEndDrag(PointerEventData eventData) {
-        if (!CheckInCombat() && Input.GetMouseButtonUp(0) && InventoryTetrisDragDropSystem.Instance.GetPlacedObject())
+        if (Input.GetMouseButtonUp(0) && InventoryTetrisDragDropSystem.Instance.GetPlacedObject())
         {
             //Debug.Log("OnEndDrag");
             canvasGroup.alpha = 1f;

@@ -18,6 +18,7 @@ public class InventoryWeapon : InventoryItem
     public float timeBetweenAttacks;
     public float baseWeaponAccuracy;
     public string[] specialEffects;
+    private bool isEquipped = false;
 
     public virtual void SetCurAmmo(int ammoModifier)
     {
@@ -30,5 +31,15 @@ public class InventoryWeapon : InventoryItem
         {
             curAmmo = 0;
         }
+    }
+
+    public void SetEquippedState(bool b)
+    {
+        isEquipped = b;
+    }
+
+    public bool GetEquippedState()
+    {
+        return isEquipped;
     }
 }

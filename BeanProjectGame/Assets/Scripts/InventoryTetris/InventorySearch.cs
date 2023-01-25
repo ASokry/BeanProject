@@ -35,7 +35,6 @@ public class InventorySearch : MonoBehaviour
         int row = GetStartingRow(inventoryTetris);
         InventoryTetrisBackground inventoryTetrisBackground = inventoryTetris.GetInventoryTetrisBackground();
         InventoryTileSystem.TileOverlayType searchType = InventoryTileSystem.TileOverlayType.Search;
-        InventoryTileSystem.TileOverlayType defaultType = InventoryTileSystem.TileOverlayType.Default;
 
         while (row >= 0 && searchState)
         {
@@ -57,12 +56,13 @@ public class InventorySearch : MonoBehaviour
                 if (CheckIfTileIsNull(coordinate.x, coordinate.y)) continue;// if coordinates are null, then continue loop
 
                 InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, searchType);
+                InventoryTileSystem.TileOverlayType originalType = InventoryTileSystem.Instance.CurrentOverlayTypeAt(inventoryTetrisBackground, coordinate);
                 if (useArrow) { inventoryArrow.Fill(); }
                 yield return new WaitForSeconds(searchDelay);
 
                 if (!inventoryTetris.GetGrid().GetGridObject(col, row).HasPlacedObject())
                 {
-                    InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, defaultType);
+                    InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, originalType);
                     continue; //if the placedGridObject is empty, then continue loop
                 }
 
@@ -84,10 +84,10 @@ public class InventorySearch : MonoBehaviour
                     searchState = false;
                     //Let GridSearchSystem know item was found
                     InventorySearchSystem.Instance.CanContinue(true);
-                    InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, defaultType);
+                    InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, originalType);
                     break;
                 }
-                InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, defaultType);
+                InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, originalType);
             }
 
             // hide the arrow again

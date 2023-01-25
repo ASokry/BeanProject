@@ -7712,6 +7712,7 @@ MonoBehaviour:
   upgradeUI: {fileID: 850510593}
   startingUpgradePoints: 0
   currentUpgradePoints: 0
+  enemyManager: {fileID: 0}
 --- !u!4 &896717319
 Transform:
   m_ObjectHideFlags: 0
@@ -12754,6 +12755,7 @@ MonoBehaviour:
   allowUpgradeTiles: 0
   isActiveGrid: 0
   inventoryTetrisGravity: 0
+  inventoryInteraction: {fileID: 0}
 --- !u!224 &1544979336
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16993,6 +16995,7 @@ GameObject:
   - component: {fileID: 2096610783}
   - component: {fileID: 2096610782}
   - component: {fileID: 2096610784}
+  - component: {fileID: 2096610785}
   m_Layer: 5
   m_Name: InventoryTetris
   m_TagString: Untagged
@@ -17068,6 +17071,7 @@ MonoBehaviour:
   allowUpgradeTiles: 1
   isActiveGrid: 1
   inventoryTetrisGravity: 1
+  inventoryInteraction: {fileID: 2096610785}
 --- !u!114 &2096610784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17085,6 +17089,20 @@ MonoBehaviour:
   useArrow: 0
   inventoryArrow: {fileID: 1605951568}
   searchDelay: 0.2
+--- !u!114 &2096610785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096610780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c0864972f7020746bca9335eedc67fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventoryTetris: {fileID: 2096610783}
+  characterMotion: {fileID: 0}
 --- !u!1 &2105375338
 GameObject:
   m_ObjectHideFlags: 0

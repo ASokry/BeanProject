@@ -38,9 +38,15 @@ public class InventorySearchSystem : MonoBehaviour
         return foundItem == null && !isSearching;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            StartGridSearch("H-Ammo");
+        }
+    }
     public void StartGridSearch(string name)
     {
-        //if (Input.GetKeyDown(KeyCode.S) && CanSearch())
         if (CanSearch())
         {
             StartCoroutine(SearchThroughGrids(name));

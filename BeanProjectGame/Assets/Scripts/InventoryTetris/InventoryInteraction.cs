@@ -7,11 +7,12 @@ public class InventoryInteraction : MonoBehaviour
 {
     [SerializeField] private InventoryTetris inventoryTetris;
     [SerializeField] private CharacterMotion characterMotion;
-    private InventoryWeapon currentEquippedPlacedObject;
+    private InventoryWeapon currentEquippedObject;
 
     //Last equipped weapon values
     private List<Vector2Int> equippedPositionList;
 
+    public InventoryWeapon GetCurrentEquippedObject() { return currentEquippedObject; }
     private void Update()
     {
         EquipWeapon();
@@ -27,7 +28,7 @@ public class InventoryInteraction : MonoBehaviour
             PlacedObject placedObject = inventoryTetris.GetGrid().GetGridObject(mouseGridPosition.x, mouseGridPosition.y).GetPlacedObject();
             InventoryWeapon inventoryWeapon = placedObject.GetComponent<InventoryWeapon>();
 
-            if (inventoryWeapon != null && inventoryWeapon != currentEquippedPlacedObject)
+            if (inventoryWeapon != null && inventoryWeapon != currentEquippedObject)
             {
                 //reset last Equipped Weapon;
                 ResetLastEquipped();
@@ -42,13 +43,13 @@ public class InventoryInteraction : MonoBehaviour
 
                 //Set equipped state of scirpt and weapon
                 inventoryWeapon.SetEquippedState(true);
-                currentEquippedPlacedObject = inventoryWeapon;
+                currentEquippedObject = inventoryWeapon;
                 equippedPositionList = positions;
 
                 //Send reference of equipped weapon to player script
                 if (characterMotion) characterMotion.SetWeaponObject(inventoryWeapon);
             }
-            else if (inventoryWeapon != null && inventoryWeapon == currentEquippedPlacedObject)
+            else if (inventoryWeapon != null && inventoryWeapon == currentEquippedObject)
             {
                 //reset last Equipped Weapon;
                 ResetLastEquipped();
@@ -59,10 +60,10 @@ public class InventoryInteraction : MonoBehaviour
     public void ResetLastEquipped()
     {
         ResetLastEquippedOverlay();
-        if (currentEquippedPlacedObject != null)
+        if (currentEquippedObject != null)
         {
-            currentEquippedPlacedObject.SetEquippedState(false);
-            currentEquippedPlacedObject = null;
+            currentEquippedObject.SetEquippedState(false);
+            currentEquippedObject = null;
             if (characterMotion) characterMotion.SetWeaponObject(null);
         }
         else

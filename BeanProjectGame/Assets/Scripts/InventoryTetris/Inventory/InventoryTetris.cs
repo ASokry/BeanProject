@@ -467,7 +467,9 @@ public class InventoryTetris : MonoBehaviour {
         if (placedObject != null)
         {
             //reset necessary scripts
-            if (inventoryInteraction) inventoryInteraction.ResetLastEquipped();
+            InventoryWeapon inventoryWeapon = placedObject.GetComponent<InventoryWeapon>();
+            if (inventoryInteraction && inventoryWeapon)
+                if (inventoryWeapon == inventoryInteraction.GetCurrentEquippedObject()) inventoryInteraction.ResetLastEquipped();
 
             //Clear PlacedObject data from gridObject
             List<Vector2Int> gridPositionList = placedObject.GetGridPositionList();

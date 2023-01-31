@@ -435,6 +435,10 @@ public class InventoryTetris : MonoBehaviour {
                 grid.GetGridObject(gridPosition.x, gridPosition.y).SetPlacedObject(placedObject);
             }
 
+            //update necessary scripts
+            InventoryWeapon inventoryWeapon = placedObject.GetComponent<InventoryWeapon>();
+            EquipWeaponHandler(inventoryWeapon, true, gridPositionList);
+
             OnObjectPlaced?.Invoke(this, placedObject);
             
             // Object Moved!
@@ -451,6 +455,10 @@ public class InventoryTetris : MonoBehaviour {
         PlacedObject placedObject = grid.GetGridObject(removeGridPosition.x, removeGridPosition.y).GetPlacedObject();
 
         if (placedObject != null) {
+            //reset necessary scripts
+            InventoryWeapon inventoryWeapon = placedObject.GetComponent<InventoryWeapon>();
+            EquipWeaponHandler(inventoryWeapon, false, null);
+
             // Demolish
             placedObject.DestroySelf();
 
@@ -466,16 +474,29 @@ public class InventoryTetris : MonoBehaviour {
         PlacedObject placedObject = grid.GetGridObject(removeGridPosition.x, removeGridPosition.y).GetPlacedObject();
         if (placedObject != null)
         {
-            //reset necessary scripts
-            InventoryWeapon inventoryWeapon = placedObject.GetComponent<InventoryWeapon>();
-            if (inventoryInteraction && inventoryWeapon)
-                if (inventoryWeapon == inventoryInteraction.GetCurrentEquippedObject()) inventoryInteraction.ResetLastEquipped();
 
             //Clear PlacedObject data from gridObject
             List<Vector2Int> gridPositionList = placedObject.GetGridPositionList();
             foreach (Vector2Int gridPosition in gridPositionList)
             {
                 grid.GetGridObject(gridPosition.x, gridPosition.y).ClearPlacedObject();
+            }
+        }
+    }
+
+    private void EquipWeaponHandler(InventoryWeapon inventoryWeapon, bool isMoving, List<Vector2Int> positions)
+    {
+        if (inventoryInteraction && inventoryWeapon && !isMoving)
+        {
+            //print(inventoryWeapon == inventoryInteraction.GetCurrentEquippedObject());
+            if (inventoryWeapon == inventoryInteraction.GetCurrentEquippedObject()) inventoryInteraction.ResetEquippedWeapon();
+        }
+        else if (inventoryInteraction && inventoryWeapon && isMoving)
+        {
+            //print(inventoryWeapon.GetEquippedState());
+            if (inventoryWeapon == inventoryInteraction.GetCurrentEquippedObject() && positions != null)
+            {
+                inventoryInteraction.UpdateEquippedWeaponPosition(positions);
             }
         }
     }

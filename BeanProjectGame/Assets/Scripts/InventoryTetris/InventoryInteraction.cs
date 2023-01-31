@@ -7,9 +7,9 @@ public class InventoryInteraction : MonoBehaviour
 {
     [SerializeField] private InventoryTetris inventoryTetris;
     [SerializeField] private CharacterMotion characterMotion;
-    private InventoryWeapon currentEquippedObject;
 
-    //Last equipped weapon values
+    //equipped weapon values
+    private InventoryWeapon currentEquippedObject;
     private List<Vector2Int> equippedPositionList;
 
     public InventoryWeapon GetCurrentEquippedObject() { return currentEquippedObject; }
@@ -31,7 +31,7 @@ public class InventoryInteraction : MonoBehaviour
             if (inventoryWeapon != null && inventoryWeapon != currentEquippedObject)
             {
                 //reset last Equipped Weapon;
-                ResetLastEquipped();
+                ResetEquippedWeapon();
 
                 //set overlay of newly equipped weapon
                 InventoryTetrisBackground inventoryTetrisBackground = inventoryTetris.GetInventoryTetrisBackground();
@@ -40,6 +40,7 @@ public class InventoryInteraction : MonoBehaviour
                 PlacedObjectTypeSO.Dir direction = placedObject.GetDir();
                 List<Vector2Int> positions = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(origin, direction);
                 InventoryTileSystem.Instance.SetMultiTileOverlay(inventoryTetrisBackground, positions, tileOverlayType);
+                InventoryTileSystem.Instance.SetOverlayTypeAt(inventoryTetrisBackground, positions, tileOverlayType);
 
                 //Set equipped state of scirpt and weapon
                 inventoryWeapon.SetEquippedState(true);
@@ -52,12 +53,25 @@ public class InventoryInteraction : MonoBehaviour
             else if (inventoryWeapon != null && inventoryWeapon == currentEquippedObject)
             {
                 //reset last Equipped Weapon;
-                ResetLastEquipped();
+                ResetEquippedWeapon();
             }
         }
     }
 
-    public void ResetLastEquipped()
+    public void UpdateEquippedWeaponPosition(List<Vector2Int> positionList)
+    {
+        if(positionList != null)
+        {
+            ResetLastEquippedOverlay();
+            equippedPositionList = positionList;
+            InventoryTetrisBackground inventoryTetrisBackground = inventoryTetris.GetInventoryTetrisBackground();
+            InventoryTileSystem.TileOverlayType tileOverlayType = InventoryTileSystem.TileOverlayType.Equipped;
+            InventoryTileSystem.Instance.SetMultiTileOverlay(inventoryTetrisBackground, equippedPositionList, tileOverlayType);
+            InventoryTileSystem.Instance.SetOverlayTypeAt(inventoryTetrisBackground, equippedPositionList, tileOverlayType);
+        }
+    }
+
+    public void ResetEquippedWeapon()
     {
         ResetLastEquippedOverlay();
         if (currentEquippedObject != null)
@@ -68,7 +82,7 @@ public class InventoryInteraction : MonoBehaviour
         }
         else
         {
-            print("There is no last equipped PlacedObject");
+            //print("There is no last equipped PlacedObject");
         }
     }
 
@@ -79,11 +93,12 @@ public class InventoryInteraction : MonoBehaviour
             InventoryTetrisBackground inventoryTetrisBackground = inventoryTetris.GetInventoryTetrisBackground();
             InventoryTileSystem.TileOverlayType defualtType = InventoryTileSystem.TileOverlayType.Default;
             InventoryTileSystem.Instance.SetMultiTileOverlay(inventoryTetrisBackground, equippedPositionList, defualtType);
+            InventoryTileSystem.Instance.SetOverlayTypeAt(inventoryTetrisBackground, equippedPositionList, defualtType);
             equippedPositionList = null;
         }
         else
         {
-            print("There is no last equipped PlacedObject");
+            //print("There is no last equipped PlacedObject");
         }
     }
 

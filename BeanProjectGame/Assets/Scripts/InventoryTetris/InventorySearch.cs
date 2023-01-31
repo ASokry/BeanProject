@@ -49,14 +49,18 @@ public class InventorySearch : MonoBehaviour
 
             // search through each column of current row
             int column = GetStartingCol(inventoryTetris, row);
-            if (column < 0) { print("there are no columns to traverse"); break; }
+            if (column < 0) { /*print("there are no columns to traverse");*/ break; }
             for (int col = column; col < inventoryTetris.GetWidthMax(); col++)
             {
                 Vector2Int coordinate = new Vector2Int(col, row);
                 if (CheckIfTileIsNull(coordinate.x, coordinate.y)) continue;// if coordinates are null, then continue loop
 
-                InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, searchType);
+                //save original tile overlay type, to reset tile after tile has been search
                 InventoryTileSystem.TileOverlayType originalType = InventoryTileSystem.Instance.CurrentOverlayTypeAt(inventoryTetrisBackground, coordinate);
+
+                //Change tile overlay type to searching
+                InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, searchType);
+                
                 if (useArrow) { inventoryArrow.Fill(); }
                 yield return new WaitForSeconds(searchDelay);
 

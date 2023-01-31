@@ -11,6 +11,8 @@ public class InventoryTile : MonoBehaviour
     private Image image;
     private Sprite defaultSprite;
     private InventoryTileSystem.TileType currentType;
+    
+    //overlay variables
     private Color defaultOverlay = Color.white;
     private InventoryTileSystem.TileOverlayType currentOverlayType;
 
@@ -23,6 +25,7 @@ public class InventoryTile : MonoBehaviour
         currentOverlayType = InventoryTileSystem.TileOverlayType.Default;
     }
     public InventoryTileSystem.TileType CurrentSpriteType() { return currentType; }
+    public void SetOverlayType(InventoryTileSystem.TileOverlayType tileOverlayType) { currentOverlayType = tileOverlayType; }
     public InventoryTileSystem.TileOverlayType CurrentOverlayType() { return currentOverlayType; }
 
     public void Setup(InventoryTetris inventoryTetris)

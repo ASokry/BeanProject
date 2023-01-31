@@ -35,16 +35,30 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
         this.inventoryTetris = inventoryTetris;
     }
 
+    //To be filled with requirements allowing item to be dragged
+    private bool CanItemBeDragged()
+    {
+        InventoryWeapon inventoryWeapon = GetComponent<InventoryWeapon>();
+        if (inventoryWeapon)
+        {
+            //return !inventoryWeapon.GetEquippedState();
+        }
+        return true;
+    }
+
     public void OnBeginDrag(PointerEventData eventData) {
         if (Input.GetMouseButton(0) && !InventoryTetrisDragDropSystem.Instance.GetPlacedObject())
         {
-            //Debug.Log("OnBeginDrag");
-            canvasGroup.alpha = .7f;
-            canvasGroup.blocksRaycasts = false;
+            if (CanItemBeDragged())
+            {
+                //Debug.Log("OnBeginDrag");
+                canvasGroup.alpha = .7f;
+                canvasGroup.blocksRaycasts = false;
 
-            //ItemTetrisSO.CreateVisualGrid(transform.GetChild(0), placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, inventoryTetris.GetGrid().GetCellSize());
+                //ItemTetrisSO.CreateVisualGrid(transform.GetChild(0), placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, inventoryTetris.GetGrid().GetCellSize());
 
-            InventoryTetrisDragDropSystem.Instance.StartedDragging(inventoryTetris, placedObject);
+                InventoryTetrisDragDropSystem.Instance.StartedDragging(inventoryTetris, placedObject);
+            }
         }
     }
 

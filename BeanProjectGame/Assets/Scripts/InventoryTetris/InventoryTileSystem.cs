@@ -87,6 +87,20 @@ public class InventoryTileSystem : MonoBehaviour
         foreach (Vector2Int coordinate in coordinates) SetTileOverlay(inventoryTetrisBackground, coordinate, tileOverlay);
     }
 
+    public void SetOverlayTypeAt(InventoryTetrisBackground inventoryTetrisBackground, List<Vector2Int> coordinates, TileOverlayType type)
+    {
+        foreach (Vector2Int coordinate in coordinates) SetOverlayTypeAt(inventoryTetrisBackground, coordinate, type);
+    }
+
+    public void SetOverlayTypeAt(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinate, TileOverlayType type)
+    {
+        inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(coordinate, out InventoryTile tile);
+        if (tile != null)
+        {
+            tile.SetOverlayType(type);
+        }
+    }
+
     public TileOverlayType CurrentOverlayTypeAt(InventoryTetrisBackground inventoryTetrisBackground, Vector2Int coordinate)
     {
         inventoryTetrisBackground.GetInventoryTileDictionary().TryGetValue(coordinate, out InventoryTile tile);

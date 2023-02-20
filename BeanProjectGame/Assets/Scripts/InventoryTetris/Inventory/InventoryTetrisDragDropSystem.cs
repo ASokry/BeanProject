@@ -7,8 +7,6 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
 
     public static InventoryTetrisDragDropSystem Instance { get; private set; }
 
-
-
     [SerializeField] private List<InventoryTetris> inventoryTetrisList;
 
     private InventoryTetris draggingInventoryTetris;
@@ -118,8 +116,12 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
             if (tryMoveItem)
             {
                 //Item Moved!
-                fromInventoryTetris.ClearItemAt(placedObject.GetGridPosition());
-                toInventoryTetris.TryMoveItem(placedObject, placedObjectOrigin, dir);
+                //fromInventoryTetris.ClearItemAt(placedObject.GetGridPosition());
+                //toInventoryTetris.TryMoveItem(placedObject, placedObjectOrigin, dir);
+
+                SavePlacedObjectForClear(fromInventoryTetris, placedObject.GetGridPosition());
+                fromInventoryTetris.TryMoveItem(placedObject, placedObject.GetGridPosition(), placedObject.GetDir());
+                toInventoryTetris.TryMoveItemInCombat(placedObject, placedObjectOrigin, dir);
             }
             else
             {
@@ -157,5 +159,20 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
             //fromInventoryTetris.TryPlaceItem(placedObject.GetPlacedObjectTypeSO() as ItemTetrisSO, placedObject.GetGridPosition(), placedObject.GetDir());
             fromInventoryTetris.TryMoveItem(placedObject, placedObject.GetGridPosition(), placedObject.GetDir());
         }
+    }
+
+    private InventoryTetris inventoryTetrisForClearing = null;
+    private Vector2Int placedObjectToBeCleared = Vector2Int.zero;
+    private void SavePlacedObjectForClear(InventoryTetris inventoryTetris, Vector2Int placedObjectPosition)
+    {
+        inventoryTetrisForClearing = inventoryTetris;
+        placedObjectToBeCleared = placedObjectPosition;
+    }
+
+    public void ClearPlacedObjectForClear()
+    {
+        inventoryTetrisForClearing.ClearItemAt(placedObjectToBeCleared);
+        inventoryTetrisForClearing = null;
+        placedObjectToBeCleared = Vector2Int.zero;
     }
 }

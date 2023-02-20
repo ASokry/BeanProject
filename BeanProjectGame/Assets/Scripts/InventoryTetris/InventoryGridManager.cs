@@ -18,6 +18,8 @@ public class InventoryGridManager : MonoBehaviour
     private List<InventoryTetris> inventoryTetrisList = new List<InventoryTetris>();
     [SerializeField] private EnemyManager enemyManager;
 
+    [SerializeField] private bool gridCombat = false;
+
     public InventoryState GetCurrentState() { return currentState; }
     public void SetCurrentState(InventoryState state) { currentState = state; }
     public int CheckUpgradePoints() { return currentUpgradePoints; }
@@ -27,6 +29,8 @@ public class InventoryGridManager : MonoBehaviour
         startingUpgradePoints = points > 0 ? points : 0;
         currentUpgradePoints = startingUpgradePoints;
     }
+
+    public bool IsGridCombat() { return gridCombat; }
 
     public void AddToManager(InventoryTetris inventoryTetris) { inventoryTetrisList.Add(inventoryTetris); }
 

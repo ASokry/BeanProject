@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryTetris : MonoBehaviour {
     public event EventHandler<PlacedObject> OnObjectPlaced;
@@ -35,6 +36,11 @@ public class InventoryTetris : MonoBehaviour {
     public bool Gravity() { return inventoryTetrisGravity; }
 
     [SerializeField] private InventoryInteraction inventoryInteraction;
+
+    private bool movingInCombat = false;
+    private List<Vector2Int> reservedPositions = new List<Vector2Int>();
+    private Transform placeholderVisual = null;
+    private float placeHolderOpacity = 0.5f;
     
     private void Awake() {
         grid = new Grid<GridObject>(gridWidthMax, gridHeightMax, cellSize, new Vector3(0, 0, 0), (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
@@ -371,14 +377,14 @@ public class InventoryTetris : MonoBehaviour {
         List<Vector2Int> gridPositionList = itemTetrisSO.GetGridPositionList(placedObjectOrigin, dir);
         bool canPlace = CheckBuildItemPositions(gridPositionList);
 
-        if (canPlace) {
+        /*if (canPlace) {
             foreach (Vector2Int gridPosition in gridPositionList) {
                 if (!grid.GetGridObject(gridPosition.x, gridPosition.y).CanBuild()) {
                     canPlace = false;
                     break;
                 }
             }
-        }
+        }*/
 
         if (canPlace) {
             Vector2Int rotationOffset = itemTetrisSO.GetRotationOffset(dir);
@@ -413,6 +419,7 @@ public class InventoryTetris : MonoBehaviour {
         PlacedObjectTypeSO placedObjectTypeSO = placedObject.GetPlacedObjectTypeSO();
         List<Vector2Int> gridPositionList = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(placedObjectOrigin, dir);
         bool canPlace = CheckBuildItemPositions(gridPositionList, placedObject);
+        
 
         if (canPlace)
         {
@@ -474,7 +481,6 @@ public class InventoryTetris : MonoBehaviour {
         PlacedObject placedObject = grid.GetGridObject(removeGridPosition.x, removeGridPosition.y).GetPlacedObject();
         if (placedObject != null)
         {
-
             //Clear PlacedObject data from gridObject
             List<Vector2Int> gridPositionList = placedObject.GetGridPositionList();
             foreach (Vector2Int gridPosition in gridPositionList)
@@ -482,6 +488,103 @@ public class InventoryTetris : MonoBehaviour {
                 grid.GetGridObject(gridPosition.x, gridPosition.y).ClearPlacedObject();
             }
         }
+    }
+
+    public void TryMoveItemInCombat(PlacedObject placedObject, Vector2Int placedObjectOrigin, PlacedObjectTypeSO.Dir dir)
+    {
+        List<Vector2Int> gridPositionList = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(placedObjectOrigin, dir);
+        bool canPlace = CheckBuildItemPositions(gridPositionList, placedObject);
+
+        if (InventoryGridManager.Instance.IsGridCombat() && !movingInCombat && canPlace)
+        {
+            //return item object back to original position (or maybe always return it to orginal spot after runing this method)
+            /*Vector2Int originalPosition = placedObject.GetGridPosition();
+            PlacedObjectTypeSO.Dir originalDir = placedObject.GetDir();
+            TryMoveItem(placedObject, originalPosition, originalDir);*/
+
+            //start MoveInCombatHandler
+            StartCoroutine(MoveInCombatHandler(placedObject, placedObjectOrigin, dir));
+        }
+        else
+        {
+            print("Cant place");
+            //return item object back to original position
+            Vector2Int originalPosition = placedObject.GetGridPosition();
+            PlacedObjectTypeSO.Dir originalDir = placedObject.GetDir();
+            TryMoveItem(placedObject, originalPosition, originalDir);
+        }
+    }
+
+    //How do we handle reserved space when a different item enters the reserved space?
+    private IEnumerator MoveInCombatHandler(PlacedObject placedObject, Vector2Int placedObjectOrigin, PlacedObjectTypeSO.Dir dir)
+    {
+        //set bool so that only one item is attempting to move during combat
+        movingInCombat = true;
+
+        //reserve grid positions and place temp ghost object as placeholder until object has been found
+        reservedPositions = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(placedObjectOrigin, dir);
+        PlacedObjectTypeSO placedObjectTypeSO = placedObject.GetPlacedObjectTypeSO();
+        SetPlaceholder(placedObjectTypeSO, placedObjectOrigin, dir);
+
+        //Search for object
+        InventorySearchSystem.Instance.StartGridSearch(placedObject);
+        yield return new WaitUntil(() => InventorySearchSystem.Instance.foundItem != null);
+
+        //if item was found, process item object movement
+        if (InventorySearchSystem.Instance.foundItem != null)
+        {
+            //remove reserved grid positions
+            Vector2Int rotationOffset = placedObjectTypeSO.GetRotationOffset(dir);
+            Vector3 placedObjectWorldPosition = grid.GetWorldPosition(placedObjectOrigin.x, placedObjectOrigin.y) + new Vector3(rotationOffset.x, rotationOffset.y) * grid.GetCellSize();
+
+            //Clear backend data on fromInventoryTetris
+            InventoryTetrisDragDropSystem.Instance.ClearPlacedObjectForClear();
+
+            //move found object to target coordinates
+            placedObject.MoveCanvas(itemContainer, placedObjectWorldPosition, placedObjectOrigin, dir);
+            placedObject.transform.rotation = Quaternion.Euler(0, 0, -placedObjectTypeSO.GetRotationAngle(dir));
+
+            //Set InventoryTetris reference in applicable scripts
+            placedObject.GetComponent<InventoryTetrisDragDrop>().Setup(this);
+            placedObject.GetComponent<InventoryGravity>().Setup(this);
+
+            //Set placed object data
+            foreach (Vector2Int gridPosition in reservedPositions)
+            {
+                //print(gridPosition);
+                grid.GetGridObject(gridPosition.x, gridPosition.y).SetPlacedObject(placedObject);
+            }
+
+            //update necessary scripts
+            InventoryWeapon inventoryWeapon = placedObject.GetComponent<InventoryWeapon>();
+            EquipWeaponHandler(inventoryWeapon, true, reservedPositions);
+
+            OnObjectPlaced?.Invoke(this, placedObject);
+            ////
+        }
+
+        //reset
+        reservedPositions.Clear();
+        ResetPlaceholder();
+        InventorySearchSystem.Instance.ResetSearchSystem();
+        movingInCombat = false;
+    }
+
+    private void SetPlaceholder(PlacedObjectTypeSO placedObjectTypeSO, Vector2Int placedObjectOrigin, PlacedObjectTypeSO.Dir dir)
+    {
+        Vector2Int rotationOffset = placedObjectTypeSO.GetRotationOffset(dir);
+        Vector3 placedObjectWorldPosition = grid.GetWorldPosition(placedObjectOrigin.x, placedObjectOrigin.y) + new Vector3(rotationOffset.x, rotationOffset.y) * grid.GetCellSize();
+        placeholderVisual = Instantiate(placedObjectTypeSO.visual, transform);
+        placeholderVisual.name = "PlaceHolder";
+        Color color = Color.white; color.a = placeHolderOpacity;
+        placeholderVisual.GetComponentInChildren<Image>().color = color;
+        placeholderVisual.GetComponent<RectTransform>().anchoredPosition = placedObjectWorldPosition;
+    }
+
+    private void ResetPlaceholder()
+    {
+        Destroy(placeholderVisual.gameObject);
+        placeholderVisual = null;
     }
 
     private void EquipWeaponHandler(InventoryWeapon inventoryWeapon, bool isMoving, List<Vector2Int> positions)
@@ -504,8 +607,6 @@ public class InventoryTetris : MonoBehaviour {
     public RectTransform GetItemContainer() {
         return itemContainer;
     }
-
-
 
     [Serializable]
     public struct AddItemTetris {

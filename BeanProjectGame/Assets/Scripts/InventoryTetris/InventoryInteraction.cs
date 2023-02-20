@@ -26,6 +26,7 @@ public class InventoryInteraction : MonoBehaviour
             RectTransformUtility.ScreenPointToLocalPointInRectangle(inventoryTetris.GetItemContainer(), Input.mousePosition, null, out Vector2 anchoredPosition);
             Vector2Int mouseGridPosition = inventoryTetris.GetGridPosition(anchoredPosition);
             PlacedObject placedObject = inventoryTetris.GetGrid().GetGridObject(mouseGridPosition.x, mouseGridPosition.y).GetPlacedObject();
+            if (placedObject == null) return;
             InventoryWeapon inventoryWeapon = placedObject.GetComponent<InventoryWeapon>();
 
             if (inventoryWeapon != null && inventoryWeapon != currentEquippedObject)
@@ -109,6 +110,7 @@ public class InventoryInteraction : MonoBehaviour
             RectTransformUtility.ScreenPointToLocalPointInRectangle(inventoryTetris.GetItemContainer(), Input.mousePosition, null, out Vector2 anchoredPosition);
             Vector2Int mouseGridPosition = inventoryTetris.GetGridPosition(anchoredPosition);
             PlacedObject placedObject = inventoryTetris.GetGrid().GetGridObject(mouseGridPosition.x, mouseGridPosition.y).GetPlacedObject();
+            if (placedObject == null) return;
             InventoryConsumable inventoryConsumable = placedObject.GetComponent<InventoryConsumable>();
 
             if (inventoryConsumable != null)

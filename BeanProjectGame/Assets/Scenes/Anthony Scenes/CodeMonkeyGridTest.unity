@@ -7713,6 +7713,7 @@ MonoBehaviour:
   startingUpgradePoints: 0
   currentUpgradePoints: 0
   enemyManager: {fileID: 0}
+  gridCombat: 0
 --- !u!4 &896717319
 Transform:
   m_ObjectHideFlags: 0
@@ -17084,7 +17085,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46f4ad86afb4102468a83d1769ea7854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inCombat: 1
   inventoryTetris: {fileID: 2096610783}
   useArrow: 0
   inventoryArrow: {fileID: 1605951568}

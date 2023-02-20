@@ -15,6 +15,7 @@ public class InventorySearchSystem : MonoBehaviour
     private InventoryTetris foundItemInventoryTetris;
     private Vector2Int foundItemCoordinate;
 
+    public bool SearchState() { return isSearching; }
     private void Awake()
     {
         Instance = this;
@@ -30,6 +31,7 @@ public class InventorySearchSystem : MonoBehaviour
         foundItem = inventoryItem;
         foundItemInventoryTetris = inventoryTetris;
         foundItemCoordinate = coordinate;
+        //print(foundItemCoordinate);
     }
 
     private bool CanSearch()
@@ -47,20 +49,23 @@ public class InventorySearchSystem : MonoBehaviour
     }
     public void StartGridSearch(string name)
     {
-        if (CanSearch())
-        {
-            StartCoroutine(SearchThroughGrids(name));
-        }
+        if (CanSearch()) StartCoroutine(SearchThroughGrids(name));
     }
 
-    private IEnumerator SearchThroughGrids(string target)
+    public void StartGridSearch(PlacedObject placedObject)
+    {
+        if (CanSearch()) StartCoroutine(SearchThroughGrids(placedObject));
+    }
+
+    //Search for string target
+    private IEnumerator SearchThroughGrids(string strTarget)
     {
         isSearching = true;
         int index = gridSearchList.Count-1;
         while (index >=0)
         {
             InventorySearch gridToSearch = gridSearchList[index];
-            gridToSearch.StartGridTraversal(target);
+            gridToSearch.StartGridTraversal(strTarget);
             yield return new WaitUntil(() => canContinue == true);
 
             //currently set to always be null, see InventorySearch
@@ -74,6 +79,31 @@ public class InventorySearchSystem : MonoBehaviour
             canContinue = false;
         }
         //print("Search is done");
+        isSearching = false;
+    }
+
+    //Search for PlacedObject
+    private IEnumerator SearchThroughGrids(PlacedObject placedObjTarget)
+    {
+        isSearching = true;
+        int index = gridSearchList.Count - 1;
+        while (index >= 0)
+        {
+            InventorySearch gridToSearch = gridSearchList[index];
+            gridToSearch.StartGridTraversal(placedObjTarget);
+            yield return new WaitUntil(() => canContinue == true);
+
+            //currently set to always be null, see InventorySearch
+            if (foundItem != null)
+            {
+                isSearching = false;
+                yield break;
+            }
+
+            index--;
+            canContinue = false;
+        }
+        
         isSearching = false;
     }
 

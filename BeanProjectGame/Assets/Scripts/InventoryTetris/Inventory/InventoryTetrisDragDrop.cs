@@ -38,12 +38,13 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
     //To be filled with requirements allowing item to be dragged
     private bool CanItemBeDragged()
     {
+        bool searchInProgress = InventorySearchSystem.Instance.SearchState();
         InventoryWeapon inventoryWeapon = GetComponent<InventoryWeapon>();
-        if (inventoryWeapon)
-        {
-            //return !inventoryWeapon.GetEquippedState();
-        }
-        return true;
+        bool isItemEquipped = inventoryWeapon ? !inventoryWeapon.GetEquippedState() : true;
+
+        bool result = !searchInProgress && isItemEquipped;
+
+        return result;
     }
 
     public void OnBeginDrag(PointerEventData eventData) {

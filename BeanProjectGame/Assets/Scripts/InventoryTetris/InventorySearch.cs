@@ -5,7 +5,6 @@ using UnityEngine;
 public class InventorySearch : MonoBehaviour
 {
     private bool searchState = false;
-    [SerializeField] private bool inCombat = true;
 
     [SerializeField] private InventoryTetris inventoryTetris;
     [SerializeField] private bool useArrow = false;
@@ -13,24 +12,35 @@ public class InventorySearch : MonoBehaviour
 
     [SerializeField] private float searchDelay = 1f;
 
-    //[SerializeField] private InventoryTetrisBackground inventoryTetrisBackground;
-
-    public void StartGridTraversal(string target)
+    public void StartGridTraversal(string strTarget)
     {
-        if ((target != null || target != "") && inCombat)
+        if ((strTarget != null || strTarget != "") && !searchState)
         {
-            //print("start grid traversal");
-            searchState = true;
-            StartCoroutine(GridTraversal(target));
+            StartCoroutine(GridTraversal(strTarget));
         }
         else
         {
-            Debug.LogError("Player is not in combat or Search Target is invalid or empty.");
+            Debug.LogError("Search Target is invalid or empty.");
         }
     }
 
-    private IEnumerator GridTraversal(string target)
+    public void StartGridTraversal(PlacedObject placedObjTarget)
     {
+        if (placedObjTarget != null && !searchState)
+        {
+            StartCoroutine(GridTraversal(placedObjTarget));
+        }
+        else
+        {
+            Debug.LogError("Search Target is empty.");
+        }
+    }
+
+    //Search for string type
+    private IEnumerator GridTraversal(string strtTarget)
+    {
+        //print(target.GetType() == typeof(PlacedObject));
+        searchState = true;
         // Traverse through entire grid, starting at the top row
         int row = GetStartingRow(inventoryTetris);
         InventoryTetrisBackground inventoryTetrisBackground = inventoryTetris.GetInventoryTetrisBackground();
@@ -73,7 +83,82 @@ public class InventorySearch : MonoBehaviour
                 PlacedObject placedObject = inventoryTetris.GetGrid().GetGridObject(col, row).GetPlacedObject();
                 PlacedObjectTypeSO itemTetrisSO = placedObject.GetPlacedObjectTypeSO();
                 //print(itemTetrisSO.nameString + ", " + target);
-                if (itemTetrisSO.nameString == target)
+                if (itemTetrisSO.nameString == strtTarget)
+                {
+                    //if we found a matching targetItemname, then use the item
+                    //print("found it at: " + col + ", " + row);
+
+                    //get reference to itemObject
+                    InventoryItem item = inventoryTetris.GetGrid().GetGridObject(col, row).GetPlacedObject().GetComponent<InventoryItem>();
+                    Vector2Int itemCoordinates = new Vector2Int(col, row);
+                    InventorySearchSystem.Instance.SetFoundItem(item, inventoryTetris, itemCoordinates);
+                    //print(itemObject);
+
+                    //after item is found, reset search state
+                    searchState = false;
+                    //Let GridSearchSystem know item was found
+                    InventorySearchSystem.Instance.CanContinue(true);
+                    InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, originalType);
+                    break;
+                }
+                InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, originalType);
+            }
+
+            // hide the arrow again
+            if (useArrow) { inventoryArrow.Hide(); }
+
+            //increment row counter, so we can go down to next row
+            row--;
+        }
+        InventorySearchSystem.Instance.CanContinue(true);
+    }
+
+    //Search for PlacedObject type
+    private IEnumerator GridTraversal(PlacedObject placedObjTarget)
+    {
+        searchState = true;
+        // Traverse through entire grid, starting at the top row
+        int row = GetStartingRow(inventoryTetris);
+        InventoryTetrisBackground inventoryTetrisBackground = inventoryTetris.GetInventoryTetrisBackground();
+        InventoryTileSystem.TileOverlayType searchType = InventoryTileSystem.TileOverlayType.Search;
+
+        while (row >= 0 && searchState)
+        {
+            //Reveal and move the arrow along y axis of grid on left hand side
+            if (useArrow)
+            {
+                inventoryArrow.SetMax(inventoryTetris.GetWidthMax());
+                inventoryArrow.ResetFill();
+                inventoryArrow.MoveArrow(0, row);
+                inventoryArrow.Reveal();
+            }
+
+            // search through each column of current row
+            int column = GetStartingCol(inventoryTetris, row);
+            if (column < 0) { /*print("there are no columns to traverse");*/ break; }
+            for (int col = column; col < inventoryTetris.GetWidthMax(); col++)
+            {
+                Vector2Int coordinate = new Vector2Int(col, row);
+                if (CheckIfTileIsNull(coordinate.x, coordinate.y)) continue;// if coordinates are null, then continue loop
+
+                //save original tile overlay type, to reset tile after tile has been search
+                InventoryTileSystem.TileOverlayType originalType = InventoryTileSystem.Instance.CurrentOverlayTypeAt(inventoryTetrisBackground, coordinate);
+
+                //Change tile overlay type to searching
+                InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, searchType);
+
+                if (useArrow) { inventoryArrow.Fill(); }
+                yield return new WaitForSeconds(searchDelay);
+
+                if (!inventoryTetris.GetGrid().GetGridObject(col, row).HasPlacedObject())
+                {
+                    InventoryTileSystem.Instance.SetTileOverlay(inventoryTetrisBackground, coordinate, originalType);
+                    continue; //if the placedGridObject is empty, then continue loop
+                }
+
+                PlacedObject placedObject = inventoryTetris.GetGrid().GetGridObject(col, row).GetPlacedObject();
+                //print(itemTetrisSO.nameString + ", " + target);
+                if (placedObject == placedObjTarget)
                 {
                     //if we found a matching targetItemname, then use the item
                     //print("found it at: " + col + ", " + row);

@@ -5,6 +5,9 @@ using UnityEngine;
 public class EncounterStartZone : MonoBehaviour
 {
     public CharacterMotion characterMotion;
+    public Transform encounterEnd;
+    public GameObject camera;
+    public Transform cameraPosition;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,9 +22,11 @@ public class EncounterStartZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        camera.transform.position = cameraPosition.position;
         if(other.tag == "Player")
         {
             characterMotion.encounterStart = transform;
+            characterMotion.encounterEnd = this.encounterEnd;
         }
     }
 }

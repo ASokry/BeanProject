@@ -47,6 +47,7 @@ public class CharacterMotion : MonoBehaviour
     public GameObject targettedEnemy;
     public EnemyBehaviour targettedEnemyBehaviour;
     [HideInInspector] public Transform encounterStart;
+    [HideInInspector] public Transform encounterEnd;
 
     public float enemyDistance;
 
@@ -292,6 +293,7 @@ public class CharacterMotion : MonoBehaviour
 
         if (weaponObject.aimType == InventoryWeapon.AimType.AreaTargeting) // handles attack hit and reload logic for area targetting weapons
         {
+
             areaTargetBox.SetActive(true);
             areaTargetPivot.gameObject.transform.localScale = new Vector3(weaponObject.range, areaTargetBox.transform.localScale.y, areaTargetBox.transform.localScale.z);
             if (areaTargettedEnemies.Count > 0 || areaProjectiles.Count > 0)
@@ -371,6 +373,12 @@ public class CharacterMotion : MonoBehaviour
                     weaponObject.SetCurAmmo(-1);
                     weaponPanel.UpdateAmmoCount(weaponObject.curAmmo, weaponObject.clipSize);
                     attackTimer = 0;
+                }
+
+                if (Vector3.Distance(transform.position, encounterEnd.position) <= weaponObject.range)  //if there are enemies or projectiles, and the player is near the end zone, stop the player
+                {
+                    print(encounterEnd.position);
+                    SetStop(true);
                 }
             }
         }

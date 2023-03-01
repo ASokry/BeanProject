@@ -41,7 +41,7 @@ public class InventoryTetrisDragDrop : MonoBehaviour, IPointerDownHandler, IBegi
         bool searchInProgress = InventorySearchSystem.Instance.SearchState();
         InventoryWeapon inventoryWeapon = GetComponent<InventoryWeapon>();
         bool isItemEquipped = inventoryWeapon ? !inventoryWeapon.GetEquippedState() : true;
-
+        //print(searchInProgress);
         bool result = !searchInProgress && isItemEquipped;
 
         return result;

@@ -495,6 +495,7 @@ public class InventoryTetris : MonoBehaviour {
         List<Vector2Int> gridPositionList = placedObject.GetPlacedObjectTypeSO().GetGridPositionList(placedObjectOrigin, dir);
         bool canPlace = CheckBuildItemPositions(gridPositionList, placedObject);
 
+        //print(movingInCombat);
         if (InventoryGridManager.Instance.IsGridCombat() && !movingInCombat && canPlace)
         {
             //return item object back to original position (or maybe always return it to orginal spot after runing this method)
@@ -547,7 +548,7 @@ public class InventoryTetris : MonoBehaviour {
             //Set InventoryTetris reference in applicable scripts
             placedObject.GetComponent<InventoryTetrisDragDrop>().Setup(this);
             placedObject.GetComponent<InventoryGravity>().Setup(this);
-
+            
             //Set placed object data
             foreach (Vector2Int gridPosition in reservedPositions)
             {
@@ -575,6 +576,7 @@ public class InventoryTetris : MonoBehaviour {
         Vector2Int rotationOffset = placedObjectTypeSO.GetRotationOffset(dir);
         Vector3 placedObjectWorldPosition = grid.GetWorldPosition(placedObjectOrigin.x, placedObjectOrigin.y) + new Vector3(rotationOffset.x, rotationOffset.y) * grid.GetCellSize();
         placeholderVisual = Instantiate(placedObjectTypeSO.visual, transform);
+        placeholderVisual.transform.rotation = Quaternion.Euler(0, 0, -placedObjectTypeSO.GetRotationAngle(dir));
         placeholderVisual.name = "PlaceHolder";
         Color color = Color.white; color.a = placeHolderOpacity;
         placeholderVisual.GetComponentInChildren<Image>().color = color;

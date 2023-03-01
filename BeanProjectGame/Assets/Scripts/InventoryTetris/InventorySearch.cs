@@ -20,6 +20,7 @@ public class InventorySearch : MonoBehaviour
         }
         else
         {
+            //print(searchState);
             Debug.LogError("Search Target is invalid or empty.");
         }
     }
@@ -110,6 +111,7 @@ public class InventorySearch : MonoBehaviour
             //increment row counter, so we can go down to next row
             row--;
         }
+        searchState = false;
         InventorySearchSystem.Instance.CanContinue(true);
     }
 
@@ -165,6 +167,7 @@ public class InventorySearch : MonoBehaviour
 
                     //get reference to itemObject
                     InventoryItem item = inventoryTetris.GetGrid().GetGridObject(col, row).GetPlacedObject().GetComponent<InventoryItem>();
+                    if (item == null) Debug.LogError("Item does not have component InventoryItem");
                     Vector2Int itemCoordinates = new Vector2Int(col, row);
                     InventorySearchSystem.Instance.SetFoundItem(item, inventoryTetris, itemCoordinates);
                     //print(itemObject);
@@ -185,6 +188,7 @@ public class InventorySearch : MonoBehaviour
             //increment row counter, so we can go down to next row
             row--;
         }
+        searchState = false;
         InventorySearchSystem.Instance.CanContinue(true);
     }
 

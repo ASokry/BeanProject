@@ -68,10 +68,10 @@ public class InventorySearchSystem : MonoBehaviour
             gridToSearch.StartGridTraversal(strTarget);
             yield return new WaitUntil(() => canContinue == true);
 
-            //currently set to always be null, see InventorySearch
             if (foundItem != null)
             {
                 isSearching = false;
+                canContinue = false;
                 yield break;
             }
 
@@ -93,10 +93,10 @@ public class InventorySearchSystem : MonoBehaviour
             gridToSearch.StartGridTraversal(placedObjTarget);
             yield return new WaitUntil(() => canContinue == true);
 
-            //currently set to always be null, see InventorySearch
             if (foundItem != null)
             {
                 isSearching = false;
+                canContinue = false;
                 yield break;
             }
 

@@ -116,12 +116,17 @@ public class InventoryTetrisDragDropSystem : MonoBehaviour {
             if (tryMoveItem)
             {
                 //Item Moved!
-                //fromInventoryTetris.ClearItemAt(placedObject.GetGridPosition());
-                //toInventoryTetris.TryMoveItem(placedObject, placedObjectOrigin, dir);
-
-                SavePlacedObjectForClear(fromInventoryTetris, placedObject.GetGridPosition());
-                fromInventoryTetris.TryMoveItem(placedObject, placedObject.GetGridPosition(), placedObject.GetDir());
-                toInventoryTetris.TryMoveItemInCombat(placedObject, placedObjectOrigin, dir);
+                if (InventoryGridManager.Instance.IsGridCombat())
+                {
+                    SavePlacedObjectForClear(fromInventoryTetris, placedObject.GetGridPosition());
+                    fromInventoryTetris.TryMoveItem(placedObject, placedObject.GetGridPosition(), placedObject.GetDir());
+                    toInventoryTetris.TryMoveItemInCombat(placedObject, placedObjectOrigin, dir);
+                }
+                else
+                {
+                    fromInventoryTetris.ClearItemAt(placedObject.GetGridPosition());
+                    toInventoryTetris.TryMoveItem(placedObject, placedObjectOrigin, dir);
+                }
             }
             else
             {
